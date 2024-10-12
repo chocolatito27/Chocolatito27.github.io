@@ -1,173 +1,115 @@
-/* Estilo para el cuerpo de la página */
 body {
-    background-color: #ffffff; /* Fondo blanco */
-    font-family: Arial, sans-serif;
     margin: 0;
-    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: white;
+    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
+    background-size: cover;
+    animation: moveBackground 10s linear infinite;
 }
 
-/* Título Chocolatito */
+@keyframes moveBackground {
+    from { background-position: 0 0; }
+    to { background-position: 100% 0; }
+}
+
 .title {
-    font-size: 4em; /* Tamaño más grande */
+    font-size: 2.5em; /* Ajusta el tamaño del título */
+    color: white; /* Color blanco */
     font-weight: bold; /* Negrita */
-    color: #ff69b4; /* Color rosado brillante */
-    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5); /* Sombra para darle profundidad */
-    letter-spacing: 2px; /* Espaciado entre letras */
-    text-transform: uppercase; /* Transformación a mayúsculas */
-    font-family: 'Comic Sans MS', cursive, sans-serif; /* Fuente llamativa */
-    animation: rotate 5s infinite linear; /* Animación de rotación lenta */
+    font-style: italic; /* Cursiva */
+    text-align: left;
+    padding: 20px;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7); /* Sombra para mayor visibilidad */
 }
 
-/* Animación de rotación */
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+.center-message {
+    text-align: center;
+    color: #333;
 }
 
-/* Estilo para el menú */
-.menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    left: 10px;
-    background-color: #333;
-    padding: 10px;
+.life-quote {
+    font-size: 1.5em; /* Tamaño de la cita de vida */
+    font-weight: bold;
+    margin: 20px 0;
+}
+
+.rating {
+    margin: 20px 0;
+}
+
+.stars {
+    cursor: pointer;
+    font-size: 1.5em;
+}
+
+.star {
+    display: inline-block;
+    color: #FFD700; /* Color dorado para estrellas */
+}
+
+.buy-button, .whatsapp-button {
+    display: inline-block;
+    padding: 10px 20px;
+    margin: 10px 0;
+    background-color: #28a745; /* Color del botón */
+    color: white;
+    text-decoration: none;
     border-radius: 5px;
+    transition: background-color 0.3s;
+}
+
+.buy-button:hover, .whatsapp-button:hover {
+    background-color: #218838; /* Color al pasar el mouse */
+}
+
+.menu {
+    display: none; /* Ocultando el menú por defecto */
+    background-color: #333; /* Fondo del menú */
+    color: white;
+    position: absolute;
+    left: 0;
+    top: 50px;
+    width: 200px; /* Ancho del menú */
+    z-index: 1000; /* Asegura que el menú esté por encima de otros elementos */
 }
 
 .menu a {
-    display: block;
-    color: #fff;
-    padding: 10px;
+    color: white; /* Color del texto del menú */
     text-decoration: none;
-    border-bottom: 1px solid #444;
+    padding: 10px; /* Espaciado interno */
+    display: block;
 }
 
-.menu a:hover {
-    background-color: #555;
-}
-
-/* Botón del menú */
 .menu-button {
-    font-size: 1.5em;
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
+    background-color: #333; /* Fondo del botón del menú */
+    color: white; /* Color del texto del botón */
+    border: none; /* Sin borde */
+    cursor: pointer; /* Cambia el cursor al pasar el mouse */
+    padding: 10px 15px; /* Espaciado interno */
 }
 
 .menu-button:hover {
-    background-color: #555;
-}
-
-/* Mensaje central */
-.center-message {
-    text-align: center;
-    margin-top: 100px;
-}
-
-/* Frase de la vida */
-.life-quote {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #333;
-}
-
-/* Botón de WhatsApp */
-.whatsapp-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #25D366;
-    color: white;
-    text-decoration: none;
-    font-size: 1.2em;
-    margin-top: 20px;
-    border-radius: 5px;
-}
-
-.whatsapp-button:hover {
-    background-color: #1ebe57;
-}
-
-/* Sección de calificación */
-.rating {
-    margin-top: 20px;
-}
-
-/* Estrellas de calificación */
-.stars {
-    cursor: pointer;
-    font-size: 2em;
-    color: gold;
-}
-
-.star:hover, .star.selected {
-    color: orange;
-}
-
-/* Estilo para las caritas de calificación */
-#feedback-face {
-    font-size: 3em;
-    margin-top: 10px;
-}
-
-/* Sección de comprar */
-#comprar {
-    text-align: center;
-    margin-top: 50px;
+    background-color: #555; /* Color del botón al pasar el mouse */
 }
 
 .purchase-option {
-    background-color: #f4f4f4;
-    padding: 20px;
-    margin: 20px auto;
-    border-radius: 10px;
-    max-width: 400px;
+    margin: 20px 0; /* Margen de las opciones de compra */
+    padding: 15px; /* Espaciado interno */
+    border: 1px solid #ccc; /* Borde de las opciones */
+    border-radius: 5px; /* Bordes redondeados */
+    background-color: rgba(255, 255, 255, 0.8); /* Fondo semi-transparente */
 }
 
 .purchase-option p {
-    font-size: 1.2em;
-    color: #333;
+    margin: 5px 0; /* Margen de los párrafos */
 }
 
-.buy-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color: white;
-    text-decoration: none;
-    font-size: 1.2em;
-    margin-top: 10px;
-    border-radius: 5px;
+.rating span {
+    font-weight: bold; /* Negrita en la calificación */
 }
 
-.buy-button:hover {
-    background-color: #0056b3;
-}
-
-/* Animación para los tulipanes en movimiento (si vuelves a agregar los tulipanes) */
-.tulipanes {
-    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
-    background-size: cover;
-    background-position: center;
-    animation: wind 10s infinite alternate;
-}
-
-@keyframes wind {
-    0% {
-        transform: translateX(0);
+@media (max-width: 600px) {
+    .title {
+        font-size: 2em; /* Tamaño más pequeño en pantallas pequeñas */
     }
-    100% {
-        transform: translateX(20px);
-    }
-}
-
-/* Ajuste del cuerpo en general */
-body {
-    background-color: white;
 }
