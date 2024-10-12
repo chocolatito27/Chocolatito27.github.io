@@ -10,9 +10,11 @@ document.getElementById('buy-option').addEventListener('click', function (e) {
     buyOptions.style.display = buyOptions.style.display === 'block' ? 'none' : 'block'; // Alterna la visibilidad
 });
 
-// Mostrar un mensaje de confirmación al hacer clic en "Comprar"
-document.getElementById('buy-button').addEventListener('click', function () {
-    alert("¡Pedido realizado! Te contactaremos para más detalles.");
+// Mostrar la sección de compras al hacer clic en "Compras"
+document.getElementById('compras-option').addEventListener('click', function (e) {
+    e.preventDefault();
+    const comprasSection = document.getElementById('compras');
+    comprasSection.style.display = comprasSection.style.display === 'block' ? 'none' : 'block'; // Alterna la visibilidad
 });
 
 // Calificación de la frase
