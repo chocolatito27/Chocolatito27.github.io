@@ -179,19 +179,3 @@ body {
 .buy-button:hover {
     background-color: darkblue;
 }
-
-/* Estilo de las secciones de inicio de sesión */
-.login-section {
-    text-align: center;
-    margin-top: 50px;
-}
-
-.login-button {
-    background-color: #4285F4; /* Color de Google */
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: none;
-    cursor: pointer;
-    font-size: 1.2em;
-    margin: 10
