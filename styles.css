@@ -1,35 +1,57 @@
-/* Estilo general de la página */
+/* Estilo para el cuerpo de la página */
 body {
-    background-color: white;
-    color: black;
+    background-color: #ffffff; /* Fondo blanco */
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
 }
 
-/* Título principal "Chocolatito" */
+/* Título Chocolatito */
 .title {
-    font-size: 4em;
-    color: black;
-    text-align: left;
-    padding: 20px;
-    font-weight: bold;
-    text-transform: uppercase;
-    letter-spacing: 5px;
-    text-shadow: 3px 3px 5px rgba(0,0,0,0.3);
-    animation: title-bounce 2s infinite ease-in-out;
+    font-size: 4em; /* Tamaño más grande */
+    font-weight: bold; /* Negrita */
+    color: #ff69b4; /* Color rosado brillante */
+    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5); /* Sombra para darle profundidad */
+    letter-spacing: 2px; /* Espaciado entre letras */
+    text-transform: uppercase; /* Transformación a mayúsculas */
+    font-family: 'Comic Sans MS', cursive, sans-serif; /* Fuente llamativa */
+    animation: rotate 5s infinite linear; /* Animación de rotación lenta */
 }
 
-@keyframes title-bounce {
-    0%, 100% {
-        transform: translateY(0);
+/* Animación de rotación */
+@keyframes rotate {
+    0% {
+        transform: rotate(0deg);
     }
-    50% {
-        transform: translateY(-10px);
+    100% {
+        transform: rotate(360deg);
     }
 }
 
-/* Estilo del botón de menú */
+/* Estilo para el menú */
+.menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    left: 10px;
+    background-color: #333;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.menu a {
+    display: block;
+    color: #fff;
+    padding: 10px;
+    text-decoration: none;
+    border-bottom: 1px solid #444;
+}
+
+.menu a:hover {
+    background-color: #555;
+}
+
+/* Botón del menú */
 .menu-button {
     font-size: 1.5em;
     background-color: #333;
@@ -37,182 +59,115 @@ body {
     border: none;
     padding: 10px;
     cursor: pointer;
-    position: absolute;
-    top: 20px;
-    right: 20px;
 }
 
-/* Estilo del menú */
-.menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    background-color: #444;
-    padding: 10px;
-    border-radius: 5px;
+.menu-button:hover {
+    background-color: #555;
 }
 
-.menu.active {
-    display: block;
-}
-
-.menu a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    margin: 10px 0;
-    font-size: 1.2em;
-}
-
-/* Estilo de la frase central */
+/* Mensaje central */
 .center-message {
     text-align: center;
-    margin: 50px 0;
+    margin-top: 100px;
 }
 
+/* Frase de la vida */
 .life-quote {
-    font-size: 2em;
-    color: black;
-    font-style: italic;
-    font-weight: bold;
-    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
-    -webkit-background-clip: text;
-    color: transparent;
-    display: inline-block;
-    padding: 10px;
-}
-
-/* Estilo de la calificación */
-.rating {
-    font-size: 1.2em;
-    margin-top: 20px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-
-.stars {
-    font-size: 2em;
-    cursor: pointer;
-}
-
-.star {
-    color: lightgray; /* Color por defecto */
-}
-
-.star:hover,
-.star.selected {
-    color: gold; /* Color cuando se selecciona */
-}
-
-#rating-result {
-    margin-top: 10px;
     font-size: 1.5em;
     font-weight: bold;
+    color: #333;
 }
 
-.face {
-    font-size: 2em;
-    margin-top: 10px;
-    display: none;
-}
-
-/* Mostrar diferentes caritas según la calificación */
-.star[data-value="1"]:hover ~ .face, .star[data-value="1"].selected ~ .face {
-    display: inline;
-    content: "😢"; /* Carita triste para 1 estrella */
-}
-
-.star[data-value="2"]:hover ~ .face, .star[data-value="2"].selected ~ .face {
-    display: inline;
-    content: "😕"; /* Carita no tan triste para 2 estrellas */
-}
-
-.star[data-value="3"]:hover ~ .face, .star[data-value="3"].selected ~ .face {
-    display: inline;
-    content: "😐"; /* Carita normal para 3 estrellas */
-}
-
-.star[data-value="4"]:hover ~ .face, .star[data-value="4"].selected ~ .face {
-    display: inline;
-    content: "🙂"; /* Carita media feliz para 4 estrellas */
-}
-
-.star[data-value="5"]:hover ~ .face, .star[data-value="5"].selected ~ .face {
-    display: inline;
-    content: "😄"; /* Carita feliz para 5 estrellas */
-}
-
-/* Estilo del botón de WhatsApp */
+/* Botón de WhatsApp */
 .whatsapp-button {
     display: inline-block;
-    background-color: green;
+    padding: 10px 20px;
+    background-color: #25D366;
     color: white;
-    padding: 15px 25px;
-    border-radius: 5px;
     text-decoration: none;
-    margin-top: 20px;
     font-size: 1.2em;
+    margin-top: 20px;
+    border-radius: 5px;
 }
 
-/* Estilo de las opciones de compra */
+.whatsapp-button:hover {
+    background-color: #1ebe57;
+}
+
+/* Sección de calificación */
+.rating {
+    margin-top: 20px;
+}
+
+/* Estrellas de calificación */
+.stars {
+    cursor: pointer;
+    font-size: 2em;
+    color: gold;
+}
+
+.star:hover, .star.selected {
+    color: orange;
+}
+
+/* Estilo para las caritas de calificación */
+#feedback-face {
+    font-size: 3em;
+    margin-top: 10px;
+}
+
+/* Sección de comprar */
+#comprar {
+    text-align: center;
+    margin-top: 50px;
+}
+
 .purchase-option {
-    margin: 30px 0;
+    background-color: #f4f4f4;
     padding: 20px;
-    background-color: #eee;
-    border: 2px solid #444;
-    border-radius: 5px;
+    margin: 20px auto;
+    border-radius: 10px;
+    max-width: 400px;
 }
 
 .purchase-option p {
-    margin: 10px 0;
     font-size: 1.2em;
+    color: #333;
 }
 
-/* Estilo de los botones de compra */
 .buy-button {
     display: inline-block;
-    background-color: blue;
-    color: white;
     padding: 10px 20px;
-    border-radius: 5px;
+    background-color: #007bff;
+    color: white;
     text-decoration: none;
     font-size: 1.2em;
     margin-top: 10px;
+    border-radius: 5px;
 }
 
 .buy-button:hover {
-    background-color: darkblue;
+    background-color: #0056b3;
 }
 
-/* Estilo de los títulos de las secciones */
-h2 {
-    font-size: 2em;
-    color: darkblue;
-    text-align: center;
-    margin-bottom: 30px;
+/* Animación para los tulipanes en movimiento (si vuelves a agregar los tulipanes) */
+.tulipanes {
+    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
+    background-size: cover;
+    background-position: center;
+    animation: wind 10s infinite alternate;
 }
 
-/* Mejora de visualización para dispositivos pequeños */
-@media (max-width: 600px) {
-    .title {
-        font-size: 3em;
+@keyframes wind {
+    0% {
+        transform: translateX(0);
     }
+    100% {
+        transform: translateX(20px);
+    }
+}
 
-    .menu-button {
-        font-size: 1.2em;
-    }
-
-    .life-quote {
-        font-size: 1.5em;
-    }
-
-    .purchase-option p {
-        font-size: 1em;
-    }
-
-    .buy-button {
-        font-size: 1em;
-    }
+/* Ajuste del cuerpo en general */
+body {
+    background-color: white;
 }
