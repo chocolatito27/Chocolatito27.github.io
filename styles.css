@@ -24,21 +24,25 @@ body {
 
 /* Título principal "Chocolatito" */
 .title {
-    font-size: 3em; /* Aumentar tamaño del título */
-    color: black; /* Color del título */
+    font-size: 2.5em; /* Aumentar el tamaño */
+    color: black; /* Color negro */
     text-align: left;
     padding: 20px;
     position: relative;
+    font-weight: bold; /* Negrita */
+    text-transform: uppercase; /* Todo en mayúsculas */
 }
 
-/* Estilo de la corona */
+/* Animación de la corona */
 .crown {
     display: inline-block;
-    animation: rotate 2s linear infinite; /* Animación de rotación */
-    margin-left: 10px; /* Espacio entre el título y la corona */
+    width: 30px; /* Ajusta el tamaño de la corona */
+    height: 30px; /* Ajusta el tamaño de la corona */
+    background-image: url('https://example.com/crown.png'); /* Cambia la URL por la de tu corona */
+    background-size: cover;
+    animation: rotate 5s infinite linear; /* Animación de rotación */
 }
 
-/* Animación de rotación */
 @keyframes rotate {
     from {
         transform: rotate(0deg);
@@ -92,10 +96,12 @@ body {
 
 .life-quote {
     font-size: 2em;
-    color: white; /* Cambiar color a blanco */
-    font-style: italic;
+    color: white;
+    font-style: italic; /* Cursiva */
     font-weight: bold;
     text-shadow: 2px 2px 4px #000; /* Sombra negra */
+    display: inline-block;
+    padding: 10px;
 }
 
 /* Estilo de la calificación */
@@ -126,14 +132,22 @@ body {
 
 /* Estilo del botón de WhatsApp */
 .whatsapp-button {
-    display: inline-block;
-    background-color: green;
+    display: inline-flex; /* Usar flex para alinear el ícono y el texto */
+    align-items: center; /* Centrar verticalmente */
+    background-color: #25D366; /* Verde de WhatsApp */
     color: white;
     padding: 15px 25px;
     border-radius: 5px;
     text-decoration: none;
     margin-top: 20px;
     font-size: 1.2em;
+}
+
+/* Estilo del ícono de WhatsApp */
+.whatsapp-icon {
+    width: 20px; /* Ajustar tamaño según sea necesario */
+    height: 20px; /* Ajustar tamaño según sea necesario */
+    margin-right: 10px; /* Espacio entre el ícono y el texto */
 }
 
 /* Estilo de las opciones de compra */
