@@ -1,209 +1,59 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
 body {
-    font-family: Arial, sans-serif;
-    background: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg') no-repeat center center fixed; 
-    background-size: cover; 
+    background-color: black;
     color: white;
-    overflow: hidden; 
-    animation: backgroundMove 10s linear infinite; /* Agregar la animación de fondo */
-}
-
-@keyframes backgroundMove {
-    0% {
-        background-position: 0 0;
-    }
-    50% {
-        background-position: 100% 0;
-    }
-    100% {
-        background-position: 0 0;
-    }
-}
-
-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 20px;
-    background-color: rgba(0, 0, 0, 0.6);
+    font-family: Arial, sans-serif;
 }
 
 .title {
-    font-size: 28px;
-    color: #FFD700; /* Color dorado */
-    display: flex;
-    align-items: center;
-}
-
-.crown {
-    animation: rotate 5s linear infinite; /* Animación para la corona */
-    margin-left: 10px; /* Espacio entre el título y la corona */
-}
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-.menu-button {
-    font-size: 20px;
-    cursor: pointer;
-    border: none;
-    background-color: transparent;
-    color: white;
-}
-
-.menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    background-color: rgba(0, 0, 0, 0.8);
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.menu a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding: 10px 0;
-}
-
-.menu a:hover {
-    background-color: rgba(255, 255, 255, 0.2);
-}
-
-#compras {
-    display: none; /* Ocultar sección de compras inicialmente */
-    background-color: rgba(0, 0, 0, 0.7);
-    padding: 20px;
-    margin: 20px;
-    border-radius: 10px;
-    text-align: center;
-}
-
-.purchase-option {
-    margin: 20px 0;
-}
-
-.center-message {
-    text-align: center;
-    margin-top: 100px;
-    font-size: 18px; /* Tamaño más pequeño */
-    animation: fadeIn 2s; /* Animación para el mensaje central */
+    font-size: 2em;
+    color: gold;
+    text-align: left;
+    position: relative;
 }
 
 .life-quote {
-    font-weight: bold; /* Negrita */
-    font-style: italic; /* Cursiva */
-    font-size: 24px; /* Tamaño más grande */
-    background: linear-gradient(90deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #00FFFF, #0000FF, #7F00FF, #FF00FF); /* Fondo de arcoíris */
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent; /* Rellenar color de texto transparente para efecto arcoíris */
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
-    }
-}
-
-.whatsapp-button {
-    display: block;
-    width: 200px;
-    margin: 30px auto;
-    padding: 10px;
-    background-color: green;
+    font-size: 1.5em;
     color: white;
     text-align: center;
-    border-radius: 5px;
-}
-
-.buy-button {
-    padding: 10px 20px;
-    background-color: #FF4500; /* Color naranja brillante */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 18px;
-    margin-top: 20px; /* Añadir más espacio arriba del botón */
-}
-
-.buy-button:hover {
-    background-color: #FF6347; /* Color rojo tomate al pasar el mouse */
-}
-
-.rating {
-    margin: 20px 0;
+    text-shadow: 2px 2px 4px #000; /* Sombra para mejorar legibilidad */
+    border: 2px solid black; /* Borde negro */
+    padding: 10px;
 }
 
 .stars {
-    display: inline-block;
+    font-size: 1.5em;
     cursor: pointer;
 }
 
 .star {
-    font-size: 24px; /* Tamaño de estrella */
-    color: gray; /* Color por defecto */
+    color: lightgray; /* Color por defecto */
 }
 
 .star:hover,
 .star.selected {
-    color: gold; /* Color dorado al pasar el mouse o seleccionar */
+    color: gold; /* Color al seleccionar */
 }
 
-/* Show menu when button is clicked */
-.menu.show {
-    display: block;
+.whatsapp-button {
+    display: inline-block;
+    background-color: green;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
 }
 
-/* Animación del botón de compra */
+.purchase-option {
+    margin: 20px 0;
+    border: 1px solid black; /* Borde negro alrededor de las opciones */
+    padding: 10px;
+}
+
 .buy-button {
-    animation: pulse 1s infinite; /* Efecto de pulso */
-}
-
-@keyframes pulse {
-    0% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.05);
-    }
-    100% {
-        transform: scale(1);
-    }
-}
-
-/* Colores arcoíris para la calificación */
-.rating span {
-    font-size: 20px; /* Aumentar tamaño de la calificación */
-}
-
-.stars .star {
-    animation: rainbow 1s infinite alternate; /* Animación arcoíris para las estrellas */
-}
-
-@keyframes rainbow {
-    0% { color: red; }
-    14% { color: orange; }
-    28% { color: yellow; }
-    42% { color: green; }
-    57% { color: blue; }
-    71% { color: indigo; }
-    85% { color: violet; }
-    100% { color: red; }
+    display: inline-block;
+    background-color: blue;
+    color: white;
+    padding: 10px;
+    border-radius: 5px;
+    text-decoration: none;
 }
