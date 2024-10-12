@@ -1,14 +1,13 @@
 body {
     background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
     background-size: cover; /* Ajusta la imagen de fondo para cubrir toda la pantalla */
-    font-family: 'Roboto', sans-serif; /* Cambia la fuente a Roboto */
     color: black; /* Color del texto por defecto */
     overflow: hidden; /* Evita el desplazamiento del fondo */
 }
 
 .title {
-    font-size: 3.5em; /* Aumenta el tamaño del título */
-    color: white; /* Cambia el color del título a blanco */
+    font-size: 4em; /* Tamaño aumentado del título */
+    color: white; /* Color del título en blanco */
     font-weight: bold; /* Negrita */
     font-style: italic; /* Cursiva */
     text-align: left; /* Alineación del texto a la izquierda */
