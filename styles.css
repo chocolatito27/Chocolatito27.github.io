@@ -1,173 +1,62 @@
-/* Estilo para el cuerpo de la página */
 body {
-    background-color: #ffffff; /* Fondo blanco */
+    background: white; /* Fondo blanco */
     font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
 }
 
-/* Título Chocolatito */
 .title {
-    font-size: 4em; /* Tamaño más grande */
+    font-size: 36px; /* Tamaño de fuente más grande */
     font-weight: bold; /* Negrita */
-    color: #ff69b4; /* Color rosado brillante */
-    text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.5); /* Sombra para darle profundidad */
-    letter-spacing: 2px; /* Espaciado entre letras */
-    text-transform: uppercase; /* Transformación a mayúsculas */
-    font-family: 'Comic Sans MS', cursive, sans-serif; /* Fuente llamativa */
-    animation: rotate 5s infinite linear; /* Animación de rotación lenta */
+    text-align: center;
+    animation: spin 10s linear infinite; /* Animación de rotación */
 }
 
-/* Animación de rotación */
-@keyframes rotate {
-    0% {
-        transform: rotate(0deg);
-    }
-    100% {
-        transform: rotate(360deg);
-    }
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }
 
-/* Estilo para el menú */
-.menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    left: 10px;
-    background-color: #333;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.menu a {
-    display: block;
-    color: #fff;
-    padding: 10px;
-    text-decoration: none;
-    border-bottom: 1px solid #444;
-}
-
-.menu a:hover {
-    background-color: #555;
-}
-
-/* Botón del menú */
 .menu-button {
-    font-size: 1.5em;
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
+    display: block;
+    margin: 10px auto;
 }
 
-.menu-button:hover {
-    background-color: #555;
+.menu {
+    display: none; /* Oculto por defecto */
+    text-align: center;
 }
 
-/* Mensaje central */
 .center-message {
     text-align: center;
-    margin-top: 100px;
+    margin: 20px;
 }
 
-/* Frase de la vida */
 .life-quote {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #333;
+    font-size: 20px; /* Ajusta el tamaño de la frase */
 }
 
-/* Botón de WhatsApp */
-.whatsapp-button {
-    display: inline-block;
-    padding: 10px 20px;
-    background-color: #25D366;
-    color: white;
-    text-decoration: none;
-    font-size: 1.2em;
-    margin-top: 20px;
-    border-radius: 5px;
-}
-
-.whatsapp-button:hover {
-    background-color: #1ebe57;
-}
-
-/* Sección de calificación */
 .rating {
     margin-top: 20px;
 }
 
-/* Estrellas de calificación */
 .stars {
     cursor: pointer;
-    font-size: 2em;
-    color: gold;
-}
-
-.star:hover, .star.selected {
-    color: orange;
-}
-
-/* Estilo para las caritas de calificación */
-#feedback-face {
-    font-size: 3em;
-    margin-top: 10px;
-}
-
-/* Sección de comprar */
-#comprar {
-    text-align: center;
-    margin-top: 50px;
-}
-
-.purchase-option {
-    background-color: #f4f4f4;
-    padding: 20px;
-    margin: 20px auto;
-    border-radius: 10px;
-    max-width: 400px;
-}
-
-.purchase-option p {
-    font-size: 1.2em;
-    color: #333;
+    font-size: 24px; /* Tamaño de las estrellas */
 }
 
 .buy-button {
     display: inline-block;
+    margin: 10px;
     padding: 10px 20px;
-    background-color: #007bff;
+    background-color: #28a745; /* Color del botón */
     color: white;
     text-decoration: none;
-    font-size: 1.2em;
-    margin-top: 10px;
-    border-radius: 5px;
+    border-radius: 5px; /* Bordes redondeados */
 }
 
-.buy-button:hover {
-    background-color: #0056b3;
-}
-
-/* Animación para los tulipanes en movimiento (si vuelves a agregar los tulipanes) */
-.tulipanes {
-    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
-    background-size: cover;
-    background-position: center;
-    animation: wind 10s infinite alternate;
-}
-
-@keyframes wind {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(20px);
-    }
-}
-
-/* Ajuste del cuerpo en general */
-body {
-    background-color: white;
+.purchase-option {
+    margin: 20px;
+    padding: 10px;
+    border: 1px solid #ccc; /* Bordes de las opciones */
+    border-radius: 5px; /* Bordes redondeados */
+    background-color: #f9f9f9; /* Fondo de las opciones */
 }
