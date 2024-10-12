@@ -1,34 +1,32 @@
 /* Estilo general de la página */
 body {
     background-color: white;
-    color: white;
+    color: black;
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    animation: moveTulips 10s infinite linear;
-}
-
-/* Animación de los tulipanes */
-@keyframes moveTulips {
-    0% {
-        background-position: 0 0;
-    }
-    100% {
-        background-position: 100% 0;
-    }
 }
 
 /* Título principal "Chocolatito" */
 .title {
-    font-size: 2.5em;
-    color: gold;
+    font-size: 4em;
+    color: black;
     text-align: left;
     padding: 20px;
-    position: relative;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 5px;
+    text-shadow: 3px 3px 5px rgba(0,0,0,0.3);
+    animation: title-bounce 2s infinite ease-in-out;
+}
+
+@keyframes title-bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 /* Estilo del botón de menú */
@@ -75,7 +73,7 @@ body {
 
 .life-quote {
     font-size: 2em;
-    color: white;
+    color: black;
     font-style: italic;
     font-weight: bold;
     background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
@@ -89,6 +87,9 @@ body {
 .rating {
     font-size: 1.2em;
     margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .stars {
@@ -111,6 +112,38 @@ body {
     font-weight: bold;
 }
 
+.face {
+    font-size: 2em;
+    margin-top: 10px;
+    display: none;
+}
+
+/* Mostrar diferentes caritas según la calificación */
+.star[data-value="1"]:hover ~ .face, .star[data-value="1"].selected ~ .face {
+    display: inline;
+    content: "😢"; /* Carita triste para 1 estrella */
+}
+
+.star[data-value="2"]:hover ~ .face, .star[data-value="2"].selected ~ .face {
+    display: inline;
+    content: "😕"; /* Carita no tan triste para 2 estrellas */
+}
+
+.star[data-value="3"]:hover ~ .face, .star[data-value="3"].selected ~ .face {
+    display: inline;
+    content: "😐"; /* Carita normal para 3 estrellas */
+}
+
+.star[data-value="4"]:hover ~ .face, .star[data-value="4"].selected ~ .face {
+    display: inline;
+    content: "🙂"; /* Carita media feliz para 4 estrellas */
+}
+
+.star[data-value="5"]:hover ~ .face, .star[data-value="5"].selected ~ .face {
+    display: inline;
+    content: "😄"; /* Carita feliz para 5 estrellas */
+}
+
 /* Estilo del botón de WhatsApp */
 .whatsapp-button {
     display: inline-block;
@@ -127,8 +160,8 @@ body {
 .purchase-option {
     margin: 30px 0;
     padding: 20px;
-    background-color: #222;
-    border: 2px solid white;
+    background-color: #eee;
+    border: 2px solid #444;
     border-radius: 5px;
 }
 
@@ -156,7 +189,7 @@ body {
 /* Estilo de los títulos de las secciones */
 h2 {
     font-size: 2em;
-    color: lightyellow;
+    color: darkblue;
     text-align: center;
     margin-bottom: 30px;
 }
@@ -164,7 +197,7 @@ h2 {
 /* Mejora de visualización para dispositivos pequeños */
 @media (max-width: 600px) {
     .title {
-        font-size: 1.8em;
+        font-size: 3em;
     }
 
     .menu-button {
