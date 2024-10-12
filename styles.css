@@ -1,95 +1,185 @@
+/* Estilo general de la página */
 body {
-    background-color: white; /* Fondo blanco */
+    background-color: black;
+    color: white;
     font-family: Arial, sans-serif;
-    overflow: hidden; /* Para evitar el desplazamiento del fondo */
+    margin: 0;
+    padding: 0;
+    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    animation: moveTulips 10s infinite linear;
 }
 
+/* Animación de los tulipanes */
+@keyframes moveTulips {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 100% 0;
+    }
+}
+
+/* Título principal "Chocolatito" */
 .title {
-    font-size: 48px; /* Tamaño de fuente más grande */
-    font-weight: bold; /* Negrita */
-    text-align: center;
-    animation: spin 10s linear infinite; /* Animación de rotación */
-    margin-top: 20px; /* Espacio arriba */
+    font-size: 2.5em;
+    color: gold;
+    text-align: left;
+    padding: 20px;
+    position: relative;
 }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
+/* Estilo del botón de menú */
 .menu-button {
-    display: block;
-    margin: 10px auto;
-    font-size: 20px; /* Tamaño de fuente del botón */
+    font-size: 1.5em;
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    position: absolute;
+    top: 20px;
+    right: 20px;
 }
 
+/* Estilo del menú */
 .menu {
-    display: none; /* Oculto por defecto */
-    text-align: center;
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: #444;
+    padding: 10px;
+    border-radius: 5px;
 }
 
+.menu.active {
+    display: block;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+
+/* Estilo de la frase central */
 .center-message {
     text-align: center;
-    margin: 20px;
+    margin: 50px 0;
 }
 
 .life-quote {
-    font-size: 24px; /* Tamaño de la frase */
-    font-weight: bold; /* Negrita */
-    color: #333; /* Color de la frase */
-    animation: rainbow 3s linear infinite; /* Animación arcoíris */
+    font-size: 2em;
+    color: white;
+    font-style: italic;
+    font-weight: bold;
+    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
+    -webkit-background-clip: text;
+    color: transparent;
+    display: inline-block;
+    padding: 10px;
 }
 
-@keyframes rainbow {
-    0% { color: red; }
-    20% { color: orange; }
-    40% { color: yellow; }
-    60% { color: green; }
-    80% { color: blue; }
-    100% { color: purple; }
-}
-
+/* Estilo de la calificación */
 .rating {
+    font-size: 1.2em;
     margin-top: 20px;
 }
 
 .stars {
+    font-size: 2em;
     cursor: pointer;
-    font-size: 24px; /* Tamaño de las estrellas */
 }
 
+.star {
+    color: lightgray; /* Color por defecto */
+}
+
+.star:hover,
+.star.selected {
+    color: gold; /* Color cuando se selecciona */
+}
+
+#rating-result {
+    margin-top: 10px;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+
+/* Estilo del botón de WhatsApp */
+.whatsapp-button {
+    display: inline-block;
+    background-color: green;
+    color: white;
+    padding: 15px 25px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 20px;
+    font-size: 1.2em;
+}
+
+/* Estilo de las opciones de compra */
+.purchase-option {
+    margin: 30px 0;
+    padding: 20px;
+    background-color: #222;
+    border: 2px solid white;
+    border-radius: 5px;
+}
+
+.purchase-option p {
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+
+/* Estilo de los botones de compra */
 .buy-button {
     display: inline-block;
-    margin: 10px;
-    padding: 10px 20px;
-    background-color: #28a745; /* Color del botón */
+    background-color: blue;
     color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
     text-decoration: none;
-    border-radius: 5px; /* Bordes redondeados */
-    border: none; /* Sin borde */
+    font-size: 1.2em;
+    margin-top: 10px;
 }
 
-.purchase-option {
-    margin: 20px;
-    padding: 10px;
-    border: 1px solid #ccc; /* Bordes de las opciones */
-    border-radius: 5px; /* Bordes redondeados */
-    background-color: #f9f9f9; /* Fondo de las opciones */
+.buy-button:hover {
+    background-color: darkblue;
 }
 
-.tulip-background {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
-    background-size: cover;
-    background-attachment: fixed; /* Fondo fijo */
-    animation: move 10s linear infinite; /* Movimiento del fondo */
+/* Estilo de los títulos de las secciones */
+h2 {
+    font-size: 2em;
+    color: lightyellow;
+    text-align: center;
+    margin-bottom: 30px;
 }
 
-@keyframes move {
-    from { background-position: 0 0; }
-    to { background-position: 100% 100%; }
+/* Mejora de visualización para dispositivos pequeños */
+@media (max-width: 600px) {
+    .title {
+        font-size: 1.8em;
+    }
+
+    .menu-button {
+        font-size: 1.2em;
+    }
+
+    .life-quote {
+        font-size: 1.5em;
+    }
+
+    .purchase-option p {
+        font-size: 1em;
+    }
+
+    .buy-button {
+        font-size: 1em;
+    }
 }
