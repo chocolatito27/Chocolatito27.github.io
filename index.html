@@ -5,69 +5,114 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chocolatito</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #000;
-            background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/chocoimagen.jpg'); /* Aquí debes poner la URL de tu imagen */
+            box-sizing: border-box;
+        }
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/chocoimagen.jpg');
             background-size: cover;
             background-position: center;
-            color: #fff;
-        }
-
-        header {
-            position: absolute;
-            top: 10px;
-            left: 20px;
-            font-size: 24px;
-            font-weight: bold;
-        }
-
-        h1 {
-            text-align: center;
-            margin-bottom: 20px;
-            font-size: 36px;
-        }
-
-        p {
-            text-align: center;
-            margin-bottom: 40px;
-            font-size: 24px;
-        }
-
-        a.button {
-            background-color: #25D366;
+            background-attachment: fixed;
             color: white;
-            padding: 15px 30px;
-            text-decoration: none;
-            font-size: 18px;
+        }
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px;
+            background-color: rgba(0, 0, 0, 0.6);
+        }
+        .title {
+            font-size: 24px;
+        }
+        .menu-button {
+            font-size: 20px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            color: white;
+        }
+        .menu {
+            display: none;
+            position: absolute;
+            top: 60px;
+            right: 20px;
+            background-color: rgba(0, 0, 0, 0.8);
+            padding: 10px;
             border-radius: 5px;
         }
-
-        a.button:hover {
-            background-color: #128C7E;
+        .menu a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px 0;
+        }
+        .menu a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+        #buy-options {
+            display: none;
+            background-color: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            margin: 20px;
+            border-radius: 10px;
+        }
+        .center-message {
+            text-align: center;
+            margin-top: 100px;
+            font-size: 30px;
+        }
+        .whatsapp-button {
+            display: block;
+            width: 200px;
+            margin: 30px auto;
+            padding: 10px;
+            background-color: green;
+            color: white;
+            text-align: center;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+        /* Show menu when button is clicked */
+        .menu.show {
+            display: block;
         }
     </style>
 </head>
 <body>
+    <header>
+        <div class="title">Chocolatito</div>
+        <button class="menu-button" id="menu-toggle">☰ Menú</button>
+        <div class="menu" id="menu">
+            <a href="#" id="buy-option">Comprar</a>
+        </div>
+    </header>
 
-    <header>Chocolatito</header>
+    <div class="center-message">
+        <p>La vida es como el chocolate, a veces dulce, a veces amargo, pero siempre llena de sorpresas. Disfruta cada momento.</p>
+        <a href="https://wa.me/+6285640549937" class="whatsapp-button">Contactar por WhatsApp</a>
+    </div>
 
-    <h1>Mensaje sobre la vida</h1>
-    <p>
-        La vida es un viaje lleno de sorpresas, de momentos buenos y otros no tan buenos. 
-        Lo importante es siempre seguir adelante, disfrutar cada pequeño instante, y sobre todo, 
-        ser agradecidos por lo que tenemos. Aprecia los momentos sencillos, porque en ellos 
-        están las mayores lecciones de la vida.
-    </p>
+    <!-- Div que muestra la opción de compra -->
+    <div id="buy-options">
+        <p>Servicio: Crear un dominio personalizado</p>
+        <p>Precio: 10 Nuevos Soles</p>
+    </div>
 
-    <a class="button" href="https://wa.me/+6285640549937">Contáctame en WhatsApp</a>
+    <script>
+        // Toggle del menú
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            document.getElementById('menu').classList.toggle('show');
+        });
 
+        // Mostrar opciones de compra al hacer clic en "Comprar"
+        document.getElementById('buy-option').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.getElementById('buy-options').style.display = 'block';
+        });
+    </script>
 </body>
 </html>
