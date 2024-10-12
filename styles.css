@@ -6,11 +6,9 @@
 
 body {
     font-family: Arial, sans-serif;
-    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/chocoimagen.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background-color: black; /* Fondo negro */
     color: white;
+    overflow: hidden; /* Evitar el scroll */
 }
 
 header {
@@ -67,7 +65,7 @@ header {
 .center-message {
     text-align: center;
     margin-top: 100px;
-    font-size: 30px;
+    font-size: 18px; /* Tamaño más pequeño */
 }
 
 .whatsapp-button {
@@ -94,6 +92,25 @@ header {
 
 .buy-button:hover {
     background-color: #FF6347; /* Color rojo tomate al pasar el mouse */
+}
+
+.rating {
+    margin: 20px 0;
+}
+
+.stars {
+    display: inline-block;
+    cursor: pointer;
+}
+
+.star {
+    font-size: 24px; /* Tamaño de estrella */
+    color: gray; /* Color por defecto */
+}
+
+.star:hover,
+.star.selected {
+    color: gold; /* Color dorado al pasar el mouse o seleccionar */
 }
 
 /* Show menu when button is clicked */
