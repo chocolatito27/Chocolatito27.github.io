@@ -5,21 +5,6 @@ body {
     font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
-    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    animation: moveTulips 10s infinite linear;
-}
-
-/* Animación de los tulipanes */
-@keyframes moveTulips {
-    0% {
-        background-position: 0 0;
-    }
-    100% {
-        background-position: 100% 0;
-    }
 }
 
 /* Título principal "Chocolatito" */
@@ -78,9 +63,11 @@ body {
     color: white;
     font-style: italic;
     font-weight: bold;
+    text-shadow: 2px 2px 4px #000; /* Sombra negra */
     background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
     -webkit-background-clip: text;
     color: transparent;
+    border: 2px solid black; /* Borde negro */
     display: inline-block;
     padding: 10px;
 }
