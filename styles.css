@@ -36,6 +36,22 @@ header {
 .title {
     font-size: 28px;
     color: #FFD700; /* Color dorado */
+    display: flex;
+    align-items: center;
+}
+
+.crown {
+    animation: rotate 5s linear infinite; /* Animación para la corona */
+    margin-left: 10px; /* Espacio entre el título y la corona */
+}
+
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 .menu-button {
@@ -87,6 +103,15 @@ header {
     animation: fadeIn 2s; /* Animación para el mensaje central */
 }
 
+.life-quote {
+    font-weight: bold; /* Negrita */
+    font-style: italic; /* Cursiva */
+    font-size: 24px; /* Tamaño más grande */
+    background: linear-gradient(90deg, #FF0000, #FF7F00, #FFFF00, #00FF00, #00FFFF, #0000FF, #7F00FF, #FF00FF); /* Fondo de arcoíris */
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent; /* Rellenar color de texto transparente para efecto arcoíris */
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -115,7 +140,7 @@ header {
     border-radius: 5px;
     cursor: pointer;
     font-size: 18px;
-    margin-top: 10px; /* Añadir espacio arriba del botón */
+    margin-top: 20px; /* Añadir más espacio arriba del botón */
 }
 
 .buy-button:hover {
