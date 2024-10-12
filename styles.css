@@ -24,11 +24,28 @@ body {
 
 /* Título principal "Chocolatito" */
 .title {
-    font-size: 2.5em;
-    color: gold;
+    font-size: 3em; /* Aumentar tamaño del título */
+    color: black; /* Color del título */
     text-align: left;
     padding: 20px;
     position: relative;
+}
+
+/* Estilo de la corona */
+.crown {
+    display: inline-block;
+    animation: rotate 2s linear infinite; /* Animación de rotación */
+    margin-left: 10px; /* Espacio entre el título y la corona */
+}
+
+/* Animación de rotación */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
 }
 
 /* Estilo del botón de menú */
@@ -75,16 +92,10 @@ body {
 
 .life-quote {
     font-size: 2em;
-    color: white;
+    color: white; /* Cambiar color a blanco */
     font-style: italic;
     font-weight: bold;
     text-shadow: 2px 2px 4px #000; /* Sombra negra */
-    background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
-    -webkit-background-clip: text;
-    color: transparent;
-    border: 2px solid black; /* Borde negro */
-    display: inline-block;
-    padding: 10px;
 }
 
 /* Estilo de la calificación */
