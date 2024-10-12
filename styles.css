@@ -78,11 +78,9 @@ body {
     color: white;
     font-style: italic;
     font-weight: bold;
-    text-shadow: 2px 2px 4px #000; /* Sombra negra */
     background: linear-gradient(to right, red, orange, yellow, green, blue, indigo, violet);
     -webkit-background-clip: text;
     color: transparent;
-    border: 2px solid black; /* Borde negro */
     display: inline-block;
     padding: 10px;
 }
@@ -184,4 +182,4 @@ h2 {
     .buy-button {
         font-size: 1em;
     }
-}
+        }
