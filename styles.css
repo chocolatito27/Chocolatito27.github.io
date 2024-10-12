@@ -136,7 +136,7 @@ body {
     align-items: center; /* Centrar verticalmente */
     background-color: #25D366; /* Verde de WhatsApp */
     color: white;
-    padding: 15px 25px;
+    padding: 10px 15px; /* Ajustar el padding */
     border-radius: 5px;
     text-decoration: none;
     margin-top: 20px;
@@ -145,8 +145,8 @@ body {
 
 /* Estilo del ícono de WhatsApp */
 .whatsapp-icon {
-    width: 20px; /* Ajustar tamaño según sea necesario */
-    height: 20px; /* Ajustar tamaño según sea necesario */
+    width: 25px; /* Ajustar tamaño del ícono */
+    height: 25px; /* Ajustar tamaño del ícono */
     margin-right: 10px; /* Espacio entre el ícono y el texto */
 }
 
