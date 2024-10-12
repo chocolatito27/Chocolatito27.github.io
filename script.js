@@ -14,3 +14,16 @@ document.getElementById('buy-option').addEventListener('click', function (e) {
 document.getElementById('buy-button').addEventListener('click', function () {
     alert("¡Pedido realizado! Te contactaremos para más detalles.");
 });
+
+// Calificación de la frase
+const stars = document.querySelectorAll('.star');
+stars.forEach(star => {
+    star.addEventListener('click', function () {
+        const rating = this.dataset.value;
+        stars.forEach(s => s.classList.remove('selected')); // Limpiar selección anterior
+        for (let i = 0; i < rating; i++) {
+            stars[i].classList.add('selected'); // Seleccionar estrellas
+        }
+        alert(`Has calificado la frase con ${rating} estrella(s).`);
+    });
+});
