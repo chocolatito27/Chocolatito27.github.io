@@ -140,6 +140,14 @@ body {
     text-decoration: none;
     margin-top: 20px;
     font-size: 1.2em;
+    position: relative; /* Para el ícono */
+}
+
+.whatsapp-icon {
+    width: 20px; /* Tamaño del ícono */
+    height: 20px; /* Tamaño del ícono */
+    vertical-align: middle; /* Alinear con el texto */
+    margin-right: 5px; /* Espacio entre el ícono y el texto */
 }
 
 /* Estilo de las opciones de compra */
