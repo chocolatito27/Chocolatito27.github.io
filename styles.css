@@ -180,33 +180,18 @@ body {
     background-color: darkblue;
 }
 
-/* Estilo de los títulos de las secciones */
-h2 {
-    font-size: 2em;
-    color: lightyellow;
+/* Estilo de las secciones de inicio de sesión */
+.login-section {
     text-align: center;
-    margin-bottom: 30px;
+    margin-top: 50px;
 }
 
-/* Mejora de visualización para dispositivos pequeños */
-@media (max-width: 600px) {
-    .title {
-        font-size: 1.8em;
-    }
-
-    .menu-button {
-        font-size: 1.2em;
-    }
-
-    .life-quote {
-        font-size: 1.5em;
-    }
-
-    .purchase-option p {
-        font-size: 1em;
-    }
-
-    .buy-button {
-        font-size: 1em;
-    }
-}
+.login-button {
+    background-color: #4285F4; /* Color de Google */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2em;
+    margin: 10
