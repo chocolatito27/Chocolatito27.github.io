@@ -132,8 +132,7 @@ body {
 
 /* Estilo del botón de WhatsApp */
 .whatsapp-button {
-    display: inline-flex; /* Usar flex para alinear el ícono y el texto */
-    align-items: center; /* Centrar verticalmente */
+    display: inline-block; /* Botón normal */
     background-color: #25D366; /* Verde de WhatsApp */
     color: white;
     padding: 10px 15px; /* Ajustar el padding */
@@ -141,13 +140,6 @@ body {
     text-decoration: none;
     margin-top: 20px;
     font-size: 1.2em;
-}
-
-/* Estilo del ícono de WhatsApp */
-.whatsapp-icon {
-    width: 25px; /* Ajustar tamaño del ícono */
-    height: 25px; /* Ajustar tamaño del ícono */
-    margin-right: 10px; /* Espacio entre el ícono y el texto */
 }
 
 /* Estilo de las opciones de compra */
