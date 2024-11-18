@@ -4,19 +4,16 @@ document.addEventListener("DOMContentLoaded", function() {
     const comprarSection = document.getElementById("comprar");
     const jueguitoSection = document.getElementById("jueguito");
 
-    // Toggle del menú
     menuToggle.addEventListener("click", function() {
-        menu.style.display = menu.style.display === "none" ? "block" : "none";
+        menu.style.display = menu.style.display === "block" ? "none" : "block";
     });
 
-    // Comprar
     document.getElementById("comprar-option").addEventListener("click", function() {
         menu.style.display = "none";
         comprarSection.style.display = "block";
         jueguitoSection.style.display = "none";
     });
 
-    // Jueguito
     document.getElementById("jueguito-option").addEventListener("click", function() {
         menu.style.display = "none";
         comprarSection.style.display = "none";
@@ -24,61 +21,71 @@ document.addEventListener("DOMContentLoaded", function() {
         startGame();
     });
 
-    // Juego del chocolate
-    const canvas = document.getElementById("gameCanvas");
-    const ctx = canvas.getContext("2d");
-
-    let chocolate = { x: 50, y: 350, width: 20, height: 20, isJumping: false, velocity: 0 };
-    let obstacles = [];
+    // Jueguito
+    let canvas = document.getElementById("gameCanvas");
+    let ctx = canvas.getContext("2d");
     let score = 0;
+    let isJumping = false;
+    let playerY = 300;
+    let gravity = 2;
+    let obstacleX = 800;
     let gameInterval;
-    let obstacleInterval;
 
     function startGame() {
-        obstacles = [];
         score = 0;
-        chocolate.y = 350;
-        chocolate.isJumping = false;
+        playerY = 300;
+        obstacleX = 800;
+        isJumping = false;
 
-        clearInterval(gameInterval);
-        clearInterval(obstacleInterval);
+        if (gameInterval) clearInterval(gameInterval);
 
         gameInterval = setInterval(updateGame, 20);
-        obstacleInterval = setInterval(addObstacle, 2000);
-
-        document.addEventListener("keydown", handleJump);
-        canvas.addEventListener("touchstart", handleJump);
-    }
-
-    function handleJump(e) {
-        if (e.type === "keydown" && e.code !== "Space") return;
-        if (!chocolate.isJumping) {
-            chocolate.isJumping = true;
-            chocolate.velocity = -12;
-        }
-    }
-
-    function addObstacle() {
-        const size = Math.random() * 30 + 20;
-        obstacles.push({ x: canvas.width, y: 380 - size, width: size, height: size });
     }
 
     function updateGame() {
+        // Clear canvas
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        ctx.fillStyle = "brown";
-        ctx.fillRect(chocolate.x, chocolate.y, chocolate.width, chocolate.height);
+        // Draw player
+        ctx.fillStyle = "#6a0572"; // Chocolate color
+        ctx.fillRect(100, playerY, 50, 50);
 
-        if (chocolate.isJumping) {
-            chocolate.velocity += 0.5;
-            chocolate.y += chocolate.velocity;
+        // Draw obstacle
+        ctx.fillStyle = "#d62828";
+        ctx.fillRect(obstacleX, 300, 20, 50);
 
-            if (chocolate.y >= 350) {
-                chocolate.y = 350;
-                chocolate.isJumping = false;
-            }
+        // Update obstacle position
+        obstacleX -= 5;
+        if (obstacleX < 0) obstacleX = canvas.width;
+
+        // Apply gravity
+        if (!isJumping) playerY += gravity;
+        if (playerY > 300) playerY = 300;
+
+        // Check collision
+        if (obstacleX < 150 && obstacleX > 100 && playerY >= 250) {
+            clearInterval(gameInterval);
+            alert("¡Juego terminado! Puntaje: " + score);
         }
 
-        ctx.fillStyle = "red";
-        for (let i = obstacles.length - 1; i >= 0; i--) {
-            const obstacle = obstacles[i];
+        // Update score
+        score++;
+        document.getElementById("score").innerText = "Puntaje: " + score;
+    }
+
+    document.addEventListener("keydown", function(e) {
+        if (e.key === " " && playerY === 300) {
+            isJumping = true;
+            let jumpCount = 0;
+
+            const jumpInterval = setInterval(() => {
+                playerY -= 5;
+                jumpCount++;
+                if (jumpCount > 20) {
+                    clearInterval(jumpInterval);
+                    isJumping = false;
+                }
+            }, 20);
+        }
+    });
+});
