@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function() {
         document.getElementById("score").innerText = "Puntaje: " + score;
     }
 
-    document.addEventListener("keydown", function(e) {
+    document.addEventListener("click", function(e) {
         if (e.key === " " && playerY === 300) {
             isJumping = true;
             let jumpCount = 0;
