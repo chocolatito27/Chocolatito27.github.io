@@ -223,18 +223,3 @@ body {
     background-color: #f4e5c3;
     border: 2px solid #8b4513;
 }
-
-/* Estilo del Canvas del Jueguito */
-canvas {
-    background-color: #2f2f2f;
-    display: block;
-    margin: 0 auto;
-    border: 2px solid #fff;
-}
-
-/* Puntaje */
-#score {
-    text-align: center;
-    font-size: 1.5em;
-    color: yellow;
-}
