@@ -237,4 +237,44 @@ canvas {
     text-align: center;
     font-size: 1.5em;
     color: yellow;
-    }
+}
+/* General */
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: black;
+    color: white;
+}
+
+/* Menú */
+.menu {
+    display: none;
+    position: absolute;
+    top: 60px;
+    right: 20px;
+    background-color: #444;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.menu a {
+    color: white;
+    text-decoration: none;
+    display: block;
+    margin: 10px 0;
+    font-size: 1.2em;
+}
+
+/* Canvas del jueguito */
+#jueguito-canvas {
+    background-color: #d3d3d3;
+    display: block;
+    margin: 0 auto;
+    border: 2px solid black;
+}
+
+#jueguito-score {
+    text-align: center;
+    font-size: 1.5em;
+    color: yellow;
+}
