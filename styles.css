@@ -223,3 +223,18 @@ body {
     background-color: #f4e5c3;
     border: 2px solid #8b4513;
     }
+.apk-download-button {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 20px;
+}
+
+.apk-download-button:hover {
+    background-color: #45a049;
+    color: #fff;
+}
