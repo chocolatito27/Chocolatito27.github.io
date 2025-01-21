@@ -238,3 +238,13 @@ body {
     background-color: #45a049;
     color: #fff;
 }
+
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 15px 30px;
+    font-size: 1.2em;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 20px;
+}
