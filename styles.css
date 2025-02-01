@@ -248,3 +248,48 @@ body {
     text-decoration: none;
     margin-top: 20px;
 }
+
+.chat-container {
+    text-align: center;
+    padding: 20px;
+}
+
+.chat-box {
+    width: 80%;
+    max-width: 600px;
+    height: 300px;
+    margin: auto;
+    border: 1px solid #ccc;
+    padding: 10px;
+    overflow-y: auto;
+    background: #f9f9f9;
+}
+
+.bot-message {
+    background: #ddd;
+    padding: 8px;
+    border-radius: 5px;
+    text-align: left;
+}
+
+.user-message {
+    background: #007bff;
+    color: white;
+    padding: 8px;
+    border-radius: 5px;
+    text-align: right;
+}
+
+input {
+    width: 70%;
+    padding: 10px;
+    margin-top: 10px;
+}
+
+button {
+    padding: 10px;
+    background: #007bff;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
