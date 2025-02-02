@@ -12,7 +12,7 @@
         async function loadModel() {
             chat.innerHTML += "<p class='loading'>Cargando modelo de IA en español... ⏳</p>";
             try {
-                model = await pipeline("text-generation", "Xenova/mistral-7b-instruct"); 
+                model = await pipeline("text-generation", "Xenova/distilgpt2");
                 document.querySelector(".loading").remove();
                 chat.innerHTML += "<p class='bot'>🤖 Modelo en español cargado. ¡Pregúntame algo!</p>";
             } catch (error) {
