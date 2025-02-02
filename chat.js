@@ -13,11 +13,11 @@ async function sendMessage() {
     input.value = "";
 
     try {
-        let response = await fetch("https://chocolatitoapis.vercel.app/api/chat", {  
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ message: userMessage })
-        });
+        let response = await fetch("https://cors-anywhere.herokuapp.com/https://chocolatitoapis.vercel.app/api/chat", {  
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ message: userMessage })
+});
 
         let data = await response.json();
         document.querySelector(".loading").remove(); // Quitar mensaje de "Pensando..."
