@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat IA Local (Potente)</title>
-    <script src="https://mlc.ai/web-llm/releases/latest/webllm.min.js"></script>
+    <title>Chat IA - Local</title>
+    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers"></script>
     <style>
-        body { font-family: Arial, sans-serif; }
-        #chat { width: 300px; height: 400px; overflow-y: scroll; border: 1px solid #ccc; padding: 10px; }
-        #input { width: 300px; }
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
+        #chat { width: 90%; max-width: 500px; height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: auto; text-align: left; }
+        #input { width: 80%; padding: 10px; }
+        button { padding: 10px; }
     </style>
 </head>
 <body>
@@ -18,19 +19,28 @@
     <button onclick="sendMessage()">Enviar</button>
 
     <script>
-        let chat = document.getElementById("chat");
-        let input = document.getElementById("input");
-        let model = new webllm.ChatModule();
+        const chat = document.getElementById("chat");
+        const input = document.getElementById("input");
+        let model;
+
+        async function loadModel() {
+            chat.innerHTML += "<p><i>Cargando modelo de IA...</i></p>";
+            model = await transformers.pipeline("text-generation", "Xenova/distilgpt2");
+            chat.innerHTML += "<p><i>Modelo cargado. Escribe algo!</i></p>";
+        }
 
         async function sendMessage() {
-            let userMessage = input.value;
+            let userMessage = input.value.trim();
+            if (userMessage === "") return;
             input.value = "";
-            chat.innerHTML += "<p><b>Tú:</b> " + userMessage + "</p>";
+            chat.innerHTML += `<p><b>Tú:</b> ${userMessage}</p>`;
 
-            let response = await model.chat(userMessage);
-            chat.innerHTML += "<p><b>Bot:</b> " + response + "</p>";
+            let response = await model(userMessage, { max_length: 100 });
+            chat.innerHTML += `<p><b>Bot:</b> ${response[0].generated_text}</p>`;
             chat.scrollTop = chat.scrollHeight;
         }
+
+        loadModel();
     </script>
 </body>
 </html>
