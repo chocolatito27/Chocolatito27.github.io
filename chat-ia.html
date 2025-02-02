@@ -3,51 +3,124 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat IA - Local</title>
+    <title>Chat IA - Modo Oscuro</title>
     <script type="module">
         import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers";
         
-        let chat, input, model;
+        let chat, input, sendBtn, model;
 
         async function loadModel() {
-            chat.innerHTML += "<p><i>Cargando modelo de IA...</i></p>";
+            chat.innerHTML += "<p class='loading'>Cargando modelo de IA...</p>";
             model = await pipeline("text-generation", "Xenova/distilgpt2");
-            chat.innerHTML += "<p><i>Modelo cargado. Escribe algo!</i></p>";
+            chat.innerHTML += "<p class='bot'>🤖 Modelo cargado. ¡Escribe algo!</p>";
         }
 
         async function sendMessage() {
             let userMessage = input.value.trim();
             if (userMessage === "") return;
+
             input.value = "";
-            chat.innerHTML += `<p><b>Tú:</b> ${userMessage}</p>`;
+            chat.innerHTML += `<p class='user'>🧑‍💻 Tú: ${userMessage}</p>`;
+            chat.innerHTML += `<p class='loading'>⏳ Pensando...</p>`;
+            chat.scrollTop = chat.scrollHeight; // Auto-scroll
 
             try {
-                let response = await model(userMessage, { max_length: 50 });
-                chat.innerHTML += `<p><b>Bot:</b> ${response[0].generated_text}</p>`;
+                let response = await model(userMessage, { max_length: 60 });
+                document.querySelector(".loading").remove();
+                chat.innerHTML += `<p class='bot'>🤖 ${response[0].generated_text}</p>`;
             } catch (error) {
-                chat.innerHTML += `<p><b>Error en la IA:</b> ${error.message}</p>`;
+                chat.innerHTML += `<p class='error'>⚠️ Error en la IA: ${error.message}</p>`;
             }
 
-            chat.scrollTop = chat.scrollHeight;
+            chat.scrollTop = chat.scrollHeight; // Auto-scroll
         }
 
         window.onload = () => {
             chat = document.getElementById("chat");
             input = document.getElementById("input");
+            sendBtn = document.getElementById("sendBtn");
+            sendBtn.addEventListener("click", sendMessage);
+            input.addEventListener("keydown", (e) => {
+                if (e.key === "Enter") sendMessage();
+            });
+
             loadModel();
         };
     </script>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
-        #chat { width: 90%; max-width: 500px; height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: auto; text-align: left; }
-        #input { width: 80%; padding: 10px; }
-        button { padding: 10px; }
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #e0e0e0;
+            text-align: center;
+            padding: 20px;
+        }
+        h2 {
+            color: #76ff03;
+        }
+        #chat {
+            width: 90%;
+            max-width: 500px;
+            height: 400px;
+            overflow-y: auto;
+            border: 1px solid #333;
+            padding: 10px;
+            margin: auto;
+            background: #1e1e1e;
+            border-radius: 10px;
+            text-align: left;
+        }
+        .bot, .user, .error, .loading {
+            padding: 10px;
+            border-radius: 10px;
+            margin: 5px 0;
+            max-width: 80%;
+        }
+        .bot {
+            background: #263238;
+            color: #76ff03;
+            text-align: left;
+        }
+        .user {
+            background: #0d47a1;
+            color: white;
+            text-align: right;
+            margin-left: auto;
+        }
+        .error {
+            background: #b71c1c;
+            color: white;
+        }
+        .loading {
+            font-style: italic;
+            color: #ffeb3b;
+        }
+        #input {
+            width: 75%;
+            padding: 10px;
+            background: #333;
+            color: white;
+            border: 1px solid #555;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+        button {
+            padding: 10px;
+            background: #76ff03;
+            color: black;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #64dd17;
+        }
     </style>
 </head>
 <body>
-    <h2>Chat IA</h2>
+    <h2>💬 Chat IA</h2>
     <div id="chat"></div>
-    <input type="text" id="input" placeholder="Escribe algo..." onkeydown="if(event.key==='Enter') sendMessage()">
-    <button onclick="sendMessage()">Enviar</button>
+    <input type="text" id="input" placeholder="Escribe algo...">
+    <button id="sendBtn">Enviar</button>
 </body>
 </html>
