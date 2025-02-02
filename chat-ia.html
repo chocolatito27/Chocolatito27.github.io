@@ -4,7 +4,39 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chat IA - Local</title>
-    <script src="https://cdn.jsdelivr.net/npm/@xenova/transformers"></script>
+    <script type="module">
+        import { pipeline } from "https://cdn.jsdelivr.net/npm/@xenova/transformers";
+        
+        let chat, input, model;
+
+        async function loadModel() {
+            chat.innerHTML += "<p><i>Cargando modelo de IA...</i></p>";
+            model = await pipeline("text-generation", "Xenova/distilgpt2");
+            chat.innerHTML += "<p><i>Modelo cargado. Escribe algo!</i></p>";
+        }
+
+        async function sendMessage() {
+            let userMessage = input.value.trim();
+            if (userMessage === "") return;
+            input.value = "";
+            chat.innerHTML += `<p><b>Tú:</b> ${userMessage}</p>`;
+
+            try {
+                let response = await model(userMessage, { max_length: 50 });
+                chat.innerHTML += `<p><b>Bot:</b> ${response[0].generated_text}</p>`;
+            } catch (error) {
+                chat.innerHTML += `<p><b>Error en la IA:</b> ${error.message}</p>`;
+            }
+
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        window.onload = () => {
+            chat = document.getElementById("chat");
+            input = document.getElementById("input");
+            loadModel();
+        };
+    </script>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; }
         #chat { width: 90%; max-width: 500px; height: 400px; overflow-y: auto; border: 1px solid #ccc; padding: 10px; margin: auto; text-align: left; }
@@ -17,39 +49,5 @@
     <div id="chat"></div>
     <input type="text" id="input" placeholder="Escribe algo..." onkeydown="if(event.key==='Enter') sendMessage()">
     <button onclick="sendMessage()">Enviar</button>
-
-    <script>
-        const chat = document.getElementById("chat");
-        const input = document.getElementById("input");
-        let model;
-
-        async function loadModel() {
-            try {
-                chat.innerHTML += "<p><i>Cargando modelo de IA...</i></p>";
-                model = await transformers.pipeline("text-generation", "Xenova/distilgpt2");
-                chat.innerHTML += "<p><i>Modelo cargado. Escribe algo!</i></p>";
-            } catch (error) {
-                chat.innerHTML += `<p><b>Error al cargar la IA:</b> ${error.message}</p>`;
-            }
-        }
-
-        async function sendMessage() {
-            let userMessage = input.value.trim();
-            if (userMessage === "") return;
-            input.value = "";
-            chat.innerHTML += `<p><b>Tú:</b> ${userMessage}</p>`;
-
-            try {
-                let response = await model(userMessage, { max_length: 100 });
-                chat.innerHTML += `<p><b>Bot:</b> ${response[0].generated_text}</p>`;
-            } catch (error) {
-                chat.innerHTML += `<p><b>Error en la IA:</b> ${error.message}</p>`;
-            }
-
-            chat.scrollTop = chat.scrollHeight;
-        }
-
-        loadModel();
-    </script>
 </body>
 </html>
