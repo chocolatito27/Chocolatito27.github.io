@@ -24,9 +24,13 @@
         let model;
 
         async function loadModel() {
-            chat.innerHTML += "<p><i>Cargando modelo de IA...</i></p>";
-            model = await transformers.pipeline("text-generation", "Xenova/distilgpt2");
-            chat.innerHTML += "<p><i>Modelo cargado. Escribe algo!</i></p>";
+            try {
+                chat.innerHTML += "<p><i>Cargando modelo de IA...</i></p>";
+                model = await transformers.pipeline("text-generation", "Xenova/distilgpt2");
+                chat.innerHTML += "<p><i>Modelo cargado. Escribe algo!</i></p>";
+            } catch (error) {
+                chat.innerHTML += `<p><b>Error al cargar la IA:</b> ${error.message}</p>`;
+            }
         }
 
         async function sendMessage() {
@@ -35,8 +39,13 @@
             input.value = "";
             chat.innerHTML += `<p><b>Tú:</b> ${userMessage}</p>`;
 
-            let response = await model(userMessage, { max_length: 100 });
-            chat.innerHTML += `<p><b>Bot:</b> ${response[0].generated_text}</p>`;
+            try {
+                let response = await model(userMessage, { max_length: 100 });
+                chat.innerHTML += `<p><b>Bot:</b> ${response[0].generated_text}</p>`;
+            } catch (error) {
+                chat.innerHTML += `<p><b>Error en la IA:</b> ${error.message}</p>`;
+            }
+
             chat.scrollTop = chat.scrollHeight;
         }
 
