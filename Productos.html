@@ -1,41 +1,26 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Productos - Tienda de Nubes</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Aquí va tu archivo de estilos CSS -->
-</head>
-<body>
-    <!-- Menú de Navegación -->
-    <nav>
-        <ul>
-            <li><a href="index.html">Inicio</a></li>
-            <li><a href="productos.html">Productos</a></li>
-        </ul>
-    </nav>
-
-    <!-- Contenido de la Página de Productos -->
-    <section id="productos">
-        <h2>Productos</h2>
-        <div class="productos-container">
-            <div class="producto">
-                <img src="ruta/a/tu/producto1.jpg" alt="Producto 1">
-                <h3>Producto 1</h3>
-                <p>Descripción breve del producto.</p>
-                <button>Agregar al carrito</button>
-            </div>
-            <div class="producto">
-                <img src="ruta/a/tu/producto2.jpg" alt="Producto 2">
-                <h3>Producto 2</h3>
-                <p>Descripción breve del producto.</p>
-                <button>Agregar al carrito</button>
-            </div>
-            <!-- Agrega más productos de esta manera -->
-        </div>
-
-        <!-- Botón para Volver al Inicio -->
-        <a href="index.html" class="btn-regresar">Volver al Inicio</a>
-    </section>
-</body>
+<!doctype html>
+<html lang="es"> 
+ <head> 
+  <meta charset="UTF-8"> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
+  <title>Chocolatito</title> 
+  <link rel="stylesheet" href="styles.css"> 
+ </head> 
+ <body> <!-- Contenido existente de la página --> 
+  <header> 
+   <div class="title">
+     CHOCOLATITO <span class="crown"></span> 
+   </div> <button class="menu-button" id="menu-toggle">☰ Menú</button> 
+   <div class="menu" id="menu"> <a href="#comprar" id="comprar-option">Comprar</a> <a href="#jueguito" id="jueguito-option">Jueguito</a> 
+   </div> 
+  </header> 
+  <div class="center-message"> 
+   <p class="life-quote">La vida es como el chocolate, a veces dulce, a veces amarga, pero siempre llena de sorpresas. Disfruta cada momento.</p> 
+   <div class="rating"> <span>Califica esta frase:</span> 
+    <div class="stars" id="star-rating"> <span class="star" data-value="1">★</span> <span class="star" data-value="2">★</span> <span class="star" data-value="3">★</span> <span class="star" data-value="4">★</span> <span class="star" data-value="5">★</span> 
+    </div> 
+   </div> <a href="https://wa.me/+6285640549937" class="whatsapp-button"> <img src="https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/whatsapp-icon-free-png.png" alt="WhatsApp" class="whatsapp-icon"> Contactar por WhatsApp </a> 
+  </div> 
+  <script src="script.js"></script> 
+ </body>
 </html>
