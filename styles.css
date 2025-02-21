@@ -1,225 +1,114 @@
-/* Estilo general de la página */
-body {
-    background-color: black;
-    color: white;
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-image: url('https://raw.githubusercontent.com/chocolatito27/Chocolatito27.github.io/refs/heads/main/tuli.jpg');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-attachment: fixed;
-    animation: moveTulips 10s infinite linear;
+function toggleMenu() {
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.style.left = sidebar.style.left === '0px' ? '-250px' : '0px';
 }
 
-/* Animación de los tulipanes */
-@keyframes moveTulips {
-    0% {
-        background-position: 0 0;
-    }
-    100% {
-        background-position: 100% 0;
-    }
+function scrollToSection(sectionId) {
+    document.getElementById(sectionId).scrollIntoView({ behavior: 'smooth' });
 }
 
-/* Título principal "Chocolatito" */
-.title {
-    font-size: 2.5em; /* Aumentar el tamaño */
-    color: black; /* Color negro */
-    text-align: left;
-    padding: 20px;
-    position: relative;
-    font-weight: bold; /* Negrita */
-    text-transform: uppercase; /* Todo en mayúsculas */
-}
-
-/* Animación de la corona */
-.crown {
-    display: inline-block;
-    width: 30px; /* Ajusta el tamaño de la corona */
-    height: 30px; /* Ajusta el tamaño de la corona */
-    background-image: url('https://example.com/crown.png'); /* Cambia la URL por la de tu corona */
-    background-size: cover;
-    animation: rotate 5s infinite linear; /* Animación de rotación */
-}
-
-@keyframes rotate {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
-}
-
-/* Estilo del botón de menú */
-.menu-button {
-    font-size: 1.5em;
-    background-color: #333;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    position: absolute;
-    top: 20px;
-    right: 20px;
-}
-
-/* Estilo del menú */
-.menu {
-    display: none;
-    position: absolute;
-    top: 60px;
-    right: 20px;
-    background-color: #444;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.menu.active {
-    display: block;
-}
-
-.menu a {
-    color: white;
-    text-decoration: none;
-    display: block;
-    margin: 10px 0;
-    font-size: 1.2em;
-}
-
-/* Estilo de la frase central */
-.center-message {
-    text-align: center;
-    margin: 50px 0;
-}
-
-.life-quote {
-    font-size: 2em;
-    color: white;
-    font-style: italic; /* Cursiva */
-    font-weight: bold;
-    text-shadow: 2px 2px 4px #000; /* Sombra negra */
-    display: inline-block;
-    padding: 10px;
-}
-
-/* Estilo de la calificación */
-.rating {
-    font-size: 1.2em;
-    margin-top: 20px;
-}
-
-.stars {
-    font-size: 2em;
-    cursor: pointer;
-}
-
-.star {
-    color: lightgray; /* Color por defecto */
-}
-
-.star:hover,
-.star.selected {
-    color: gold; /* Color cuando se selecciona */
-}
-
-#rating-result {
-    margin-top: 10px;
-    font-size: 1.5em;
-    font-weight: bold;
-}
-
-/* Estilo del botón de WhatsApp */
-.whatsapp-button {
-    display: inline-block; /* Botón normal */
-    background-color: #25D366; /* Verde de WhatsApp */
-    color: white;
-    padding: 10px 15px; /* Ajustar el padding */
-    border-radius: 5px;
-    text-decoration: none;
-    margin-top: 20px;
-    font-size: 1.2em;
-    position: relative; /* Para el ícono */
-}
-
-.whatsapp-icon {
-    width: 20px; /* Tamaño del ícono */
-    height: 20px; /* Tamaño del ícono */
-    vertical-align: middle; /* Alinear con el texto */
-    margin-right: 5px; /* Espacio entre el ícono y el texto */
-}
-
-/* Estilo de las opciones de compra */
-.purchase-option {
-    margin: 30px 0;
-    padding: 20px;
-    background-color: #222;
-    border: 2px solid white;
-    border-radius: 5px;
-}
-
-.purchase-option p {
-    margin: 10px 0;
-    font-size: 1.2em;
-}
-
-/* Estilo de los botones de compra */
-.buy-button {
-    display: inline-block;
-    background-color: blue;
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    font-size: 1.2em;
-    margin-top: 10px;
-}
-
-.buy-button:hover {
-    background-color: darkblue;
-}
-
-/* Estilo de los títulos de las secciones */
-h2 {
-    font-size: 2em;
-    color: lightyellow;
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-/* Mejora de visualización para dispositivos pequeños */
-@media (max-width: 600px) {
-    .title {
-        font-size: 1.8em;
-    }
-
-    .menu-button {
-        font-size: 1.2em;
-    }
-
-    .life-quote {
-        font-size: 1.5em;
-    }
-
-    .purchase-option p {
-        font-size: 1em;
-    }
-
-    .buy-button {
-        font-size: 1em;
-    }
-}
-/* General */
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-}
-
-/* Estilos para el canvas */
-#gameCanvas {
-    display: block;
-    margin: 20px auto;
-    background-color: #f4e5c3;
-    border: 2px solid #8b4513;
-}
+particlesJS("particles-js", {
+    particles: {
+        number: {
+            value: 80,
+            density: {
+                enable: true,
+                value_area: 800
+            }
+        },
+        color: {
+            value: ["#FF0000", "#00FF00", "#0000FF", "#FFFF00", "#00FFFF", "#FF00FF"]
+        },
+        shape: {
+            type: "circle",
+            stroke: {
+                width: 0,
+                color: "#000000"
+            },
+            polygon: {
+                nb_sides: 5
+            }
+        },
+        opacity: {
+            value: 0.5,
+            random: false,
+            anim: {
+                enable: false,
+                speed: 1,
+                opacity_min: 0.1,
+                sync: false
+            }
+        },
+        size: {
+            value: 3,
+            random: true,
+            anim: {
+                enable: false,
+                speed: 40,
+                size_min: 0.1,
+                sync: false
+            }
+        },
+        line_linked: {
+            enable: true,
+            distance: 150,
+            color: "#ffffff",
+            opacity: 0.4,
+            width: 1
+        },
+        move: {
+            enable: true,
+            speed: 6,
+            direction: "none",
+            random: false,
+            straight: false,
+            out_mode: "bounce",
+            bounce: true,
+            attract: {
+                enable: false,
+                rotateX: 600,
+                rotateY: 1200
+            }
+        }
+    },
+    interactivity: {
+        detect_on: "canvas",
+        events: {
+            onhover: {
+                enable: true,
+                mode: "repulse"
+            },
+            onclick: {
+                enable: true,
+                mode: "push"
+            },
+            resize: true
+        },
+        modes: {
+            grab: {
+                distance: 400,
+                line_linked: {
+                    opacity: 1
+                }
+            },
+            bubble: {
+                distance: 400,
+                size: 40,
+                duration: 2,
+                opacity: 8,
+                speed: 3
+            },
+            repulse: {
+                distance: 200,
+                duration: 0.4
+            },
+            push: {
+                particles_nb: 4
+            },
+            remove: {
+                particles_nb: 2
+            }
+        }
+    },
+    retina_detect: true
+});
