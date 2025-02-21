@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Derribalos - ChocolatitoWeb</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        canvas {
+            display: block;
+            margin: 0 auto;
+            background-color: black;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
+        </div>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="juegos.html">Juegos</a></li>
+        </ul>
+    </div>
+    <div class="game-container">
+        <h1>Derribalos</h1>
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div class="game-info">
+            <p>Puntos: <span id="score">0</span></p>
+            <p>Nivel: <span id="level">1</span></p>
+        </div>
+    </div>
+    <div class="mobile-controls">
+        <div class="joystick">
+            <div class="left" ontouchstart="moveLeft(true)" ontouchend="moveLeft(false)"></div>
+            <div class="right" ontouchstart="moveRight(true)" ontouchend="moveRight(false)"></div>
+        </div>
+        <div class="shoot-button" ontouchstart="shoot()">Disparar</div>
+    </div>
+    <script src="derribalos.js"></script>
+</body>
+</html>
