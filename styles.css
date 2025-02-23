@@ -247,3 +247,67 @@ html, body {
     text-align: center;
     color: white;
 }
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Hace que el cuerpo ocupe toda la altura de la ventana */
+}
+
+.main-content {
+    flex: 1; /* Hace que el contenido principal ocupe el espacio restante */
+    padding: 50px 20px;
+}
+
+.main-content h1 {
+    font-size: 48px;
+    color: #33FFFF;
+    margin: 0;
+}
+
+.main-content .lema {
+    font-size: 20px;
+    color: #666;
+    margin-top: 10px;
+}
+
+/* Iconos de redes sociales (sin footer) */
+.social-icons {
+    position: fixed; /* Fija los iconos en la parte inferior */
+    bottom: 20px; /* Distancia desde la parte inferior */
+    left: 50%; /* Centra horizontalmente */
+    transform: translateX(-50%); /* Ajusta el centrado */
+    display: flex;
+    gap: 20px;
+    background-color: rgba(51, 51, 51, 0.8); /* Fondo semitransparente */
+    padding: 10px 20px;
+    border-radius: 25px; /* Bordes redondeados */
+}
+
+.social-icons a {
+    font-size: 24px; /* Tamaño de los iconos */
+    transition: transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    transform: scale(1.2); /* Efecto de escala al pasar el mouse */
+}
+
+/* Colores personalizados para los iconos */
+.social-icons a .fa-whatsapp {
+    color: #25D366; /* Verde de WhatsApp */
+}
+
+.social-icons a .fa-instagram {
+    color: #E1306C; /* Rosa de Instagram */
+}
+
+.social-icons a .fa-facebook {
+    color: #1877F2; /* Azul de Facebook */
+}
