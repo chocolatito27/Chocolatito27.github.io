@@ -1,0 +1,179 @@
+<style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background-color: #000;
+      overflow: hidden;
+    }
+  
+    #contenedor-pizarra {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      background: #000;
+    }
+  
+    #pizarra {
+      width: 100%;
+      height: 100%;
+      display: block;
+      cursor: crosshair;
+    }
+  
+    #controles {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background: rgba(30, 30, 30, 0.8);
+      padding: 10px;
+      border-radius: 10px;
+      color: white;
+      z-index: 10;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+  
+    #controles input[type="range"] {
+      width: 150px;
+    }
+  
+    #controles button {
+      padding: 5px 10px;
+      background: #444;
+      border: none;
+      color: white;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  
+    #controles button:hover {
+      background: #666;
+    }
+  </style>
+  
+  <div id="contenedor-pizarra">
+    <canvas id="pizarra"></canvas>
+  
+    <div id="controles">
+      <label>🎨 Color:
+        <input type="color" id="colorPicker" value="#ffffff">
+      </label>
+  
+      <label>🖌️ Tamaño pincel:
+        <input type="range" id="tamanioPincel" min="1" max="50" value="5">
+      </label>
+  
+      <label>🧽 Tamaño borrador:
+        <input type="range" id="tamanioBorrador" min="5" max="100" value="20">
+      </label>
+  
+      <button onclick="activarPincel()">Pincel</button>
+      <button onclick="activarBorrador()">Borrador</button>
+      <button onclick="limpiar()">Limpiar</button>
+    </div>
+  </div>
+  
+  <script>
+    const canvas = document.getElementById('pizarra');
+    const ctx = canvas.getContext('2d');
+    let dibujando = false;
+    let usandoBorrador = false;
+  
+    function redimensionarCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+  
+    window.addEventListener('resize', redimensionarCanvas);
+    redimensionarCanvas();
+  
+    let colorActual = document.getElementById('colorPicker').value;
+    let tamanioActual = parseInt(document.getElementById('tamanioPincel').value);
+  
+    document.getElementById('colorPicker').addEventListener('input', e => {
+      colorActual = e.target.value;
+    });
+  
+    document.getElementById('tamanioPincel').addEventListener('input', e => {
+      if (!usandoBorrador) {
+        tamanioActual = parseInt(e.target.value);
+      }
+    });
+  
+    document.getElementById('tamanioBorrador').addEventListener('input', e => {
+      if (usandoBorrador) {
+        tamanioActual = parseInt(e.target.value);
+      }
+    });
+  
+    function activarPincel() {
+      usandoBorrador = false;
+      tamanioActual = parseInt(document.getElementById('tamanioPincel').value);
+      ctx.globalCompositeOperation = 'source-over';
+    }
+  
+    function activarBorrador() {
+      usandoBorrador = true;
+      tamanioActual = parseInt(document.getElementById('tamanioBorrador').value);
+      ctx.globalCompositeOperation = 'destination-out';
+    }
+  
+    function limpiar() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    }
+  
+    canvas.addEventListener('mousedown', e => {
+      dibujando = true;
+      ctx.beginPath();
+      ctx.moveTo(e.offsetX, e.offsetY);
+    });
+  
+    canvas.addEventListener('mousemove', e => {
+      if (!dibujando) return;
+      ctx.lineWidth = tamanioActual;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = usandoBorrador ? 'rgba(0,0,0,1)' : colorActual;
+      ctx.lineTo(e.offsetX, e.offsetY);
+      ctx.stroke();
+    });
+  
+    canvas.addEventListener('mouseup', () => {
+      dibujando = false;
+      ctx.beginPath();
+    });
+  
+    canvas.addEventListener('mouseleave', () => {
+      dibujando = false;
+      ctx.beginPath();
+    });
+  
+    // Touch para celulares
+    canvas.addEventListener('touchstart', function (e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      ctx.beginPath();
+      ctx.moveTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      dibujando = true;
+    });
+  
+    canvas.addEventListener('touchmove', function (e) {
+      e.preventDefault();
+      if (!dibujando) return;
+      const touch = e.touches[0];
+      const rect = canvas.getBoundingClientRect();
+      ctx.lineWidth = tamanioActual;
+      ctx.lineCap = 'round';
+      ctx.strokeStyle = usandoBorrador ? 'rgba(0,0,0,1)' : colorActual;
+      ctx.lineTo(touch.clientX - rect.left, touch.clientY - rect.top);
+      ctx.stroke();
+    });
+  
+    canvas.addEventListener('touchend', function () {
+      dibujando = false;
+      ctx.beginPath();
+    });
+  </script>  a eso quiero que le agregues una opcion mas abajo de limpiar una opcion que diga agregar eje de coordenadas y que al poner en esa opcion me ponga un plano cartesiano con cuadriculas y que tenga numeros y se pueda hacer zoom y que eso sea desplegable uqe lo pueda poner y quitar y otra opcion sea agregar funciones en el plano cartesiano
+</html>
