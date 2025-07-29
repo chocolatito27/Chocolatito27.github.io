@@ -1,754 +1,178 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Juego de Nave Espacial: Múltiples Niveles</title>
-<style>
-  body { margin: 0; background: #000; color: #fff; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; overflow: hidden; }
-  canvas { display: block; margin: 0 auto; background: linear-gradient(180deg, #00111f, #000000); }
-  #hud { position: fixed; top: 10px; left: 50%; transform: translateX(-50%); font-size: 18px; user-select:none; z-index: 10; }
-  #message { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 48px; display: none; color: #fff; text-shadow: 2px 2px 10px #0ff; z-index: 10;}
-  #btnRestart { display:none; position: fixed; top: 60%; left: 50%; transform: translateX(-50%); padding: 12px 28px; font-size: 24px; cursor: pointer; border:none; border-radius: 8px; background: #0ff; color:#000; z-index: 10; transition: background 0.3s ease; }
-  #btnRestart:hover { background: #0cc; }
-</style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Vaca Virtual</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: linear-gradient(#87ceeb, #cceeff);
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    .game-container {
+      background-color: #ffffffd9;
+      border-radius: 20px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      padding: 20px;
+      width: 500px;
+      text-align: center;
+      position: relative;
+    }
+    .vaca {
+      width: 300px;
+      height: 300px;
+      margin: 20px auto;
+      transition: transform 0.3s;
+      position: relative;
+      z-index: 1;
+    }
+    .vaca:active {
+      transform: scale(1.1) rotate(5deg);
+    }
+    .stats {
+      margin: 10px 0;
+    }
+    .stats div {
+      margin: 5px 0;
+    }
+    .comidas {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin: 15px 0;
+    }
+    .comidas img {
+      width: 60px;
+      height: 60px;
+      cursor: grab;
+    }
+    .comida-animacion {
+      width: 60px;
+      height: 60px;
+      position: absolute;
+      pointer-events: none;
+      display: none;
+      z-index: 2;
+    }
+    button {
+      padding: 10px;
+      margin: 5px;
+      border: none;
+      border-radius: 10px;
+      background: #66ccff;
+      color: #fff;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+    button:hover {
+      background: #55bbff;
+    }
+  </style>
 </head>
 <body>
+  <div class="game-container">
+    <h1>Mi Vaca</h1>
+    <img src="vaca.png" alt="vaca" class="vaca" id="vaca" onclick="moveCow()" />
+    <img src="" id="comidaAnimacion" class="comida-animacion" />
+    <div class="stats">
+      <div>Hambre: <span id="hunger">100</span></div>
+      <div>Felicidad: <span id="happiness">100</span></div>
+      <div>Limpieza: <span id="cleanliness">100</span></div>
+      <div>Energía: <span id="energy">100</span></div>
+    </div>
+    <div class="comidas">
+      <img src="papitas.png" alt="Papitas" draggable="true" ondragstart="drag(event)">
+      <img src="vaso de leche.png" alt="Leche" draggable="true" ondragstart="drag(event)">
+      <img src="huevito.png" alt="Huevito" draggable="true" ondragstart="drag(event)">
+    </div>
+    <button onclick="playWithCow()">Jugar 🎾</button>
+    <button onclick="cleanCow()">Bañar 🧼</button>
+    <button onclick="letCowSleep()">Dormir 😴</button>
+  </div>
 
-<div id="hud">
-  Vidas: <span id="vidas">3</span> | 
-  Puntaje: <span id="puntaje">0</span> | 
-  Nivel: <span id="nivel">1</span> | 
-  Enemigos: <span id="enemigosRestantes">0</span> | 
-  Jefe: <span id="bossStatus">No</span>
-</div>
-<div id="message"></div>
-<button id="btnRestart">Reiniciar</button>
-<canvas id="gameCanvas" width="900" height="600"></canvas>
+  <script>
+    let hunger = 100;
+    let happiness = 100;
+    let cleanliness = 100;
+    let energy = 100;
 
-<script>
-(() => {
-  /*** CONSTANTES Y VARIABLES INICIALES ***/
-  const canvas = document.getElementById('gameCanvas');
-  const ctx = canvas.getContext('2d');
-  const WIDTH = canvas.width;
-  const HEIGHT = canvas.height;
-
-  // HUD elementos
-  const vidasUI = document.getElementById('vidas');
-  const puntajeUI = document.getElementById('puntaje');
-  const nivelUI = document.getElementById('nivel');
-  const enemigosRestantesUI = document.getElementById('enemigosRestantes');
-  const bossStatusUI = document.getElementById('bossStatus');
-  const messageEl = document.getElementById('message');
-  const btnRestart = document.getElementById('btnRestart');
-
-  // Variables juego
-  let vidas = 3;
-  let puntaje = 0;
-  let nivel = 1;
-  let enemigosRestantes = 0;
-  let gameOver = false;
-  let paused = false;
-
-  // Teclas presionadas
-  const keys = {};
-
-  /*** CLASES DEL JUEGO ***/
-
-  // Nave del jugador
-  class Nave {
-    constructor() {
-      this.w = 50;
-      this.h = 50;
-      this.x = WIDTH / 2 - this.w / 2;
-      this.y = HEIGHT - this.h - 20;
-      this.speed = 7;
-      this.color = '#00ccff';
-      this.balas = [];
-      this.cooldown = 0;
-      this.escudo = false;
-      this.escudoTimer = 0;
-      this.dobleDisparo = false;
-      this.dobleTimer = 0;
-      this.scoreMultiplier = 1;
+    function updateStats() {
+      document.getElementById("hunger").innerText = hunger;
+      document.getElementById("happiness").innerText = happiness;
+      document.getElementById("cleanliness").innerText = cleanliness;
+      document.getElementById("energy").innerText = energy;
     }
-    mover() {
-      if (keys['arrowleft'] || keys['a']) {
-        this.x -= this.speed;
-        if (this.x < 0) this.x = 0;
-      }
-      if (keys['arrowright'] || keys['d']) {
-        this.x += this.speed;
-        if (this.x + this.w > WIDTH) this.x = WIDTH - this.w;
-      }
-      if (this.cooldown > 0) this.cooldown--;
-      // Timers para powerups
-      if (this.escudo) {
-        this.escudoTimer--;
-        if (this.escudoTimer <= 0) this.escudo = false;
-      }
-      if (this.dobleDisparo) {
-        this.dobleTimer--;
-        if (this.dobleTimer <= 0) this.dobleDisparo = false;
-      }
+
+    function playWithCow() {
+      happiness = Math.min(100, happiness + 20);
+      hunger = Math.max(0, hunger - 10);
+      cleanliness = Math.max(0, cleanliness - 10);
+      energy = Math.max(0, energy - 15);
+      updateStats();
     }
-    disparar() {
-      if (this.cooldown === 0) {
-        if (this.dobleDisparo) {
-          this.balas.push(new Bala(this.x + 10, this.y));
-          this.balas.push(new Bala(this.x + this.w - 18, this.y));
-        } else {
-          this.balas.push(new Bala(this.x + this.w / 2 - 5, this.y));
-        }
-        this.cooldown = 12; // Velocidad de disparo ajustada
-        sonidoDisparo.play();
-      }
+
+    function cleanCow() {
+      cleanliness = 100;
+      updateStats();
     }
-    dibujar() {
-      // Nave
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.moveTo(this.x + this.w/2, this.y);
-      ctx.lineTo(this.x + this.w, this.y + this.h);
-      ctx.lineTo(this.x, this.y + this.h);
-      ctx.closePath();
-      ctx.fill();
 
-      // Escudo
-      if (this.escudo) {
-        ctx.strokeStyle = '#00ffff';
-        ctx.lineWidth = 3;
-        ctx.beginPath();
-        ctx.arc(this.x + this.w / 2, this.y + this.h / 2, this.w, 0, Math.PI * 2);
-        ctx.stroke();
-      }
-
-      // Balas
-      this.balas.forEach(b => b.dibujar());
+    function letCowSleep() {
+      energy = 100;
+      happiness = Math.min(100, happiness + 5);
+      updateStats();
     }
-    actualizarBalas() {
-      this.balas.forEach((b, i) => {
-        b.mover();
-        if (b.y < -b.h) this.balas.splice(i, 1);
-      });
+
+    function moveCow() {
+      const vaca = document.getElementById("vaca");
+      vaca.style.transform = "translateY(-10px) rotate(10deg) scale(1.1)";
+      setTimeout(() => {
+        vaca.style.transform = "translateY(0) rotate(0deg) scale(1)";
+      }, 300);
     }
-    recibirDaño() {
-      if (this.escudo) {
-        sonidoDaño.play();
-        return;
-      }
-      vidas--;
-      vidasUI.textContent = vidas;
-      sonidoDaño.play();
-      if (vidas <= 0) {
-        morir();
-      }
+
+    function drag(ev) {
+      ev.dataTransfer.setData("text", ev.target.src);
     }
-    aplicarPowerUp(tipo) {
-      if (tipo === 'escudo') {
-        this.escudo = true;
-        this.escudoTimer = 600;
-      } else if (tipo === 'doble') {
-        this.dobleDisparo = true;
-        this.dobleTimer = 600;
-      } else if (tipo === 'vida') {
-        vidas++;
-        vidasUI.textContent = vidas;
-      } else if (tipo === 'multiplicador') {
-        this.scoreMultiplier = 2;
-        setTimeout(() => { this.scoreMultiplier = 1; }, 15000);
-      }
-      sonidoPowerUp.play();
-    }
-    reset() {
-      this.x = WIDTH / 2 - this.w / 2;
-      this.balas = [];
-      this.cooldown = 0;
-      this.escudo = false;
-      this.escudoTimer = 0;
-      this.dobleDisparo = false;
-      this.dobleTimer = 0;
-      this.scoreMultiplier = 1;
-    }
-  }
 
-  // Bala del jugador
-  class Bala {
-    constructor(x, y) {
-      this.x = x;
-      this.y = y;
-      this.w = 8;
-      this.h = 20;
-      this.speed = 12;
-      this.color = '#00ffff';
-    }
-    mover() {
-      this.y -= this.speed;
-    }
-    dibujar() {
-      ctx.fillStyle = this.color;
-      ctx.fillRect(this.x, this.y, this.w, this.h);
-    }
-  }
-
-  // Bala enemiga
-  class BalaEnemiga {
-    constructor(x, y, speed = 5, color = '#ff5500') {
-      this.x = x;
-      this.y = y;
-      this.w = 10;
-      this.h = 20;
-      this.speed = speed;
-      this.color = color;
-    }
-    mover() {
-      this.y += this.speed;
-    }
-    dibujar() {
-      ctx.fillStyle = this.color;
-      ctx.fillRect(this.x, this.y, this.w, this.h);
-    }
-  }
-
-  // Enemigo
-  class Enemigo {
-    constructor(x, y, tipo = 'normal', nivel = 1) {
-      this.tipo = tipo;
-      this.nivel = nivel;
-      this.w = 40;
-      this.h = 40;
-      this.x = x;
-      this.y = y;
-      this.speed = 1 + nivel * 0.3;
-      this.hpMax = 3 + nivel * 2;
-      this.color = '#ff3300';
-      this.ataqueCooldown = 0;
-      this.movimientoDir = 1;
-      this.movimientoVel = 2 + nivel * 0.2;
-      this.patron = 0;
-
-      if (tipo === 'avanzado') {
-        this.w = 50;
-        this.h = 50;
-        this.speed += 1;
-        this.hpMax += 5;
-        this.color = '#ff9900';
-      } else if (tipo === 'jefe') {
-        this.w = 150;
-        this.h = 100;
-        this.speed = 1;
-        this.hpMax = 50 + nivel * 25;
-        this.color = '#ffff00';
-        this.ataqueCooldown = 60;
-        this.movimientoDir = 1;
-        this.movimientoVel = 3 + nivel * 0.3;
-        this.patron = 0;
-      }
-      this.hp = this.hpMax;
-    }
-    mover() {
-      if (this.tipo === 'jefe') {
-        this.movimientoPatronJefe();
-      } else if (this.tipo === 'avanzado') {
-        this.moverAvanzado();
-      } else {
-        this.y += this.speed;
-      }
-    }
-    moverAvanzado() {
-      // Patrón zigzag horizontal + descenso lento
-      this.x += this.movimientoVel * this.movimientoDir;
-      this.y += this.speed * 0.6;
-      if (this.x <= 0 || this.x + this.w >= WIDTH) this.movimientoDir *= -1;
-    }
-    movimientoPatronJefe() {
-      // Patrón oscilante horizontal arriba + disparos en ráfaga
-      this.x += this.movimientoVel * this.movimientoDir;
-      if (this.x <= 0) this.movimientoDir = 1;
-      else if (this.x + this.w >= WIDTH) this.movimientoDir = -1;
-
-      this.ataqueCooldown--;
-      if (this.ataqueCooldown <= 0) {
-        this.disparar();
-        this.ataqueCooldown = 90; // cada 1.5 segundos
-      }
-    }
-    disparar() {
-      // Disparo múltiple en abanico
-      let centro = this.x + this.w / 2;
-      for (let i = -2; i <= 2; i++) {
-        balasEnemigas.push(new BalaEnemiga(centro + i * 20, this.y + this.h, 6, '#ffdd00'));
-      }
-      sonidoDisparoEnemigo.play();
-    }
-    dibujar() {
-      ctx.fillStyle = this.color;
-      ctx.fillRect(this.x, this.y, this.w, this.h);
-
-      // Barra de vida
-      ctx.fillStyle = '#0f0';
-      const hpBarWidth = (this.hp / this.hpMax) * this.w;
-      ctx.fillRect(this.x, this.y - 8, hpBarWidth, 5);
-      ctx.strokeStyle = '#000';
-      ctx.strokeRect(this.x, this.y - 8, this.w, 5);
-    }
-  }
-
-  // PowerUp
-  class PowerUp {
-    constructor(x, y, tipo) {
-      this.x = x;
-      this.y = y;
-      this.w = 30;
-      this.h = 30;
-      this.speed = 2;
-      this.tipo = tipo;
-      this.color = this.getColorByTipo(tipo);
-    }
-    getColorByTipo(tipo) {
-      switch(tipo) {
-        case 'escudo': return '#00ffff';
-        case 'doble': return '#ff00ff';
-        case 'vida': return '#00ff00';
-        case 'multiplicador': return '#ffff00';
-        default: return '#fff';
-      }
-    }
-    mover() {
-      this.y += this.speed;
-    }
-    dibujar() {
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x + this.w/2, this.y + this.h/2, this.w/2, 0, Math.PI * 2);
-      ctx.fill();
-
-      ctx.fillStyle = '#000';
-      ctx.font = '18px Arial';
-      ctx.textAlign = 'center';
-      ctx.fillText(this.tipo[0].toUpperCase(), this.x + this.w/2, this.y + this.h/2 + 7);
-    }
-  }
-
-  // Partículas para explosiones y efectos
-  class Particula {
-    constructor(x, y, color) {
-      this.x = x;
-      this.y = y;
-      this.vx = (Math.random() - 0.5) * 6;
-      this.vy = (Math.random() - 0.5) * 6;
-      this.size = 4 + Math.random() * 3;
-      this.color = color;
-      this.life = 30 + Math.random() * 20;
-      this.alpha = 1;
-    }
-    mover() {
-      this.x += this.vx;
-      this.y += this.vy;
-      this.vy += 0.15; // gravedad leve
-      this.life--;
-      this.alpha = this.life / 50;
-    }
-    dibujar() {
-      ctx.save();
-      ctx.globalAlpha = this.alpha;
-      ctx.fillStyle = this.color;
-      ctx.beginPath();
-      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-      ctx.fill();
-      ctx.restore();
-    }
-  }
-
-  /*** SONIDOS (Simples usando Web Audio API con beep) ***/
-  const AudioCtx = window.AudioContext || window.webkitAudioContext;
-  const audioCtx = new AudioCtx();
-
-  function playBeep(freq = 440, duration = 0.1, volume = 0.2) {
-    const osc = audioCtx.createOscillator();
-    const gainNode = audioCtx.createGain();
-    osc.frequency.value = freq;
-    osc.type = 'square';
-    osc.connect(gainNode);
-    gainNode.connect(audioCtx.destination);
-    gainNode.gain.value = volume;
-    osc.start();
-    osc.stop(audioCtx.currentTime + duration);
-  }
-
-  const sonidoDisparo = { play: () => playBeep(1200, 0.1, 0.2) };
-  const sonidoDisparoEnemigo = { play: () => playBeep(400, 0.15, 0.15) };
-  const sonidoExplosion = { play: () => playBeep(200, 0.3, 0.3) };
-  const sonidoDaño = { play: () => playBeep(150, 0.25, 0.3) };
-  const sonidoPowerUp = { play: () => playBeep(900, 0.2, 0.25) };
-
-  /*** VARIABLES DE ENTIDADES ***/
-  let jugador = new Nave();
-  let enemigos = [];
-  let balasEnemigas = [];
-  let powerUps = [];
-  let particulas = [];
-
-  /*** SISTEMA DE NIVELES Y OLEADAS ***/
-
-  // Definición de niveles con oleadas y enemigos
-  const niveles = [
-    {
-      descripcion: 'Nivel 1 - Oleadas básicas',
-      oleadas: [
-        { tipo: 'normal', cantidad: 5, delay: 60 },
-        { tipo: 'normal', cantidad: 7, delay: 50 },
-        { tipo: 'avanzado', cantidad: 3, delay: 80 }
-      ],
-      jefe: true
-    },
-    {
-      descripcion: 'Nivel 2 - Enemigos avanzados y jefe más fuerte',
-      oleadas: [
-        { tipo: 'normal', cantidad: 10, delay: 45 },
-        { tipo: 'avanzado', cantidad: 7, delay: 60 },
-        { tipo: 'normal', cantidad: 12, delay: 35 }
-      ],
-      jefe: true
-    },
-    {
-      descripcion: 'Nivel 3 - Oleadas intensas y jefe rápido',
-      oleadas: [
-        { tipo: 'avanzado', cantidad: 12, delay: 50 },
-        { tipo: 'avanzado', cantidad: 15, delay: 45 },
-        { tipo: 'normal', cantidad: 20, delay: 30 }
-      ],
-      jefe: true
-    },
-    {
-      descripcion: 'Nivel 4 - Jefe final super fuerte',
-      oleadas: [
-        { tipo: 'avanzado', cantidad: 20, delay: 40 },
-        { tipo: 'avanzado', cantidad: 25, delay: 35 },
-        { tipo: 'normal', cantidad: 30, delay: 25 }
-      ],
-      jefe: true
-      
-      
-    },
-    {
-      descripcion: 'Nivel 5 - Oleadas rápidas y jefe ágil',
-      oleadas: [
-        { tipo: 'normal', cantidad: 25, delay: 30 },
-        { tipo: 'avanzado', cantidad: 20, delay: 25 },
-        { tipo: 'normal', cantidad: 30, delay: 20 }
-      ],
-      jefe: true
-    },
-    {
-      descripcion: 'Nivel 6 - Oleadas caóticas con muchos enemigos',
-      oleadas: [
-        { tipo: 'avanzado', cantidad: 30, delay: 25 },
-        { tipo: 'avanzado', cantidad: 35, delay: 20 },
-        { tipo: 'normal', cantidad: 40, delay: 15 }
-      ],
-      jefe: true
-    },
-    {
-      descripcion: 'Nivel 7 - Desafío máximo, jefe poderoso y rápido',
-      oleadas: [
-        { tipo: 'avanzado', cantidad: 40, delay: 20 },
-        { tipo: 'avanzado', cantidad: 45, delay: 15 },
-        { tipo: 'normal', cantidad: 50, delay: 10 }
-      ],
-      jefe: true
-  }
-  
-    
-  ];
-
-  // Control de oleadas y enemigos spawneados
-  let oleadaIndex = 0;
-  let enemigosSpawnedInOleada = 0;
-  let framesDesdeUltimoSpawn = 0;
-  let spawnDelayActual = 0;
-  let jugandoOleada = false;
-  let jefeActual = null;
-
-  function spawnEnemigo(tipo) {
-    const x = Math.random() * (WIDTH - 50);
-    enemigos.push(new Enemigo(x, -50, tipo, nivel));
-    enemigosRestantes++;
-    enemigosRestantesUI.textContent = enemigosRestantes;
-  }
-
-  // Control spawn por oleadas
-  function manejarOleadas() {
-    if (jugandoOleada) {
-      framesDesdeUltimoSpawn++;
-      if (framesDesdeUltimoSpawn >= spawnDelayActual) {
-        if (enemigosSpawnedInOleada < niveles[nivel-1].oleadas[oleadaIndex].cantidad) {
-          spawnEnemigo(niveles[nivel-1].oleadas[oleadaIndex].tipo);
-          enemigosSpawnedInOleada++;
-          framesDesdeUltimoSpawn = 0;
-        } else {
-          // Oleada terminada, pasamos a la siguiente después que enemigos mueran
-          if (enemigosRestantes === 0) {
-            oleadaIndex++;
-            enemigosSpawnedInOleada = 0;
-            jugandoOleada = false;
-            // Si hay jefe
-            if (oleadaIndex >= niveles[nivel-1].oleadas.length && niveles[nivel-1].jefe && !jefeActual) {
-              spawnJefe();
-            } else if (oleadaIndex >= niveles[nivel-1].oleadas.length && !niveles[nivel-1].jefe) {
-              // Pasar de nivel si no hay jefe
-              pasarNivel();
-            }
-          }
-        }
-      }
-    } else {
-      if (oleadaIndex < niveles[nivel-1].oleadas.length) {
-        // Comienza oleada
-        spawnDelayActual = niveles[nivel-1].oleadas[oleadaIndex].delay;
-        jugandoOleada = true;
-        framesDesdeUltimoSpawn = 0;
-        enemigosSpawnedInOleada = 0;
-      }
-    }
-  }
-
-  // Spawnear jefe
-  function spawnJefe() {
-    const x = WIDTH / 2 - 75;
-    jefeActual = new Enemigo(x, 20, 'jefe', nivel);
-    enemigos.push(jefeActual);
-    enemigosRestantes++;
-    enemigosRestantesUI.textContent = enemigosRestantes;
-    bossStatusUI.textContent = 'Sí';
-  }
-
-  // Pasar de nivel
-  function pasarNivel() {
-    nivel++;
-    if (nivel > niveles.length) {
-      gameOver = true;
-      messageEl.textContent = '¡GANASTE! Felicidades ✨🚀';
-      messageEl.style.display = 'block';
-      btnRestart.style.display = 'block';
-      return;
-    }
-    nivelUI.textContent = nivel;
-    oleadaIndex = 0;
-    enemigosSpawnedInOleada = 0;
-    jugandoOleada = false;
-    jefeActual = null;
-    bossStatusUI.textContent = 'No';
-    messageEl.textContent = 'Nivel ' + nivel;
-    messageEl.style.display = 'block';
-    setTimeout(() => { messageEl.style.display = 'none'; }, 3000);
-    enemigos = [];
-    balasEnemigas = [];
-    powerUps = [];
-  }
-
-  /*** LÓGICA DE ACTUALIZACIÓN ***/
-  function update() {
-    if (gameOver || paused) return;
-
-    jugador.mover();
-    jugador.actualizarBalas();
-
-    // Actualizar enemigos
-    enemigos.forEach((e, i) => {
-      e.mover();
-
-      // Detectar colisión balas jugador vs enemigos
-      jugador.balas.forEach((b, bi) => {
-        if (colision(b, e)) {
-          e.hp -= 1 * jugador.scoreMultiplier;
-          jugador.balas.splice(bi, 1);
-          puntaje += 10 * jugador.scoreMultiplier;
-          puntajeUI.textContent = puntaje;
-          particulas.push(new Particula(b.x, b.y, e.color));
-          sonidoExplosion.play();
-          if (e.hp <= 0) {
-            enemigos.splice(i, 1);
-            enemigosRestantes--;
-            enemigosRestantesUI.textContent = enemigosRestantes;
-            particulas.push(new Particula(e.x + e.w / 2, e.y + e.h / 2, e.color));
-
-            if (e.tipo === 'jefe') {
-              puntaje += 500 * jugador.scoreMultiplier;
-              pasarNivel();
-            } else {
-              // Chance powerup
-              if (Math.random() < 0.25) {
-                const tipos = ['escudo', 'doble', 'vida', 'multiplicador'];
-                const tipo = tipos[Math.floor(Math.random() * tipos.length)];
-                powerUps.push(new PowerUp(e.x, e.y, tipo));
-              }
-            }
-          }
-        }
-      });
-
-      // Colisión enemigo con jugador
-      if (colision(e, jugador)) {
-        enemigos.splice(i, 1);
-        enemigosRestantes--;
-        enemigosRestantesUI.textContent = enemigosRestantes;
-        jugador.recibirDaño();
-        particulas.push(new Particula(jugador.x + jugador.w / 2, jugador.y + jugador.h / 2, '#00ffff'));
-        sonidoDaño.play();
-      }
-
-      // Enemigos fuera de pantalla
-      if (e.y > HEIGHT + e.h) {
-        enemigos.splice(i, 1);
-        enemigosRestantes--;
-        enemigosRestantesUI.textContent = enemigosRestantes;
-      }
+    const vaca = document.getElementById("vaca");
+    vaca.addEventListener("dragover", (e) => e.preventDefault());
+    vaca.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const foodSrc = e.dataTransfer.getData("text");
+      animateEating(foodSrc);
+      hunger = Math.min(100, hunger + 20);
+      energy = Math.max(0, energy - 5);
+      updateStats();
     });
 
-    // Actualizar balas enemigas
-    balasEnemigas.forEach((b, i) => {
-      b.mover();
-
-      if (colision(b, jugador)) {
-        balasEnemigas.splice(i, 1);
-        jugador.recibirDaño();
-        particulas.push(new Particula(jugador.x + jugador.w / 2, jugador.y + jugador.h / 2, '#00ffff'));
-        sonidoDaño.play();
-      }
-
-      if (b.y > HEIGHT + b.h) balasEnemigas.splice(i, 1);
-    });
-
-    // Actualizar power-ups
-    powerUps.forEach((p, i) => {
-      p.mover();
-
-      if (colision(p, jugador)) {
-        jugador.aplicarPowerUp(p.tipo);
-        powerUps.splice(i, 1);
-      }
-      if (p.y > HEIGHT + p.h) powerUps.splice(i, 1);
-    });
-
-    // Actualizar partículas
-    particulas.forEach((p, i) => {
-      p.mover();
-      if (p.life <= 0) particulas.splice(i, 1);
-    });
-
-    manejarOleadas();
-  }
-
-  /*** LÓGICA DE DIBUJO ***/
-  function draw() {
-    // Fondo
-    ctx.fillStyle = '#000011';
-    ctx.fillRect(0, 0, WIDTH, HEIGHT);
-
-    jugador.dibujar();
-
-    enemigos.forEach(e => e.dibujar());
-
-    balasEnemigas.forEach(b => b.dibujar());
-
-    powerUps.forEach(p => p.dibujar());
-
-    particulas.forEach(p => p.dibujar());
-  }
-
-  /*** DETECCIÓN DE COLISIONES ***/
-  function colision(a, b) {
-    return (
-      a.x < b.x + b.w &&
-      a.x + a.w > b.x &&
-      a.y < b.y + b.h &&
-      a.y + a.h > b.y
-    );
-  }
-
-  /*** CONTROL DEL JUEGO ***/
-  function morir() {
-    gameOver = true;
-    messageEl.textContent = '¡Game Over! 🚀';
-    messageEl.style.display = 'block';
-    btnRestart.style.display = 'block';
-    bossStatusUI.textContent = 'No';
-  }
-
-  /*** EVENTOS DE TECLADO ***/
-  window.addEventListener('keydown', (e) => {
-    keys[e.key.toLowerCase()] = true;
-
-    // Espacio para disparar
-    if (e.key === ' ' || e.key.toLowerCase() === 'w' || e.key.toLowerCase() === 'arrowup') {
-      jugador.disparar();
+    function animateEating(src) {
+      const comida = document.getElementById("comidaAnimacion");
+      comida.src = src;
+      comida.style.left = vaca.offsetLeft + 100 + "px";
+      comida.style.top = vaca.offsetTop + 100 + "px";
+      comida.style.display = "block";
+      comida.style.transition = "transform 0.5s ease";
+      comida.style.transform = "scale(1.2) rotate(10deg)";
+      setTimeout(() => {
+        comida.style.transform = "scale(0)";
+        setTimeout(() => comida.style.display = "none", 300);
+      }, 500);
     }
 
-    // P para pausar
-    if (e.key.toLowerCase() === 'p') {
-      paused = !paused;
-      if (!paused) loop();
-    }
-  });
-
-  window.addEventListener('keyup', (e) => {
-    keys[e.key.toLowerCase()] = false;
-  });
-
-  btnRestart.addEventListener('click', () => {
-    resetGame();
-  });
-
-  /*** REINICIAR JUEGO ***/
-  function resetGame() {
-    vidas = 3;
-    puntaje = 0;
-    nivel = 1;
-    enemigosRestantes = 0;
-    gameOver = false;
-    paused = false;
-    oleadaIndex = 0;
-    enemigosSpawnedInOleada = 0;
-    jugandoOleada = false;
-    jefeActual = null;
-
-    jugador.reset();
-    enemigos = [];
-    balasEnemigas = [];
-    powerUps = [];
-    particulas = [];
-
-    vidasUI.textContent = vidas;
-    puntajeUI.textContent = puntaje;
-    nivelUI.textContent = nivel;
-    enemigosRestantesUI.textContent = enemigosRestantes;
-    bossStatusUI.textContent = 'No';
-
-    messageEl.style.display = 'none';
-    btnRestart.style.display = 'none';
-    loop();
-  }
-
-  /*** LOOP PRINCIPAL ***/
-  function loop() {
-    if (!gameOver && !paused) {
-      update();
-      draw();
-      requestAnimationFrame(loop);
-    }
-  }
-
-  // Iniciar el juego al cargar
-  messageEl.textContent = 'Nivel 1';
-  messageEl.style.display = 'block';
-  setTimeout(() => {
-    messageEl.style.display = 'none';
-    loop();
-  }, 2000);
-})();
-</script>
-
+    setInterval(() => {
+      hunger = Math.max(0, hunger - 1);
+      happiness = Math.max(0, happiness - 1);
+      cleanliness = Math.max(0, cleanliness - 1);
+      energy = Math.max(0, energy - 1);
+      updateStats();
+    }, 3000);
+  </script>
 </body>
 </html>
