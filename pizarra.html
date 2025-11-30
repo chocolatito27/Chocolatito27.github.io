@@ -68,11 +68,19 @@
     <label>🖌️ Pincel: <input type="range" id="brushSize" min="1" max="10" value="2"></label>
     <label>🧽 Borrador: <input type="range" id="eraserSize" min="5" max="50" value="10"></label>
     <label>🔠 Tamaño texto: <input type="range" id="fontSize" min="10" max="48" value="20"></label>
+
     <button onclick="setMode('draw')">✏️ Pincel</button>
     <button onclick="setMode('erase')">🧼 Borrador</button>
     <button onclick="setMode('text')">📝 Texto</button>
+
+    <button onclick="setMode('line')">📏 Línea recta</button>
+    <button onclick="setMode('rect')">▭ Rectángulo</button>
+    <button onclick="setMode('circle')">⚪ Círculo</button>
+    <button onclick="setMode('triangle')">🔺 Triángulo</button>
+
     <button onclick="clearCanvas()">🗑️ Limpiar</button>
   </div>
+
   <canvas id="canvas"></canvas>
 
   <script>
@@ -98,6 +106,7 @@
     const fontSize = document.getElementById("fontSize");
 
     const elements = [];
+    let undoStack = []; // ← NUEVO
 
     function setMode(newMode) {
       mode = newMode;
@@ -113,6 +122,9 @@
       draw();
     }
 
+    // TEMP shape preview
+    let tempShape = null;
+
     canvas.addEventListener("mousedown", (e) => {
       if (e.button === 1) {
         isPanning = true;
@@ -122,6 +134,21 @@
 
       const x = (e.offsetX - originX) / scale;
       const y = (e.offsetY - originY) / scale;
+
+      if (["line","rect","circle","triangle"].includes(mode)) {
+
+        tempShape = {
+          type: mode,
+          color: colorPicker.value,
+          size: parseInt(brushSize.value),
+          x1: x,
+          y1: y,
+          x2: x,
+          y2: y
+        };
+        isDrawing = true;
+        return;
+      }
 
       if (mode === "text") {
         const textBox = document.createElement("div");
@@ -136,7 +163,6 @@
         document.body.appendChild(textBox);
         textBox.focus();
 
-        // Mover arrastrando
         let offsetX, offsetY, isDragging = false;
 
         textBox.addEventListener("mousedown", (ev) => {
@@ -156,7 +182,6 @@
           isDragging = false;
         });
 
-        // Guardar con doble clic
         textBox.addEventListener("dblclick", () => {
           const rect = textBox.getBoundingClientRect();
           elements.push({
@@ -193,6 +218,17 @@
         draw();
         return;
       }
+
+      if (tempShape && isDrawing) {
+        const x = (e.offsetX - originX) / scale;
+        const y = (e.offsetY - originY) / scale;
+        tempShape.x2 = x;
+        tempShape.y2 = y;
+        draw();
+        drawTempShape();
+        return;
+      }
+
       if (!isDrawing || mode === "text") return;
       const x = (e.offsetX - originX) / scale;
       const y = (e.offsetY - originY) / scale;
@@ -203,6 +239,13 @@
 
     canvas.addEventListener("mouseup", (e) => {
       if (e.button === 1) isPanning = false;
+
+      if (tempShape && isDrawing) {
+        elements.push({ ...tempShape });
+        tempShape = null;
+        draw();
+      }
+
       isDrawing = false;
     });
 
@@ -220,6 +263,43 @@
       draw();
     });
 
+    function drawTempShape() {
+      if (!tempShape) return;
+
+      ctx.strokeStyle = tempShape.color;
+      ctx.lineWidth = tempShape.size;
+      ctx.beginPath();
+
+      const {x1,y1,x2,y2} = tempShape;
+      const X1 = x1 * scale + originX;
+      const Y1 = y1 * scale + originY;
+      const X2 = x2 * scale + originX;
+      const Y2 = y2 * scale + originY;
+
+      if (tempShape.type === "line") {
+        ctx.moveTo(X1, Y1);
+        ctx.lineTo(X2, Y2);
+      }
+
+      if (tempShape.type === "rect") {
+        ctx.strokeRect(X1, Y1, X2 - X1, Y2 - Y1);
+      }
+
+      if (tempShape.type === "circle") {
+        const r = Math.sqrt((X2-X1)**2 + (Y2-Y1)**2);
+        ctx.arc(X1, Y1, r, 0, Math.PI*2);
+      }
+
+      if (tempShape.type === "triangle") {
+        ctx.moveTo(X1, Y1);
+        ctx.lineTo(X2, Y2);
+        ctx.lineTo(X1 - (X2-X1), Y2);
+        ctx.closePath();
+      }
+
+      ctx.stroke();
+    }
+
     function drawGrid() {
       const step = 1;
       const left = -originX / scale;
@@ -232,6 +312,7 @@
       for (let x = Math.floor(left); x <= right; x++) {
         ctx.beginPath();
         ctx.moveTo(x * scale + originX, 0);
+        // CORRECCIÓN: usar originX (antes estaba originY y eso deformaba la cuadricula)
         ctx.lineTo(x * scale + originX, height);
         ctx.stroke();
         if (x !== 0) {
@@ -266,37 +347,107 @@
       ctx.stroke();
     }
 
+    function drawElement(elem) {
+      if (elem.type === "text") {
+        ctx.font = `bold ${elem.size}px sans-serif`;
+        ctx.fillStyle = elem.color;
+        ctx.fillText(elem.text, elem.x * scale + originX, elem.y * scale + originY);
+        return;
+      }
+
+      ctx.strokeStyle = elem.color;
+      ctx.lineWidth = elem.size;
+
+      if (elem.type === "line") {
+        ctx.beginPath();
+        ctx.moveTo(elem.x1 * scale + originX, elem.y1 * scale + originY);
+        ctx.lineTo(elem.x2 * scale + originX, elem.y2 * scale + originY);
+        ctx.stroke();
+        return;
+      }
+
+      if (elem.type === "rect") {
+        ctx.strokeRect(
+          elem.x1 * scale + originX,
+          elem.y1 * scale + originY,
+          (elem.x2 - elem.x1) * scale,
+          (elem.y2 - elem.y1) * scale
+        );
+        return;
+      }
+
+      if (elem.type === "circle") {
+        const X1 = elem.x1 * scale + originX;
+        const Y1 = elem.y1 * scale + originY;
+        const X2 = elem.x2 * scale + originX;
+        const Y2 = elem.y2 * scale + originY;
+
+        const r = Math.sqrt((X2 - X1)**2 + (Y2 - Y1)**2);
+
+        ctx.beginPath();
+        ctx.arc(X1, Y1, r, 0, Math.PI*2);
+        ctx.stroke();
+        return;
+      }
+
+      if (elem.type === "triangle") {
+        const X1 = elem.x1 * scale + originX;
+        const Y1 = elem.y1 * scale + originY;
+        const X2 = elem.x2 * scale + originX;
+        const Y2 = elem.y2 * scale + originY;
+
+        ctx.beginPath();
+        ctx.moveTo(X1, Y1);
+        ctx.lineTo(X2, Y2);
+        ctx.lineTo(X1 - (X2 - X1), Y2);
+        ctx.closePath();
+        ctx.stroke();
+        return;
+      }
+
+      if (elem.type === "draw" || elem.type === "erase") {
+        if (elem.type === "erase") {
+          ctx.save();
+          ctx.globalCompositeOperation = "destination-out";
+        } else {
+          ctx.globalCompositeOperation = "source-over";
+        }
+        ctx.beginPath();
+        elem.points.forEach((p, i) => {
+          const x = p.x * scale + originX;
+          const y = p.y * scale + originY;
+          if (i === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        });
+        ctx.stroke();
+        if (elem.type === "erase") ctx.restore();
+      }
+    }
+
     function draw() {
       ctx.clearRect(0, 0, width, height);
       drawGrid();
+      for (const elem of elements) drawElement(elem);
+    }
 
-      for (const elem of elements) {
-        if (elem.type === "text") {
-          ctx.font = `bold ${elem.size}px sans-serif`;
-          ctx.fillStyle = elem.color;
-          ctx.fillText(elem.text, elem.x * scale + originX, elem.y * scale + originY);
-        } else {
-          if (elem.type === "erase") {
-            ctx.save();
-            ctx.globalCompositeOperation = "destination-out";
-          } else {
-            ctx.globalCompositeOperation = "source-over";
-          }
-
-          ctx.strokeStyle = elem.color;
-          ctx.lineWidth = elem.size;
-          ctx.beginPath();
-          elem.points.forEach((p, i) => {
-            const x = p.x * scale + originX;
-            const y = p.y * scale + originY;
-            if (i === 0) ctx.moveTo(x, y);
-            else ctx.lineTo(x, y);
-          });
-          ctx.stroke();
-          if (elem.type === "erase") ctx.restore();
+    // CTRL + Z / CTRL + Y
+    document.addEventListener("keydown", (e) => {
+      if (e.ctrlKey && e.key === "z") {
+        if (elements.length > 0) {
+          const last = elements.pop();
+          undoStack.push(last);
+          draw();
         }
       }
-    }
+
+      if (e.ctrlKey && e.key === "y") {
+        if (undoStack.length > 0) {
+          const restored = undoStack.pop();
+          elements.push(restored);
+          draw();
+        }
+      }
+    });
 
     window.addEventListener("resize", () => {
       width = window.innerWidth;
@@ -310,3 +461,4 @@
   </script>
 </body>
 </html>
+
