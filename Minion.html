@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minion</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+        #minion {
+            width: 200px; /* Ajusta el tamaño según necesites */
+        }
+        button {
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #si {
+            transition: transform 0.3s;
+        }
+    </style>
+</head>
+<body>
+
+    <img id="minion" src="minion.gif" alt="Minion">
+    <h2>¿Quieres ser mi 14🥺?</h2>
+    <button id="si">Sí</button>
+    <button id="no">No</button>
+    
+    <script>
+        document.getElementById('no').addEventListener('click', function() {
+            const siButton = document.getElementById('si');
+            siButton.style.transform = 'scale(1.5)'; // Aumenta tamaño al hacer clic en 'No'
+        });
+
+        document.getElementById('si').addEventListener('click', function() {
+            alert('¡Felicidades!');
+        });
+    </script>
+
+</body>
+</html>
