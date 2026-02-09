@@ -32,13 +32,21 @@
     <img id="minion" src="minion.gif" alt="Minion">
     <h2>¿Quieres ser mi 14🥺?</h2>
     <button id="si">Sí</button>
-    <button id="no">No</button>
+    <button id="no" onclick="increaseSize()">No</button>
     
     <script>
-        document.getElementById('no').addEventListener('click', function() {
+        let scale = 1;
+
+        function increaseSize() {
+            scale += 0.1; // Aumenta el tamaño en un 10%
             const siButton = document.getElementById('si');
-            siButton.style.transform = 'scale(1.5)'; // Aumenta tamaño al hacer clic en 'No'
-        });
+            siButton.style.transform = `scale(${scale})`; // Aplica el nuevo tamaño
+
+            // Si el tamaño supera 2, oculta el botón "No"
+            if (scale >= 2) {
+                document.getElementById('no').style.display = 'none';
+            }
+        }
 
         document.getElementById('si').addEventListener('click', function() {
             alert('¡Felicidades!');
