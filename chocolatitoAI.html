@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>ChocolatitoAI 🍫🤖</title>
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial;
+      background: linear-gradient(135deg, #1a1a1a, #2d1b00);
+      color: white;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+
+    header {
+      text-align: center;
+      padding: 15px;
+      font-size: 24px;
+      font-weight: bold;
+      background: #111;
+      animation: glow 2s infinite alternate;
+    }
+
+    @keyframes glow {
+      from { text-shadow: 0 0 5px orange; }
+      to { text-shadow: 0 0 20px orange; }
+    }
+
+    #chat {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .msg {
+      margin: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      max-width: 70%;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .user {
+      background: orange;
+      align-self: flex-end;
+    }
+
+    .bot {
+      background: #333;
+      align-self: flex-start;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    #inputBox {
+      display: flex;
+      padding: 10px;
+      background: #111;
+    }
+
+    input {
+      flex: 1;
+      padding: 10px;
+      border: none;
+      border-radius: 5px;
+      outline: none;
+    }
+
+    button {
+      margin-left: 10px;
+      padding: 10px;
+      border: none;
+      background: orange;
+      color: black;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+  </style>
+</head>
+
+<body>
+
+<header>🍫 ChocolatitoAI 🤖</header>
+
+<div id="chat"></div>
+
+<div id="inputBox">
+  <input id="input" placeholder="Escribe algo..." />
+  <button onclick="send()">Enviar</button>
+</div>
+
+<script>
+const chat = document.getElementById("chat");
+
+const API_URL = "https://index-creator.tomasaraujoteja.replit.app/chat";
+
+function addMessage(text, sender) {
+  const div = document.createElement("div");
+  div.className = "msg " + sender;
+  div.innerText = text;
+  chat.appendChild(div);
+  chat.scrollTop = chat.scrollHeight;
+}
+
+async function send() {
+  const input = document.getElementById("input");
+  const text = input.value;
+
+  if (!text) return;
+
+  addMessage(text, "user");
+  input.value = "";
+
+  const typing = document.createElement("div");
+  typing.className = "msg bot";
+  typing.innerText = "Escribiendo...";
+  chat.appendChild(typing);
+
+  try {
+    const res = await fetch(API_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        messages: [{ role: "user", content: text }]
+      })
+    });
+
+    const data = await res.json();
+
+    typing.remove();
+    addMessage(data.choices[0].message.content, "bot");
+
+  } catch (error) {
+    typing.remove();
+    addMessage("Error conectando con el servidor 😢", "bot");
+  }
+}
+</script>
+
+</body>
+</html>
