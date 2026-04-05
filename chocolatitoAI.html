@@ -22,8 +22,8 @@
     .bubble { max-width: 78%; padding: 11px 15px; border-radius: 16px; font-size: 0.92rem; line-height: 1.65; word-break: break-word; animation: pop 0.18s ease; }
     .bubble.user { background: rgba(0,255,255,0.15); border: 1px solid rgba(0,255,255,0.4); color: #fff; border-bottom-right-radius: 4px; }
     .bubble.assistant { background: rgba(0,0,0,0.6); border: 1px solid rgba(255,255,255,0.1); color: #eee; border-bottom-left-radius: 4px; }
-    .bubble .katex { font-size: 1em; }
-    .bubble .katex-display { margin: 8px 0; overflow-x: auto; }
+    .bubble .katex { font-size: 1.05em; }
+    .bubble .katex-display { margin: 10px 0; overflow-x: auto; text-align: center; }
     .bubble.typing { display: flex; gap: 6px; align-items: center; padding: 14px 18px; }
     .bubble.typing span { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #33FFFF; opacity: 0.5; animation: bounce 1.2s infinite; }
     .bubble.typing span:nth-child(2) { animation-delay: 0.2s; }
@@ -68,16 +68,16 @@ particlesJS("particles-js", {
   particles: {
     number: { value: 80, density: { enable: true, value_area: 800 } },
     color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
-    shape: { type: "circle", stroke: { width: 0, color: "#000000" }, polygon: { nb_sides: 5 } },
-    opacity: { value: 0.5, random: false, anim: { enable: false, speed: 1, opacity_min: 0.1, sync: false } },
-    size: { value: 3, random: true, anim: { enable: false, speed: 40, size_min: 0.1, sync: false } },
+    shape: { type: "circle", stroke: { width: 0, color: "#000000" } },
+    opacity: { value: 0.5, random: false },
+    size: { value: 3, random: true },
     line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
-    move: { enable: true, speed: 6, direction: "none", random: false, straight: false, out_mode: "bounce", bounce: true, attract: { enable: false, rotateX: 600, rotateY: 1200 } }
+    move: { enable: true, speed: 6, out_mode: "bounce", bounce: true }
   },
   interactivity: {
     detect_on: "canvas",
     events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
-    modes: { grab: { distance: 400, line_linked: { opacity: 1 } }, bubble: { distance: 400, size: 40, duration: 2, opacity: 8, speed: 3 }, repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 }, remove: { particles_nb: 2 } }
+    modes: { repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 } }
   },
   retina_detect: true
 });
@@ -88,9 +88,14 @@ const inputBox = document.getElementById("inputBox");
 const sendBtn = document.getElementById("sendBtn");
 let history = [{ role: "assistant", content: "¡Hola! Soy ChocolatitoAI. ¿En qué te puedo ayudar hoy?" }];
 
+function normalizeMath(text) {
+  text = text.replace(/\\\[([\s\S]*?)\\\]/g, (_, l) => `$$${l.trim()}$$`);
+  text = text.replace(/\\\(([\s\S]*?)\\\)/g, (_, l) => `$${l.trim()}$`);
+  return text;
+}
 function escapeHtml(str) { return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/\n/g,"<br>"); }
-
-function renderContent(text) {
+function renderContent(rawText) {
+  const text = normalizeMath(rawText);
   const container = document.createElement("div");
   const parts = text.split(/((?:\$\$[\s\S]*?\$\$)|(?:\$[^$\n]+?\$))/g);
   let html = "";
@@ -108,7 +113,6 @@ function renderContent(text) {
   container.innerHTML = html;
   return container;
 }
-
 function addBubble(role, content, isTyping = false) {
   const row = document.createElement("div");
   row.className = `bubble-row ${role}`;
@@ -121,7 +125,6 @@ function addBubble(role, content, isTyping = false) {
   messagesEl.scrollTop = messagesEl.scrollHeight;
   return row;
 }
-
 async function sendMessage() {
   const text = inputBox.value.trim();
   if (!text || sendBtn.disabled) return;
@@ -135,14 +138,9 @@ async function sendMessage() {
     const data = await res.json();
     const reply = data.choices?.[0]?.message?.content ?? "Sin respuesta.";
     history.push({ role: "assistant", content: reply });
-    typingRow.remove();
-    addBubble("assistant", reply);
-  } catch {
-    typingRow.remove();
-    addBubble("assistant", "Error al conectar con el servidor.");
-  } finally {
-    sendBtn.disabled = false; inputBox.disabled = false; inputBox.focus();
-  }
+    typingRow.remove(); addBubble("assistant", reply);
+  } catch { typingRow.remove(); addBubble("assistant", "Error al conectar con el servidor."); }
+  finally { sendBtn.disabled = false; inputBox.disabled = false; inputBox.focus(); }
 }
 inputBox.addEventListener("keydown", e => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } });
 inputBox.addEventListener("input", () => { inputBox.style.height = "auto"; inputBox.style.height = Math.min(inputBox.scrollHeight, 130) + "px"; });
