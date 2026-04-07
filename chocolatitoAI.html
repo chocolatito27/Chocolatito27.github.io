@@ -5,6 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ChocolatitoAI</title>
 
+  <!-- Font Awesome (iconos redes sociales) -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+
   <!-- KaTeX (matemáticas) -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.css" />
   <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.10/dist/katex.min.js"></script>
@@ -20,45 +23,114 @@
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 
   <style>
-    /*
-    ╔══════════════════════════════════════════════════════════════╗
-    ║  AJUSTE: cambia el valor de --menu-h al alto de tu menú.    ║
-    ║  Ejemplos: 60px, 70px, 80px. Si no hay menú usa 0px.        ║
-    ╚══════════════════════════════════════════════════════════════╝
-    */
-    :root {
-      --menu-h: 70px;
-    }
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    body {
+    body, html {
       font-family: Arial, sans-serif;
       background: #000;
       color: #fff;
-    }
-
-    .cai-wrapper {
-      position: relative;
-      width: 100%;
-      height: calc(100vh - var(--menu-h));
+      height: 100dvh;
       overflow: hidden;
-      background: #000;
-      display: flex;
-      justify-content: center;
-      align-items: stretch;
     }
 
     #particles-js {
-      position: absolute;
+      position: fixed;
       inset: 0;
       z-index: 0;
       background: #000;
     }
 
+    /* ═══ MENÚ LATERAL ═══ */
+    .menu-icon {
+      position: fixed;
+      top: 20px;
+      left: 20px;
+      font-size: 30px;
+      color: #fff;
+      cursor: pointer;
+      z-index: 1100;
+      line-height: 1;
+      user-select: none;
+    }
+
+    .sidebar {
+      position: fixed;
+      top: 0;
+      left: -250px;
+      width: 250px;
+      height: 100%;
+      background: rgba(51,51,51,0.95);
+      transition: left 0.3s ease;
+      z-index: 1050;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 20px;
+      background: rgba(34,34,34,0.95);
+      color: #fff;
+      text-align: right;
+    }
+
+    .back-arrow {
+      cursor: pointer;
+      font-size: 24px;
+      user-select: none;
+    }
+
+    .sidebar ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex: 1;
+    }
+
+    .sidebar ul li {
+      padding: 15px 20px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar ul li a {
+      color: #fff;
+      text-decoration: none;
+      font-size: 18px;
+      display: block;
+      transition: color 0.2s;
+    }
+
+    .sidebar ul li a:hover { color: #33FFFF; }
+    .sidebar ul li a.active { color: #33FFFF; font-weight: 700; }
+
+    .sidebar-social {
+      display: flex;
+      gap: 18px;
+      padding: 18px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar-social a { font-size: 22px; transition: opacity 0.2s; }
+    .sidebar-social a:hover { opacity: 0.75; }
+
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 1040;
+    }
+    .sidebar-overlay.open { display: block; }
+
+    /* ═══ CHAT ═══ */
+    .cai-wrapper {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+    }
+
     .cai-shell {
       position: relative;
-      z-index: 1;
+      z-index: 2;
       width: 100%;
       max-width: 760px;
       height: 100%;
@@ -69,8 +141,8 @@
     .cai-header {
       display: flex;
       align-items: center;
-      gap: 12px;
-      padding: 14px 24px;
+      justify-content: center;
+      padding: 14px 24px 14px 70px;
       background: rgba(0,0,0,0.85);
       border-bottom: 1px solid rgba(0,255,255,0.2);
       flex-shrink: 0;
@@ -87,7 +159,7 @@
       border-radius: 50%;
       background: #33FFFF;
       box-shadow: 0 0 8px #33FFFF;
-      margin-left: auto;
+      margin-left: 10px;
       flex-shrink: 0;
     }
 
@@ -252,9 +324,8 @@
     .cai-send:active:not(:disabled) { transform: scale(0.9); }
     .cai-send:disabled              { opacity: 0.3; cursor: not-allowed; }
 
-    /* ── Responsive ─────────────────────────────────────────────── */
     @media (max-width: 600px) {
-      .cai-header     { padding: 10px 14px; }
+      .cai-header     { padding: 12px 14px 12px 62px; }
       .cai-logo       { font-size: 1rem; }
       .cai-messages   { padding: 14px 10px; gap: 10px; }
       .bubble         { max-width: 92%; font-size: 0.88rem; padding: 10px 13px; }
@@ -263,16 +334,44 @@
       .cai-send       { width: 40px; height: 40px; }
     }
     @media (max-width: 400px) {
-      .bubble   { max-width: 96%; }
-      .cai-logo { font-size: 0.9rem; }
+      .bubble { max-width: 96%; }
     }
   </style>
 </head>
 <body>
 
-<div class="cai-wrapper">
-  <div id="particles-js"></div>
+<div id="particles-js"></div>
 
+<!-- ═══ MENÚ LATERAL ═══ -->
+<div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
+  </div>
+  <ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="chocolatitoAI.html" class="active">ChocolatitoAI</a></li>
+    <li><a href="entretenimiento.html">Entretenimiento</a></li>
+    <li><a href="contactos.html">Contactos</a></li>
+    <li><a href="juegos.html">Juegos</a></li>
+  </ul>
+  <div class="sidebar-social">
+    <a href="https://wa.me/6285640549937" target="_blank">
+      <i class="fab fa-whatsapp" style="color:#25D366;"></i>
+    </a>
+    <a href="https://www.instagram.com/chocolatitoadm?igsh=em9ocnowajN6cWxv" target="_blank">
+      <i class="fab fa-instagram" style="color:#E1306C;"></i>
+    </a>
+    <a href="https://www.facebook.com/share/15pPDtcREs" target="_blank">
+      <i class="fab fa-facebook" style="color:#1877F2;"></i>
+    </a>
+  </div>
+</div>
+
+<!-- ═══ CHAT ═══ -->
+<div class="cai-wrapper">
   <div class="cai-shell">
     <header class="cai-header">
       <span class="cai-logo">ChocolatitoAI</span>
@@ -298,6 +397,14 @@
 </div>
 
 <script>
+function toggleMenu() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const isOpen  = sidebar.style.left === '0px';
+  sidebar.style.left = isOpen ? '-250px' : '0px';
+  overlay.classList.toggle('open', !isOpen);
+}
+
 particlesJS("particles-js", {
   particles: {
     number:      { value: 80, density: { enable: true, value_area: 800 } },
@@ -385,7 +492,7 @@ function renderContent(rawText) {
 }
 
 function addBubble(role, content, isTyping = false) {
-  const row    = document.createElement("div");
+  const row     = document.createElement("div");
   row.className = `bubble-row ${role}`;
   const bubble  = document.createElement("div");
   bubble.className = `bubble ${role}${isTyping ? " typing" : ""}`;
