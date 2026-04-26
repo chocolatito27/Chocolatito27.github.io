@@ -32,6 +32,8 @@ body, html {
     background-color: rgba(51, 51, 51, 0.9);
     transition: left 0.3s ease;
     z-index: 999;
+    display: flex;
+    flex-direction: column;
 }
 
 .sidebar-header {
@@ -46,10 +48,36 @@ body, html {
     font-size: 24px;
 }
 
+/* Tarjeta de usuario */
+.user-info {
+    padding: 14px 20px;
+    background: rgba(108, 141, 245, 0.15);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+}
+
+.user-info .user-name {
+    color: #33FFFF;
+    font-weight: 700;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-info .user-id {
+    color: #aaa;
+    font-size: 0.78rem;
+    font-family: 'Courier New', monospace;
+}
+
 .sidebar ul {
     list-style: none;
     padding: 0;
     margin: 0;
+    flex: 1;
 }
 
 .sidebar ul li {
@@ -61,6 +89,20 @@ body, html {
     color: white;
     text-decoration: none;
     font-size: 18px;
+    cursor: pointer;
+}
+
+.sidebar ul li a:hover {
+    color: #33FFFF;
+}
+
+/* Botón cerrar sesión */
+.logout-link {
+    color: #ff6b6b !important;
+}
+
+.logout-link:hover {
+    color: #ff4444 !important;
 }
 
 .main-content {
@@ -86,6 +128,7 @@ body, html {
     color: white;
     margin-top: 10px;
 }
+
 .by-line {
     font-size: 18px;
     color: white;
@@ -118,6 +161,7 @@ body, html {
 .contact-button:hover {
     opacity: 0.8;
 }
+
 .games-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -150,20 +194,28 @@ body, html {
     font-size: 16px;
     margin-top: 10px;
 }
+
 .game-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     text-align: center;
     color: white;
-    padding: 20px;
 }
 
 .game-info {
-    margin-top: 20px;
-    font-size: 20px;
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 1.2em;
 }
 
 .game-info p {
-    margin: 5px 0;
+    margin: 5px 0;
 }
+
 .fullscreen-button {
     position: fixed;
     top: 20px;
@@ -180,8 +232,9 @@ body, html {
 .fullscreen-button:hover {
     background-color: rgba(0, 0, 0, 0.8);
 }
+
 .mobile-controls {
-    display: none; /* Ocultar en escritorio */
+    display: none;
     position: fixed;
     bottom: 20px;
     width: 100%;
@@ -228,107 +281,13 @@ body, html {
 
 @media (max-width: 768px) {
     .mobile-controls {
-        display: block; /* Mostrar en móviles */
+        display: block;
     }
-}
-html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden; /* Evitar barras de desplazamiento */
-    height: 100%;
-}
-
-.game-container {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    text-align: center;
-    color: white;
-}
-/* Estilos generales */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh; /* Hace que el cuerpo ocupe toda la altura de la ventana */
-}
-
-.main-content {
-    flex: 1; /* Hace que el contenido principal ocupe el espacio restante */
-    padding: 50px 20px;
-}
-
-.main-content h1 {
-    font-size: 48px;
-    color: #33FFFF;
-    margin: 0;
-}
-
-.main-content .lema {
-    font-size: 20px;
-    color: #666;
-    margin-top: 10px;
-}
-
-/* Iconos de redes sociales (sin footer) */
-.social-icons {
-    position: fixed; /* Fija los iconos en la parte inferior */
-    bottom: 20px; /* Distancia desde la parte inferior */
-    left: 50%; /* Centra horizontalmente */
-    transform: translateX(-50%); /* Ajusta el centrado */
-    display: flex;
-    gap: 20px;
-    background-color: rgba(51, 51, 51, 0.8); /* Fondo semitransparente */
-    padding: 10px 20px;
-    border-radius: 25px; /* Bordes redondeados */
-}
-
-.social-icons a {
-    font-size: 24px; /* Tamaño de los iconos */
-    transition: transform 0.3s ease;
-}
-
-.social-icons a:hover {
-    transform: scale(1.2); /* Efecto de escala al pasar el mouse */
-}
-
-/* Colores personalizados para los iconos */
-.social-icons a .fa-whatsapp {
-    color: #25D366; /* Verde de WhatsApp */
-}
-
-.social-icons a .fa-instagram {
-    color: #E1306C; /* Rosa de Instagram */
-}
-
-.social-icons a .fa-facebook {
-    color: #1877F2; /* Azul de Facebook */
-}
-body {
-    margin: 0;
-    overflow: hidden;
-    background-color: #000;
-    color: #FFF;
-    font-family: 'Arial', sans-serif;
 }
 
 canvas {
     display: block;
     background-color: #000;
-}
-
-.game-info {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    font-size: 1.2em;
 }
 
 .hidden {
@@ -347,6 +306,7 @@ canvas {
     border: none;
     cursor: pointer;
 }
+
 .tool-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -378,4 +338,27 @@ canvas {
     color: white;
     font-size: 16px;
     margin-top: 10px;
+}
+
+/* Iconos sociales */
+.social-icons {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    background-color: rgba(51, 51, 51, 0.8);
+    padding: 10px 20px;
+    border-radius: 25px;
+    z-index: 100;
+}
+
+.social-icons a {
+    font-size: 24px;
+    transition: transform 0.3s ease;
+}
+
+.social-icons a:hover {
+    transform: scale(1.2);
 }
