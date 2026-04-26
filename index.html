@@ -7,8 +7,13 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="/favicon.png">
-    <meta http-equiv="refresh" content="0; url=login.html">
 
+    <!-- Protección: si no hay sesión, va al login -->
+    <script>
+        if (!localStorage.getItem('cw_token')) {
+            window.location.replace('login.html');
+        }
+    </script>
 </head>
 <body>
     <div id="particles-js"></div>
@@ -17,32 +22,57 @@
         <div class="sidebar-header">
             <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
         </div>
+
+        <!-- Tarjeta de usuario -->
+        <div class="user-info" id="sidebar-user">
+            <span class="user-name" id="sidebar-username">—</span>
+            <span class="user-id" id="sidebar-uid">ID: —</span>
+        </div>
+
         <ul>
             <li><a href="#inicio" onclick="scrollToSection('inicio')">Inicio</a></li>
             <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
             <li><a href="entretenimiento.html">Entretenimiento</a></li>
             <li><a href="contactos.html">Contactos</a></li>
-            <li><a href="juegos.html">juegos</a></li>
-            
+            <li><a href="juegos.html">Juegos</a></li>
+            <li><a class="logout-link" onclick="cwLogout()"><i class="fas fa-sign-out-alt"></i> Cerrar sesión</a></li>
         </ul>
     </div>
+
     <div class="main-content" id="inicio">
         <h1>ChocolatitoWeb</h1>
         <p class="lema">Bienvenido a este mundo, esperamos que tengas una buena experiencia</p>
     </div>
+
+    <div class="social-icons">
+        <a href="https://wa.me/6285640549937" target="_blank">
+            <i class="fab fa-whatsapp" style="color: #25D366;"></i>
+        </a>
+        <a href="https://www.instagram.com/chocolatitoadm?igsh=em9ocnowajN6cWxv" target="_blank">
+            <i class="fab fa-instagram" style="color: #E1306C;"></i>
+        </a>
+        <a href="https://www.facebook.com/share/15pPDtcREs" target="_blank">
+            <i class="fab fa-facebook" style="color: #1877F2;"></i>
+        </a>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
-        </div>
-         <div class="social-icons">
-            <a href="https://wa.me/6285640549937" target="_blank">
-                <i class="fab fa-whatsapp" style="color: #25D366;"></i> <!-- Icono de WhatsApp -->
-            </a>
-            <a href="https://www.instagram.com/chocolatitoadm?igsh=em9ocnowajN6cWxv" target="_blank">
-                <i class="fab fa-instagram" style="color: #E1306C;"></i> <!-- Icono de Instagram -->
-            </a>
-            <a href="https://www.facebook.com/share/15pPDtcREs" target="_blank">
-                <i class="fab fa-facebook" style="color: #1877F2;"></i> <!-- Icono de Facebook -->
-            </a>
-        </div>
+
+    <!-- Cargar datos del usuario desde localStorage -->
+    <script>
+        const cwUser = JSON.parse(localStorage.getItem('cw_user') || '{}');
+        if (cwUser.username) {
+            document.getElementById('sidebar-username').textContent = cwUser.username;
+            document.getElementById('sidebar-uid').textContent = 'ID: ' + (cwUser.id || '—');
+        }
+
+        function cwLogout() {
+            localStorage.removeItem('cw_token');
+            localStorage.removeItem('cw_user');
+            window.location.replace('login.html');
+        }
+    </script>
 </body>
 </html>
+
