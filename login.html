@@ -208,7 +208,9 @@ const API_BASE = "https://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.p
       headers: { Authorization: 'Bearer ' + token }
     });
     if (res.ok) {
-      window.location.replace('index.html');
+    const data = await res.json();
+    localStorage.setItem('cw_user', JSON.stringify(data.user));
+    window.location.replace('index.html');
     } else {
       localStorage.removeItem('cw_token');
       localStorage.removeItem('cw_user');
