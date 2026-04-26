@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Iniciar sesión — ChocolatitoWeb</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body, html {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #000;
+      min-height: 100dvh;
+      color: #fff;
+    }
+
+    #particles-js {
+      position: fixed; inset: 0; z-index: 0; background: #000;
+    }
+
+    /* ───── MENÚ LATERAL (igual que chocolatito.store) ───── */
+    .menu-icon {
+      position: fixed; top: 20px; left: 20px;
+      font-size: 30px; color: #fff;
+      cursor: pointer; z-index: 1100;
+      line-height: 1; user-select: none;
+    }
+    .sidebar {
+      position: fixed; top: 0; left: -250px;
+      width: 250px; height: 100%;
+      background: rgba(51,51,51,0.95);
+      transition: left 0.3s ease;
+      z-index: 1050;
+      display: flex; flex-direction: column;
+    }
+    .sidebar-header {
+      padding: 20px; background: rgba(34,34,34,0.95);
+      color: #fff; text-align: right;
+    }
+    .back-arrow { cursor: pointer; font-size: 24px; user-select: none; }
+    .sidebar ul { list-style: none; padding: 0; margin: 0; flex: 1; }
+    .sidebar ul li { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .sidebar ul li a {
+      color: #fff; text-decoration: none; font-size: 18px;
+      display: block; transition: color 0.2s;
+    }
+    .sidebar ul li a:hover { color: #33FFFF; }
+    .sidebar-social {
+      display: flex; gap: 18px;
+      padding: 18px 20px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+    }
+    .sidebar-social a { font-size: 22px; transition: opacity 0.2s; }
+    .sidebar-social a:hover { opacity: 0.75; }
+    .sidebar-overlay { display: none; position: fixed; inset: 0; z-index: 1040; }
+    .sidebar-overlay.open { display: block; }
+
+    /* ───── TARJETA DE LOGIN ───── */
+    .login-wrapper {
+      position: relative; z-index: 1;
+      min-height: 100dvh;
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+
+    .login-card {
+      width: 100%; max-width: 400px;
+      background: #fff;
+      color: #2c3e50;
+      border-radius: 18px;
+      padding: 38px 32px 28px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(51,255,255,0.15);
+      animation: card-in 0.4s ease;
+    }
+    @keyframes card-in {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-logo {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6c8df5, #a896f0);
+      margin: 0 auto 22px;
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-size: 26px;
+      box-shadow: 0 6px 18px rgba(108,141,245,0.35);
+    }
+
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block;
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #2c3e50;
+      margin-bottom: 7px;
+    }
+    .input-wrap { position: relative; }
+    .field input {
+      width: 100%;
+      padding: 11px 14px;
+      font-size: 0.95rem;
+      border: 1px solid #e1e5ea;
+      border-radius: 8px;
+      background: #fff;
+      color: #2c3e50;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .field input:focus {
+      border-color: #6c8df5;
+      box-shadow: 0 0 0 3px rgba(108,141,245,0.15);
+    }
+    .field input::placeholder { color: #a8b1bd; }
+
+    .toggle-pass {
+      position: absolute; right: 12px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; color: #8995a5;
+      cursor: pointer; font-size: 16px; padding: 4px;
+    }
+    .toggle-pass:hover { color: #6c8df5; }
+
+    .submit-btn {
+      width: 100%;
+      margin-top: 8px;
+      padding: 13px;
+      background: #8597e8;
+      color: #fff;
+      border: none; border-radius: 10px;
+      font-size: 1rem; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.05s;
+    }
+    .submit-btn:hover:not(:disabled)  { background: #6c8df5; }
+    .submit-btn:active:not(:disabled) { transform: scale(0.985); }
+    .submit-btn:disabled              { opacity: 0.55; cursor: not-allowed; }
+
+    .error-msg {
+      margin-top: 12px;
+      padding: 9px 12px;
+      background: #fff0f0;
+      border: 1px solid #ffc9c9;
+      color: #c53030;
+      font-size: 0.85rem;
+      border-radius: 7px;
+      display: none;
+    }
+    .error-msg.show { display: block; }
+
+    .social-row {
+      display: flex; justify-content: center; gap: 14px;
+      margin-top: 22px;
+    }
+    .social-row a {
+      width: 38px; height: 38px;
+      border-radius: 50%;
+      background: #f0f3f8;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      transition: transform 0.15s, background 0.2s;
+    }
+    .social-row a:hover { transform: translateY(-2px); background: #e6ecf5; }
+    .social-row a.tg  { color: #1c93e3; }
+    .social-row a.fb  { color: #1877F2; }
+    .social-row a.wa  { color: #25D366; }
+
+    .forgot {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      color: #6c757d;
+      font-size: 0.85rem;
+      text-decoration: none;
+    }
+    .forgot:hover { color: #6c8df5; }
+    .forgot i { margin-right: 4px; font-size: 0.78rem; }
+
+    .success-screen {
+      text-align: center; padding: 20px 0;
+    }
+    .success-screen .check {
+      width: 64px; height: 64px;
+      border-radius: 50%;
+      background: #d1f7e1;
+      color: #1aaa55;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; margin: 0 auto 14px;
+    }
+    .success-screen h2 { color: #2c3e50; margin-bottom: 8px; }
+    .success-screen p  { color: #5a6776; font-size: 0.92rem; margin-bottom: 6px; }
+    .success-screen .uid {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 18px;
+      background: #f0f3f8;
+      border-radius: 8px;
+      font-family: 'Courier New', monospace;
+      font-weight: 700;
+      color: #6c8df5;
+      letter-spacing: 2px;
+      font-size: 1.05rem;
+    }
+    .success-screen .credits {
+      margin-top: 14px;
+      color: #2c3e50;
+      font-size: 0.95rem;
+    }
+    .success-screen .credits strong {
+      color: #1aaa55; font-size: 1.15rem;
+    }
+    .logout-btn {
+      margin-top: 18px;
+      padding: 10px 24px;
+      background: transparent;
+      color: #6c757d;
+      border: 1px solid #d8dde5;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.88rem;
+    }
+    .logout-btn:hover { background: #f5f7fa; color: #2c3e50; }
+
+    @media (max-width: 480px) {
+      .login-card { padding: 30px 22px 22px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="particles-js"></div>
+
+<!-- Menú lateral igual que chocolatito.store -->
+<div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
+  </div>
+  <ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
+    <li><a href="entretenimiento.html">Entretenimiento</a></li>
+    <li><a href="contactos.html">Contactos</a></li>
+    <li><a href="juegos.html">Juegos</a></li>
+  </ul>
+  <div class="sidebar-social">
+    <a href="https://wa.me/6285640549937" target="_blank"><i class="fab fa-whatsapp" style="color:#25D366;"></i></a>
+    <a href="https://www.instagram.com/chocolatitoadm?igsh=em9ocnowajN6cWxv" target="_blank"><i class="fab fa-instagram" style="color:#E1306C;"></i></a>
+    <a href="https://www.facebook.com/share/15pPDtcREs" target="_blank"><i class="fab fa-facebook" style="color:#1877F2;"></i></a>
+  </div>
+</div>
+
+<div class="login-wrapper">
+  <div class="login-card" id="login-card">
+
+    <!-- Pantalla de login -->
+    <div id="form-view">
+      <div class="login-logo"><i class="fas fa-user"></i></div>
+
+      <form id="login-form" autocomplete="off" novalidate>
+        <div class="field">
+          <label for="username">Usuario o Correo Electrónico</label>
+          <div class="input-wrap">
+            <input type="text" id="username" name="username" placeholder="Usuario o Correo Electrónico" required />
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="password">Contraseña</label>
+          <div class="input-wrap">
+            <input type="password" id="password" name="password" placeholder="Ingrese su Contraseña" required />
+            <button type="button" class="toggle-pass" id="toggle-pass" aria-label="Mostrar contraseña">
+              <i class="fas fa-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submit-btn">Ingresar</button>
+
+        <div class="error-msg" id="error-msg"></div>
+      </form>
+
+      <div class="social-row">
+        <a href="https://t.me/" target="_blank" class="tg" aria-label="Telegram"><i class="fab fa-telegram-plane"></i></a>
+        <a href="https://www.facebook.com/share/15pPDtcREs" target="_blank" class="fb" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://wa.me/6285640549937" target="_blank" class="wa" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+      </div>
+
+      <a href="#" class="forgot" onclick="alert('Contacta al administrador por WhatsApp para recuperar tu contraseña.'); return false;">
+        <i class="fas fa-lock"></i> ¿Olvidó su contraseña?
+      </a>
+    </div>
+
+    <!-- Pantalla "ya estás dentro" -->
+    <div id="logged-view" class="success-screen" style="display:none;">
+      <div class="check"><i class="fas fa-check"></i></div>
+      <h2 id="welcome-name">¡Bienvenido!</h2>
+      <p>Tu ID de usuario es:</p>
+      <div class="uid" id="welcome-uid">--------</div>
+      <div class="credits">Créditos disponibles: <strong id="welcome-credits">0</strong></div>
+      <button class="logout-btn" onclick="logout()">Cerrar sesión</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* ═══════════════════════════════════════════════════════════
+   ⚠️  CAMBIA esta URL si tu backend cambia de dominio.
+═══════════════════════════════════════════════════════════ */
+const API_BASE = "https://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev/api";
+
+/* ───── Menú lateral ───── */
+function toggleMenu() {
+  const sidebar = document.getElementById('sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  const isOpen  = sidebar.style.left === '0px';
+  sidebar.style.left = isOpen ? '-250px' : '0px';
+  overlay.classList.toggle('open', !isOpen);
+}
+
+/* ───── Partículas ───── */
+particlesJS("particles-js", {
+  particles: {
+    number: { value: 80, density: { enable: true, value_area: 800 } },
+    color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
+    shape: { type: "circle" },
+    opacity: { value: 0.5 },
+    size: { value: 3, random: true },
+    line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+    move: { enable: true, speed: 6, out_mode: "bounce" }
+  },
+  interactivity: {
+    detect_on: "canvas",
+    events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+    modes: { repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 } }
+  },
+  retina_detect: true
+});
+
+/* ───── Mostrar / ocultar contraseña ───── */
+const passInput = document.getElementById('password');
+document.getElementById('toggle-pass').addEventListener('click', () => {
+  const isPwd = passInput.type === 'password';
+  passInput.type = isPwd ? 'text' : 'password';
+  document.querySelector('#toggle-pass i').className = isPwd ? 'fas fa-eye-slash' : 'fas fa-eye';
+});
+
+/* ───── Errores ───── */
+function showError(msg) {
+  const el = document.getElementById('error-msg');
+  el.textContent = msg;
+  el.classList.add('show');
+}
+function clearError() {
+  document.getElementById('error-msg').classList.remove('show');
+}
+
+/* ───── Mostrar pantalla de bienvenida ───── */
+function showWelcome(user) {
+  document.getElementById('form-view').style.display   = 'none';
+  document.getElementById('logged-view').style.display = 'block';
+  document.getElementById('welcome-name').textContent  = '¡Bienvenido, ' + user.username + '!';
+  document.getElementById('welcome-uid').textContent   = user.id;
+  document.getElementById('welcome-credits').textContent = user.credits;
+}
+
+/* ───── Logout ───── */
+function logout() {
+  localStorage.removeItem('cw_token');
+  localStorage.removeItem('cw_user');
+  document.getElementById('form-view').style.display   = 'block';
+  document.getElementById('logged-view').style.display = 'none';
+  document.getElementById('login-form').reset();
+}
+
+/* ───── Si ya hay sesión guardada, refrescar y mostrar ───── */
+async function checkSession() {
+  const token = localStorage.getItem('cw_token');
+  if (!token) return;
+  try {
+    const res = await fetch(API_BASE + '/auth/me', {
+      headers: { Authorization: 'Bearer ' + token }
+    });
+    if (!res.ok) { logout(); return; }
+    const data = await res.json();
+    localStorage.setItem('cw_user', JSON.stringify(data.user));
+    showWelcome(data.user);
+  } catch { /* offline, ignore */ }
+}
+checkSession();
+
+/* ───── Submit ───── */
+document.getElementById('login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  clearError();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  if (!username || !password) { showError('Completa todos los campos.'); return; }
+
+  const btn = document.getElementById('submit-btn');
+  btn.disabled = true;
+  btn.textContent = 'Ingresando...';
+
+  try {
+    const res = await fetch(API_BASE + '/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username, password })
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      showError(data.error || 'No se pudo iniciar sesión.');
+      return;
+    }
+    localStorage.setItem('cw_token', data.token);
+    localStorage.setItem('cw_user', JSON.stringify(data.user));
+    showWelcome(data.user);
+  } catch {
+    showError('No se pudo conectar con el servidor.');
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Ingresar';
+  }
+});
+</script>
+</body>
+  </html>
+  
