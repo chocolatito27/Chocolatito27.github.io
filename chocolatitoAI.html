@@ -20,6 +20,16 @@
 
   <!-- Estilos propios -->
   <link rel="stylesheet" href="chocolatitoAI.css" />
+
+  <!-- Protección inmediata: oculta el body hasta verificar sesión -->
+  <script>
+    (function () {
+      if (!localStorage.getItem("cw_token")) {
+        document.documentElement.style.visibility = "hidden";
+        window.location.replace("login.html");
+      }
+    })();
+  </script>
 </head>
 <body>
 
