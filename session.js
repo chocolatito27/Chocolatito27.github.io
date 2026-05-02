@@ -1,31 +1,13 @@
-/**
- * session.js — Incluye este archivo en TODAS las páginas de chocolatito.store
- *
- * Uso básico (solo mostrar widget):
- *   <script src="session.js"></script>
- *
- * Para proteger una página (redirige a login si no hay sesión):
- *   <script>const CW_PROTECTED = true;</script>
- *   <script src="session.js"></script>
- *
- * ¡NUEVO! También registra el Service Worker que protege
- * automáticamente todas las páginas privadas sin tocar su HTML.
- */
 (function () {
   "use strict";
 
   const API_BASE  = "https://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev/api";
   const LOGIN_PAGE = "login.html";
 
-  /* ══════════════════════════════════════════════════════════════
-     SERVICE WORKER — se registra en todas las páginas
-     Una vez instalado, protege el sitio entero sin tocar cada HTML
-  ══════════════════════════════════════════════════════════════ */
   if ("serviceWorker" in navigator) {
     navigator.serviceWorker.register("/sw.js", { scope: "/" }).catch(() => {});
   }
 
-  /* ── Notificar al SW cuando hay sesión activa ─────────────────── */
   function swMessage(msg) {
     if (!("serviceWorker" in navigator)) return;
     navigator.serviceWorker.ready.then(reg => {
@@ -33,7 +15,6 @@
     }).catch(() => {});
   }
 
-  /* ── Leer sesión guardada ─────────────────────────────────────── */
   function getToken() { return localStorage.getItem("cw_token"); }
   function getUser()  {
     try { return JSON.parse(localStorage.getItem("cw_user") || "null"); }
@@ -45,30 +26,21 @@
     swMessage("CW_LOGOUT");
   }
 
-  /* ── Si la página está protegida y no hay sesión → login ──────── */
   const isProtected = (typeof window.CW_PROTECTED !== "undefined" && window.CW_PROTECTED);
   if (isProtected && !getToken()) {
-    sessionStorage.setItem("cw_redirect", window.location.href);
     window.location.replace(LOGIN_PAGE);
     return;
   }
 
-  /* ── Si hay sesión, avisar al SW para que la reconozca ─────────── */
   if (getToken()) swMessage("CW_LOGIN");
 
-  /* ══════════════════════════════════════════════════════════════
-     WIDGET DE USUARIO
-  ══════════════════════════════════════════════════════════════ */
   const STYLE = `
     #cw-widget {
-      position: fixed;
-      top: 14px; right: 16px;
-      z-index: 2000;
+      position: fixed; top: 14px; right: 16px; z-index: 2000;
       display: flex; align-items: center; gap: 8px;
       background: rgba(0,0,0,0.78);
       border: 1px solid rgba(51,255,255,0.35);
-      border-radius: 999px;
-      padding: 5px 12px 5px 8px;
+      border-radius: 999px; padding: 5px 12px 5px 8px;
       font-family: 'Segoe UI', Arial, sans-serif;
       font-size: 0.8rem; color: #fff;
       backdrop-filter: blur(6px);
@@ -96,7 +68,6 @@
       font-size: 13px; padding: 0 0 0 4px; transition: color 0.2s;
     }
     #cw-widget .cw-logout:hover { color: #ff5470; }
-
     #cw-login-btn {
       position: fixed; top: 14px; right: 16px; z-index: 2000;
       background: rgba(0,0,0,0.75);
@@ -125,23 +96,46 @@
   function renderWidget(user) {
     document.getElementById("cw-widget")?.remove();
     document.getElementById("cw-login-btn")?.remove();
+
     const div = document.createElement("div");
     div.id = "cw-widget";
     div.innerHTML = `
       <div class="cw-avatar">${(user.username || "?")[0].toUpperCase()}</div>
       <div class="cw-info">
         <div class="cw-name">${escHtml(user.username)}</div>
-        <div class="cw-meta">ID: ${escHtml(user.id)} &nbsp;·&nbsp; Créditos: <span>${user.credits}</span></div>
+        <div class="cw-meta">ID: ${escHtml(user.id)} &nbsp;&middot;&nbsp; Cr&eacute;ditos: <span>${user.credits}</span></div>
       </div>
-      <button class="cw-logout" title="Cerrar sesión">&#10005;</button>
+      <button class="cw-logout" title="Cerrar sesi&oacute;n">&#10005;</button>
     `;
     div.querySelector(".cw-logout").addEventListener("click", () => {
-      if (confirm("¿Cerrar sesión?")) {
-        clearSession();
-        window.location.href = LOGIN_PAGE;
-      }
+      if (confirm("¿Cerrar sesión?")) { clearSession(); window.location.href = LOGIN_PAGE; }
     });
     document.body.appendChild(div);
+
+    const sidebar = document.querySelector(".sidebar");
+    if (sidebar) {
+      document.getElementById("cw-sidebar-user")?.remove();
+      const sec = document.createElement("div");
+      sec.id = "cw-sidebar-user";
+      sec.innerHTML = `
+        <div style="padding:14px 20px 10px;border-bottom:1px solid rgba(255,255,255,0.12);">
+          <div style="color:#33FFFF;font-weight:700;font-size:1rem;">${escHtml(user.username)}</div>
+          <div style="color:rgba(255,255,255,0.5);font-size:0.78rem;margin-top:3px;">ID: ${escHtml(user.id)}</div>
+        </div>
+        <div style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.12);">
+          <button id="cw-sidebar-logout" style="background:none;border:none;color:#ff5470;cursor:pointer;font-size:0.9rem;padding:0;display:flex;align-items:center;gap:6px;">
+            &#8594; Cerrar sesi&oacute;n
+          </button>
+        </div>
+      `;
+      const header = sidebar.querySelector(".sidebar-header");
+      if (header) header.after(sec);
+      else sidebar.prepend(sec);
+
+      document.getElementById("cw-sidebar-logout").addEventListener("click", () => {
+        if (confirm("¿Cerrar sesión?")) { clearSession(); window.location.href = LOGIN_PAGE; }
+      });
+    }
   }
 
   function renderLoginButton() {
@@ -167,12 +161,6 @@
       const data = await res.json();
       localStorage.setItem("cw_user", JSON.stringify(data.user));
       renderWidget(data.user);
-
-      const redirect = sessionStorage.getItem("cw_redirect");
-      if (redirect && window.location.pathname.endsWith(LOGIN_PAGE)) {
-        sessionStorage.removeItem("cw_redirect");
-        window.location.replace(redirect);
-      }
     } catch {
       const cached = getUser();
       if (cached) renderWidget(cached);
@@ -180,7 +168,6 @@
     }
   }
 
-  /* ── Arranque ─────────────────────────────────────────────────── */
   const token = getToken();
   if (token) {
     const cached = getUser();
