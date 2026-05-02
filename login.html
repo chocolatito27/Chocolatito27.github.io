@@ -180,9 +180,9 @@ async function checkSession() {
     swMessage('CW_LOGIN');
     showWelcome(data.user);
 
-    // Si vino redirigido desde otra página, volver a ella
+    // Redirigir: a la página original si vino redirigido, o al chat por defecto
     const next = new URLSearchParams(window.location.search).get('next');
-    if (next) window.location.replace(next);
+    window.location.replace(next || 'index.html');
   } catch {}
 }
 checkSession();
@@ -220,11 +220,9 @@ document.getElementById('login-form').addEventListener('submit', async e => {
     // Avisar al Service Worker que ya hay sesión
     swMessage('CW_LOGIN');
 
-    // Si vino redirigido, volver a la página original
+    // Redirigir: a la página original si vino redirigido, o al chat por defecto
     const next = new URLSearchParams(window.location.search).get('next');
-    if (next) { window.location.replace(next); return; }
-
-    showWelcome(data.user);
+    window.location.replace(next || 'index.html');
   } catch {
     document.getElementById('error-msg').textContent = 'No se pudo conectar con el servidor.';
     document.getElementById('error-msg').classList.add('show');
