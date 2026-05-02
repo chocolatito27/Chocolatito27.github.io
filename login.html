@@ -14,21 +14,6 @@
     }
     #particles-js { position: fixed; inset: 0; z-index: 0; background: #000; }
 
-    /* ── Menú lateral ── */
-    .menu-icon { position: fixed; top: 20px; left: 20px; font-size: 30px; color: #fff; cursor: pointer; z-index: 1100; line-height: 1; user-select: none; }
-    .sidebar { position: fixed; top: 0; left: -250px; width: 250px; height: 100%; background: rgba(51,51,51,0.95); transition: left 0.3s ease; z-index: 1050; display: flex; flex-direction: column; }
-    .sidebar-header { padding: 20px; background: rgba(34,34,34,0.95); color: #fff; text-align: right; }
-    .back-arrow { cursor: pointer; font-size: 24px; user-select: none; }
-    .sidebar ul { list-style: none; padding: 0; margin: 0; flex: 1; }
-    .sidebar ul li { padding: 15px 20px; border-bottom: 1px solid rgba(255,255,255,0.1); }
-    .sidebar ul li a { color: #fff; text-decoration: none; font-size: 18px; display: block; transition: color 0.2s; }
-    .sidebar ul li a:hover { color: #33FFFF; }
-    .sidebar-social { display: flex; gap: 18px; padding: 18px 20px; border-top: 1px solid rgba(255,255,255,0.1); }
-    .sidebar-social a { font-size: 22px; transition: opacity 0.2s; }
-    .sidebar-social a:hover { opacity: 0.75; }
-    .sidebar-overlay { display: none; position: fixed; inset: 0; z-index: 1040; }
-    .sidebar-overlay.open { display: block; }
-
     /* ── Tarjeta login ── */
     .login-wrapper { position: relative; z-index: 1; min-height: 100dvh; display: flex; align-items: center; justify-content: center; padding: 20px; }
     .login-card { width: 100%; max-width: 400px; background: #fff; color: #2c3e50; border-radius: 18px; padding: 38px 32px 28px; box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(51,255,255,0.15); animation: card-in 0.4s ease; }
@@ -75,25 +60,6 @@
 <body>
 
 <div id="particles-js"></div>
-
-<div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMenu()"></div>
-<div class="sidebar" id="sidebar">
-  <div class="sidebar-header">
-    <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
-  </div>
-  <ul>
-    <li><a href="index.html">Inicio</a></li>
-    <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
-    <li><a href="entretenimiento.html">Entretenimiento</a></li>
-    <li><a href="juegos.html">Juegos</a></li>
-  </ul>
-  <div class="sidebar-social">
-    <a href="https://wa.me/6285640549937" target="_blank"><i class="fab fa-whatsapp" style="color:#25D366;"></i></a>
-    <a href="https://www.instagram.com/chocolatitoadm?igsh=em9ocnowajN6cWxv" target="_blank"><i class="fab fa-instagram" style="color:#E1306C;"></i></a>
-    <a href="https://www.facebook.com/share/15pPDtcREs" target="_blank"><i class="fab fa-facebook" style="color:#1877F2;"></i></a>
-  </div>
-</div>
 
 <div class="login-wrapper">
   <div class="login-card" id="login-card">
@@ -155,15 +121,6 @@ function swMessage(msg) {
   navigator.serviceWorker.ready.then(reg => {
     if (reg.active) reg.active.postMessage(msg);
   }).catch(() => {});
-}
-
-/* ── Menú ─────────────────────────────────────────────────────── */
-function toggleMenu() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('sidebarOverlay');
-  const isOpen  = sidebar.style.left === '0px';
-  sidebar.style.left = isOpen ? '-250px' : '0px';
-  overlay.classList.toggle('open', !isOpen);
 }
 
 /* ── Partículas ───────────────────────────────────────────────── */
@@ -278,4 +235,3 @@ document.getElementById('login-form').addEventListener('submit', async e => {
 </script>
 </body>
 </html>
-
