@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoxelWorld — ChocolatitoWeb</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#1a1a2e;font-family:'Segoe UI',Arial,sans-serif;overflow:hidden;color:#fff;user-select:none}
+
+/* ── SCREENS ── */
+#screen{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#0f0c29,#302b63,#24243e);z-index:100}
+.card{background:rgba(255,255,255,0.05);backdrop-filter:blur(12px);border:1px solid rgba(255,255,255,0.1);border-radius:20px;padding:36px 32px;max-width:420px;width:92%;text-align:center}
+.card h1{font-size:2.2rem;font-weight:900;background:linear-gradient(90deg,#00f5d4,#7b2ff7);-webkit-background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:6px}
+.card p{color:rgba(255,255,255,0.5);margin-bottom:24px;font-size:0.9rem}
+.btn{width:100%;padding:13px;margin:6px 0;border-radius:10px;border:none;cursor:pointer;font-size:0.95rem;font-weight:700;transition:all 0.2s;letter-spacing:0.5px}
+.btn-primary{background:linear-gradient(90deg,#00f5d4,#7b2ff7);color:#fff}
+.btn-primary:hover{opacity:0.85;transform:translateY(-1px)}
+.btn-secondary{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.8);border:1px solid rgba(255,255,255,0.15)}
+.btn-secondary:hover{background:rgba(255,255,255,0.14)}
+.inp{width:100%;padding:12px 16px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-size:0.95rem;margin:5px 0;outline:none;text-align:center;transition:border-color 0.2s}
+.inp:focus{border-color:#00f5d4}
+.code-inp{letter-spacing:8px;text-transform:uppercase;font-size:1.1rem;font-weight:700}
+.divider{display:flex;align-items:center;gap:10px;margin:10px 0;color:rgba(255,255,255,0.3);font-size:0.8rem}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:rgba(255,255,255,0.1)}
+.err{color:#ff5470;font-size:0.82rem;margin:4px 0;min-height:18px}
+
+/* ── GAME ── */
+#canvas{display:none;position:fixed;inset:0;cursor:none}
+#crosshair{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;display:none;width:24px;height:24px}
+#crosshair::before{content:'';position:absolute;width:2px;height:100%;left:11px;background:rgba(255,255,255,0.9)}
+#crosshair::after{content:'';position:absolute;height:2px;width:100%;top:11px;background:rgba(255,255,255,0.9)}
+
+/* ── HUD ── */
+#hud{position:fixed;bottom:0;left:0;right:0;display:none;flex-direction:column;align-items:center;padding-bottom:14px;pointer-events:none}
+#hotbar{display:flex;gap:4px}
+.hslot{width:54px;height:54px;border:2px solid rgba(255,255,255,0.25);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:2px;background:rgba(0,0,0,0.55);font-size:0.6rem;color:rgba(255,255,255,0.6);position:relative}
+.hslot.sel{border-color:#fff;background:rgba(255,255,255,0.18)}
+.hslot .sw{width:30px;height:30px;border-radius:5px;border:1px solid rgba(255,255,255,0.2)}
+.hslot .num{position:absolute;top:2px;left:5px;font-size:0.6rem;color:rgba(255,255,255,0.45)}
+
+#info{position:fixed;top:12px;left:12px;font-size:0.72rem;color:rgba(255,255,255,0.65);display:none;line-height:2;pointer-events:none;text-shadow:1px 1px 3px #000}
+#badge{position:fixed;top:12px;right:12px;background:rgba(0,0,0,0.65);border:1px solid rgba(0,245,212,0.3);border-radius:10px;padding:9px 16px;display:none;font-size:0.78rem;line-height:1.7;text-align:right}
+#badge .rc{color:#00f5d4;font-weight:900;letter-spacing:3px;font-size:1rem;font-family:monospace}
+#badge .cp{color:rgba(255,255,255,0.5)}
+
+/* ── CHAT ── */
+#chatbox{position:fixed;bottom:82px;left:16px;width:340px;display:none;pointer-events:none}
+#chatlog{height:130px;overflow-y:auto;padding:4px}
+#chatlog::-webkit-scrollbar{width:3px}
+#chatlog::-webkit-scrollbar-thumb{background:rgba(255,255,255,0.2);border-radius:2px}
+.cmsg{font-size:0.8rem;padding:2px 0;text-shadow:1px 1px 3px #000;line-height:1.5}
+.cmsg .cn{color:#00f5d4;font-weight:700}
+.cmsg.sys{color:rgba(255,255,255,0.45);font-style:italic}
+#chatinp-wrap{display:none;pointer-events:all}
+#chatinp{width:100%;padding:9px 14px;background:rgba(0,0,0,0.8);border:1px solid rgba(0,245,212,0.4);border-radius:8px;color:#fff;font-size:0.85rem;outline:none}
+
+/* ── HINT ── */
+#hint{position:fixed;bottom:82px;right:16px;font-size:0.68rem;color:rgba(255,255,255,0.35);display:none;line-height:2.2;text-align:right;pointer-events:none;text-shadow:1px 1px 2px #000}
+
+/* ── PAUSE ── */
+#pause{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;z-index:50}
+#pause .card{max-width:320px}
+#pause .card h2{font-size:1.6rem;color:#00f5d4;margin-bottom:8px}
+#pause .card .rc2{font-size:1.4rem;letter-spacing:5px;color:#fff;font-family:monospace;font-weight:900;margin-bottom:20px}
+
+/* ── LOADING ── */
+#loading{position:fixed;inset:0;background:#0f0c29;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;z-index:200}
+#loading p{color:rgba(255,255,255,0.6)}
+.spinner{width:48px;height:48px;border:4px solid rgba(255,255,255,0.1);border-top-color:#00f5d4;border-radius:50%;animation:spin 0.8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+
+<!-- SCREENS -->
+<div id="screen">
+  <div class="card" id="smain">
+    <h1>🌍 VoxelWorld</h1>
+    <p>Mundo de bloques multijugador — ChocolatitoWeb</p>
+    <button class="btn btn-primary" onclick="showCreate()">Crear nueva sala</button>
+    <div class="divider">o</div>
+    <button class="btn btn-secondary" onclick="showJoin()">Unirse a sala existente</button>
+  </div>
+  <div class="card" id="screate" style="display:none">
+    <h1>Nueva Sala</h1>
+    <p>Comparte el código de sala con tus amigos</p>
+    <input class="inp" id="cu" placeholder="Tu nombre de usuario" maxlength="16"/>
+    <div class="err" id="cerr"></div>
+    <button class="btn btn-primary" onclick="doCreate()">Crear y entrar</button>
+    <button class="btn btn-secondary" onclick="showMain()">← Volver</button>
+  </div>
+  <div class="card" id="sjoin" style="display:none">
+    <h1>Unirse a Sala</h1>
+    <p>Ingresa el código que te compartieron</p>
+    <input class="inp" id="ju" placeholder="Tu nombre de usuario" maxlength="16"/>
+    <input class="inp code-inp" id="jc" placeholder="CÓDIGO" maxlength="6"/>
+    <div class="err" id="jerr"></div>
+    <button class="btn btn-primary" onclick="doJoin()">Entrar</button>
+    <button class="btn btn-secondary" onclick="showMain()">← Volver</button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div id="loading">
+  <div class="spinner"></div>
+  <p id="lstatus">Conectando al servidor...</p>
+</div>
+
+<!-- GAME -->
+<canvas id="canvas"></canvas>
+<div id="crosshair"></div>
+
+<div id="hud"><div id="hotbar"></div></div>
+<div id="info"></div>
+<div id="badge"><div class="rc" id="rcdisp">------</div><div class="cp">Jugadores: <span id="pcount">1</span></div></div>
+
+<div id="chatbox">
+  <div id="chatlog"></div>
+  <div id="chatinp-wrap"><input id="chatinp" type="text" placeholder="Escribe un mensaje… (Enter)" maxlength="100"/></div>
+</div>
+
+<div id="hint">WASD — Mover<br>Espacio — Saltar<br>Click izq. — Romper bloque<br>Click der. — Colocar bloque<br>1-6 — Selec. bloque<br>Rueda — Cambiar bloque<br>T — Chat &nbsp; Esc — Pausa</div>
+
+<div id="pause">
+  <div class="card">
+    <h2>Pausa</h2>
+    <div class="rc2" id="prc">------</div>
+    <button class="btn btn-primary" onclick="resume()">Continuar</button>
+    <button class="btn btn-secondary" onclick="location.reload()">Salir al menú</button>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script>
+// ══════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════
+const WS_URL = 'wss://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev/api/game/ws';
+const W = 64, H = 16, D = 64;
+const GRAVITY = -24, JUMP = 9, SPEED = 6, REACH = 7, PH = 1.8;
+
+// ══════════════════════════════════════════
+// BLOCK DEFINITIONS
+// ══════════════════════════════════════════
+const BNAME = ['','Pasto','Tierra','Piedra','Madera','Hojas','Arena','Cristal'];
+const BCOL = [
+  null,
+  {t:[0.29,0.68,0.30],s:[0.52,0.38,0.14],b:[0.52,0.38,0.14]}, // grass
+  {t:[0.52,0.38,0.14],s:[0.52,0.38,0.14],b:[0.52,0.38,0.14]}, // dirt
+  {t:[0.50,0.50,0.51],s:[0.47,0.47,0.48],b:[0.50,0.50,0.51]}, // stone
+  {t:[0.60,0.46,0.24],s:[0.43,0.28,0.12],b:[0.60,0.46,0.24]}, // wood
+  {t:[0.20,0.54,0.22],s:[0.20,0.54,0.22],b:[0.20,0.54,0.22]}, // leaves
+  {t:[0.84,0.72,0.52],s:[0.84,0.72,0.52],b:[0.84,0.72,0.52]}, // sand
+  {t:[0.65,0.85,0.95],s:[0.65,0.85,0.95],b:[0.65,0.85,0.95]}, // glass
+];
+const HCOL = ['','#4CAF50','#8B6914','#808080','#6B4226','#2D7D32','#D4B483','#ADD8E6'];
+
+function bCol(type, face) {
+  const b = BCOL[type]; if (!b) return [1,1,1];
+  if (face==='t') return b.t; if (face==='b') return b.b; return b.s;
+}
+
+// ══════════════════════════════════════════
+// WORLD
+// ══════════════════════════════════════════
+const world = new Uint8Array(W * H * D);
+function wi(x,y,z){return x + W*(y + H*z);}
+function gb(x,y,z){if(x<0||x>=W||y<0||y>=H||z<0||z>=D)return 1;return world[wi(x,y,z)];}
+function sb(x,y,z,t){if(x<0||x>=W||y<0||y>=H||z<0||z>=D)return;world[wi(x,y,z)]=t;}
+
+function noise2(x,z,s){const n=Math.sin(x*127.1+z*311.7+s*74.2)*43758.5453;return n-Math.floor(n);}
+function smn(x,z,sc,s){
+  const ix=Math.floor(x/sc),iz=Math.floor(z/sc),fx=(x/sc)-ix,fz=(z/sc)-iz;
+  const ux=fx*fx*(3-2*fx),uz=fz*fz*(3-2*fz);
+  return noise2(ix,iz,s)*(1-ux)*(1-uz)+noise2(ix+1,iz,s)*ux*(1-uz)+noise2(ix,iz+1,s)*(1-ux)*uz+noise2(ix+1,iz+1,s)*ux*uz;
+}
+function terrHeight(x,z,seed){return Math.floor(3+smn(x,z,14,seed)*5+smn(x,z,7,seed+1)*2.5+smn(x,z,3,seed+2)*1);}
+
+function generateTerrain(seed) {
+  world.fill(0);
+  for(let x=0;x<W;x++) for(let z=0;z<D;z++){
+    const h=Math.min(terrHeight(x,z,seed),H-3);
+    const isSand=h<=3;
+    for(let y=0;y<=h;y++){
+      if(isSand) sb(x,y,z,6);
+      else if(y<h-2) sb(x,y,z,3);
+      else if(y<h) sb(x,y,z,2);
+      else sb(x,y,z,1);
+    }
+    // Trees (not on sand)
+    if(!isSand && h>4 && noise2(x*3.7,z*2.9,seed+5)>0.91 && x>2&&x<W-3&&z>2&&z<D-3){
+      const th=3+Math.floor(noise2(x*1.1,z*1.3,seed+3)*2);
+      for(let ty=1;ty<=th;ty++) if(h+ty<H) sb(x,h+ty,z,4);
+      for(let lx=-2;lx<=2;lx++) for(let lz=-2;lz<=2;lz++) for(let ly=th-1;ly<=th+1;ly++){
+        if(Math.abs(lx)+Math.abs(lz)<=3&&h+ly<H&&gb(x+lx,h+ly,z+lz)===0) sb(x+lx,h+ly,z+lz,5);
+      }
+    }
+  }
+}
+
+// ══════════════════════════════════════════
+// THREE.JS
+// ══════════════════════════════════════════
+let scene,camera,renderer,wMesh,highlight,clock;
+let needsRebuild=true;
+
+const FACES=[
+  {d:[0,1,0],c:[[0,1,1],[1,1,1],[1,1,0],[0,1,0]],f:'t'},
+  {d:[0,-1,0],c:[[1,0,1],[0,0,1],[0,0,0],[1,0,0]],f:'b'},
+  {d:[0,0,1],c:[[1,0,1],[0,0,1],[0,1,1],[1,1,1]],f:'s'},
+  {d:[0,0,-1],c:[[0,0,0],[1,0,0],[1,1,0],[0,1,0]],f:'s'},
+  {d:[1,0,0],c:[[1,0,0],[1,0,1],[1,1,1],[1,1,0]],f:'s'},
+  {d:[-1,0,0],c:[[0,0,1],[0,0,0],[0,1,0],[0,1,1]],f:'s'},
+];
+
+function initThree(){
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0x87ceeb);
+  scene.fog=new THREE.Fog(0x87ceeb,28,70);
+
+  camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.05,150);
+
+  renderer=new THREE.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:false});
+  renderer.setSize(innerWidth,innerHeight);
+  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+
+  clock=new THREE.Clock();
+
+  const amb=new THREE.AmbientLight(0xffffff,0.55);
+  scene.add(amb);
+  const sun=new THREE.DirectionalLight(0xffd070,0.9);
+  sun.position.set(50,80,30);
+  scene.add(sun);
+  const fill=new THREE.DirectionalLight(0x8080ff,0.2);
+  fill.position.set(-30,20,-30);
+  scene.add(fill);
+
+  const hg=new THREE.BoxGeometry(1.005,1.005,1.005);
+  const hm=new THREE.MeshBasicMaterial({color:0xffffff,wireframe:true,transparent:true,opacity:0.35});
+  highlight=new THREE.Mesh(hg,hm);
+  highlight.visible=false;
+  scene.add(highlight);
+
+  window.addEventListener('resize',()=>{
+    camera.aspect=innerWidth/innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+  });
+}
+
+function buildWorld(){
+  if(wMesh){scene.remove(wMesh);wMesh.geometry.dispose();}
+  const pos=[],col=[],nor=[],idx=[];
+  let vi=0;
+  for(let x=0;x<W;x++) for(let y=0;y<H;y++) for(let z=0;z<D;z++){
+    const bt=gb(x,y,z); if(!bt) continue;
+    const shade=0.78+y/H*0.22;
+    for(const f of FACES){
+      if(gb(x+f.d[0],y+f.d[1],z+f.d[2])!==0) continue;
+      const c=bCol(bt,f.f);
+      for(const [cx,cy,cz] of f.c){
+        pos.push(x+cx,y+cy,z+cz);
+        col.push(c[0]*shade,c[1]*shade,c[2]*shade);
+        nor.push(...f.d);
+      }
+      idx.push(vi,vi+1,vi+2,vi,vi+2,vi+3);
+      vi+=4;
+    }
+  }
+  const g=new THREE.BufferGeometry();
+  g.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  g.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  g.setAttribute('normal',new THREE.Float32BufferAttribute(nor,3));
+  g.setIndex(idx);
+  wMesh=new THREE.Mesh(g,new THREE.MeshLambertMaterial({vertexColors:true}));
+  scene.add(wMesh);
+  needsRebuild=false;
+}
+
+// ══════════════════════════════════════════
+// CONTROLS
+// ══════════════════════════════════════════
+const keys={};
+let velY=0,onGround=false,locked=false,yaw=0,pitch=0,selBlock=1,gameOn=false,chatOpen=false;
+let tgtBlock=null,tgtFace=null;
+
+document.addEventListener('keydown',e=>{
+  keys[e.code]=true;
+  if(!gameOn) return;
+  if(e.code==='KeyT'&&locked&&!chatOpen){openChat();e.preventDefault();}
+  const n=parseInt(e.key);
+  if(n>=1&&n<=7){selBlock=n;updateHotbar();}
+});
+document.addEventListener('keyup',e=>{keys[e.code]=false;});
+document.addEventListener('mousemove',e=>{
+  if(!locked) return;
+  yaw-=e.movementX*0.0022;
+  pitch=Math.max(-Math.PI/2+0.01,Math.min(Math.PI/2-0.01,pitch-e.movementY*0.0022));
+});
+document.addEventListener('mousedown',e=>{
+  if(!locked) return;
+  if(e.button===0) breakBlock();
+  if(e.button===2) placeBlock();
+});
+document.addEventListener('contextmenu',e=>e.preventDefault());
+document.addEventListener('wheel',e=>{
+  if(!locked) return;
+  selBlock+=e.deltaY>0?1:-1;
+  if(selBlock<1)selBlock=7;
+  if(selBlock>7)selBlock=1;
+  updateHotbar();
+},{passive:true});
+document.getElementById('canvas').addEventListener('click',()=>{
+  if(!locked&&gameOn) document.getElementById('canvas').requestPointerLock();
+});
+document.addEventListener('pointerlockchange',()=>{
+  locked=!!document.pointerLockElement;
+  if(gameOn) document.getElementById('pause').style.display=locked?'none':'flex';
+});
+
+function resume(){document.getElementById('canvas').requestPointerLock();}
+
+// ══════════════════════════════════════════
+// PHYSICS
+// ══════════════════════════════════════════
+function collides(px,py,pz){
+  const hw=0.3,foot=py;
+  for(let dx=-1;dx<=1;dx++) for(let dy=0;dy<=2;dy++) for(let dz=-1;dz<=1;dz++){
+    const bx=Math.floor(px+dx*hw*0.9),by=Math.floor(foot+dy*0.6),bz=Math.floor(pz+dz*hw*0.9);
+    if(gb(bx,by,bz)!==0){
+      if(px+hw>bx&&px-hw<bx+1&&foot>by-0.01&&foot<by+1+PH&&pz+hw>bz&&pz-hw<bz+1) return true;
+    }
+  }
+  return false;
+}
+
+function updatePhysics(dt){
+  if(!locked||chatOpen) return;
+  const fwd=new THREE.Vector3(-Math.sin(yaw),0,-Math.cos(yaw));
+  const rgt=new THREE.Vector3(Math.cos(yaw),0,-Math.sin(yaw));
+  const mv=new THREE.Vector3();
+  if(keys['KeyW']||keys['ArrowUp']) mv.add(fwd);
+  if(keys['KeyS']||keys['ArrowDown']) mv.sub(fwd);
+  if(keys['KeyA']||keys['ArrowLeft']) mv.sub(rgt);
+  if(keys['KeyD']||keys['ArrowRight']) mv.add(rgt);
+  if(mv.length()>0) mv.normalize().multiplyScalar(SPEED*dt);
+  if((keys['Space']||keys['KeyE'])&&onGround){velY=JUMP;onGround=false;}
+  velY+=GRAVITY*dt;
+  const p=camera.position;
+  const foot=p.y-PH;
+  const nx=p.x+mv.x;
+  if(!collides(nx,foot,p.z)) p.x=nx;
+  const nz=p.z+mv.z;
+  if(!collides(p.x,foot,nz)) p.z=nz;
+  const nf=foot+velY*dt;
+  if(!collides(p.x,nf,p.z)){p.y=nf+PH;onGround=false;}
+  else{if(velY<0)onGround=true;velY=0;}
+  camera.quaternion.setFromEuler(new THREE.Euler(pitch,yaw,0,'YXZ'));
+  p.x=Math.max(0.5,Math.min(W-0.5,p.x));
+  p.z=Math.max(0.5,Math.min(D-0.5,p.z));
+}
+
+// ══════════════════════════════════════════
+// RAYCAST
+// ══════════════════════════════════════════
+function castRay(){
+  const dir=new THREE.Vector3(0,0,-1).applyQuaternion(camera.quaternion);
+  let px=camera.position.x,py=camera.position.y,pz=camera.position.z;
+  let lx=-1,ly=-1,lz=-1;
+  const step=0.04;
+  for(let i=0;i<REACH/step;i++){
+    const bx=Math.floor(px),by=Math.floor(py),bz=Math.floor(pz);
+    if(gb(bx,by,bz)!==0){
+      tgtBlock={x:bx,y:by,z:bz};
+      tgtFace={x:lx,y:ly,z:lz};
+      highlight.position.set(bx+0.5,by+0.5,bz+0.5);
+      highlight.visible=true;
+      return;
+    }
+    lx=bx;ly=by;lz=bz;
+    px+=dir.x*step;py+=dir.y*step;pz+=dir.z*step;
+  }
+  tgtBlock=null;highlight.visible=false;
+}
+
+function breakBlock(){
+  if(!tgtBlock) return;
+  const{x,y,z}=tgtBlock;
+  sb(x,y,z,0);needsRebuild=true;
+  sendBlock(x,y,z,0);
+}
+function placeBlock(){
+  if(!tgtFace||tgtFace.x<0) return;
+  const{x,y,z}=tgtFace;
+  if(x<0||x>=W||y<0||y>=H||z<0||z>=D) return;
+  const p=camera.position;
+  if(Math.abs(x+0.5-p.x)<0.6&&y>=p.y-PH-0.1&&y<p.y+0.1&&Math.abs(z+0.5-p.z)<0.6) return;
+  sb(x,y,z,selBlock);needsRebuild=true;
+  sendBlock(x,y,z,selBlock);
+}
+
+// ══════════════════════════════════════════
+// REMOTE PLAYERS
+// ══════════════════════════════════════════
+const rPlayers=new Map();
+const PCOLORS=[0x6c8df5,0xff5470,0xffb300,0x00e5ff,0x69f0ae,0xff6d00,0xec407a,0x26c6da];
+
+function addRP(id,uname,idx){
+  const geo=new THREE.Group();
+  // Body
+  const body=new THREE.Mesh(new THREE.BoxGeometry(0.7,0.9,0.4),new THREE.MeshLambertMaterial({color:PCOLORS[idx%PCOLORS.length]}));
+  body.position.y=0.45;
+  geo.add(body);
+  // Head
+  const head=new THREE.Mesh(new THREE.BoxGeometry(0.6,0.6,0.6),new THREE.MeshLambertMaterial({color:0xffcc99}));
+  head.position.y=1.2;
+  geo.add(head);
+  // Name tag
+  const c=document.createElement('canvas');c.width=256;c.height=56;
+  const ctx=c.getContext('2d');
+  ctx.fillStyle='rgba(0,0,0,0.6)';ctx.roundRect(2,2,252,52,8);ctx.fill();
+  ctx.fillStyle='#00f5d4';ctx.font='bold 28px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillText(uname.substring(0,14),128,28);
+  const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(c)}));
+  sp.scale.set(2.2,0.48,1);sp.position.y=2;
+  geo.add(sp);
+  scene.add(geo);
+  rPlayers.set(id,{g:geo,u:uname});
+}
+function moveRP(id,x,y,z,ry){
+  const p=rPlayers.get(id);if(!p) return;
+  p.g.position.set(x,y-PH,z);p.g.rotation.y=ry;
+}
+function removeRP(id){
+  const p=rPlayers.get(id);if(!p) return;
+  scene.remove(p.g);rPlayers.delete(id);
+}
+
+// ══════════════════════════════════════════
+// HUD
+// ══════════════════════════════════════════
+function buildHotbar(){
+  const hb=document.getElementById('hotbar');hb.innerHTML='';
+  for(let i=1;i<=7;i++){
+    const s=document.createElement('div');
+    s.className='hslot'+(i===selBlock?' sel':'');
+    s.id='hs'+i;
+    s.innerHTML=`<span class="num">${i}</span><div class="sw" style="background:${HCOL[i]}"></div><div>${BNAME[i]}</div>`;
+    hb.appendChild(s);
+  }
+}
+function updateHotbar(){for(let i=1;i<=7;i++){const s=document.getElementById('hs'+i);if(s)s.className='hslot'+(i===selBlock?' sel':'');}}
+
+// ══════════════════════════════════════════
+// CHAT
+// ══════════════════════════════════════════
+function addMsg(name,msg,sys=false){
+  const log=document.getElementById('chatlog');
+  const d=document.createElement('div');
+  d.className='cmsg'+(sys?' sys':'');
+  d.innerHTML=sys?msg:`<span class="cn">${name}:</span> ${msg}`;
+  log.appendChild(d);
+  log.scrollTop=log.scrollHeight;
+  // Fade old messages
+  const msgs=log.querySelectorAll('.cmsg');
+  if(msgs.length>30) msgs[0].remove();
+}
+function openChat(){
+  if(chatOpen) return;
+  chatOpen=true;
+  document.getElementById('chatinp-wrap').style.display='block';
+  const inp=document.getElementById('chatinp');
+  inp.focus();document.exitPointerLock();
+  inp.onkeydown=e=>{
+    e.stopPropagation();
+    if(e.key==='Enter'){
+      const m=inp.value.trim();
+      if(m&&ws&&ws.readyState===WebSocket.OPEN){ws.send(JSON.stringify({type:'chat',message:m}));addMsg(myUser,m);}
+      inp.value='';closeChat();
+    }
+    if(e.key==='Escape'){inp.value='';closeChat();}
+  };
+}
+function closeChat(){
+  chatOpen=false;
+  document.getElementById('chatinp-wrap').style.display='none';
+  document.getElementById('canvas').requestPointerLock();
+}
+
+// ══════════════════════════════════════════
+// WEBSOCKET
+// ══════════════════════════════════════════
+let ws,myId,myUser,myRoom,rpIdx=0,mvTimer=0;
+
+function sendBlock(x,y,z,t){if(ws&&ws.readyState===WebSocket.OPEN)ws.send(JSON.stringify({type:'block',x,y,z,blockType:t}));}
+function sendMove(){if(ws&&ws.readyState===WebSocket.OPEN&&myId)ws.send(JSON.stringify({type:'move',x:camera.position.x,y:camera.position.y,z:camera.position.z,rx:pitch,ry:yaw}));}
+
+function connect(username,roomCode){
+  setStatus('Conectando al servidor...');
+  ws=new WebSocket(WS_URL);
+  ws.onopen=()=>{
+    setStatus('Generando mundo...');
+    ws.send(JSON.stringify({
+      type:'join',username,roomCode:roomCode||null,
+      userId:(() => {try{const u=JSON.parse(localStorage.getItem('cw_user')||'{}');return u.id||'????????';}catch{return '????????';}})()
+    }));
+  };
+  ws.onmessage=e=>{
+    const msg=JSON.parse(e.data);
+    if(msg.type==='init'){
+      myId=msg.playerId;myRoom=msg.roomCode;
+      document.getElementById('rcdisp').textContent=myRoom;
+      document.getElementById('prc').textContent=myRoom;
+      setStatus('Generando terreno...');
+      generateTerrain(msg.seed);
+      msg.blocks.forEach(b=>sb(b.x,b.y,b.z,b.type));
+      needsRebuild=true;
+      msg.players.forEach(p=>{addRP(p.id,p.username,rpIdx++);moveRP(p.id,p.x,p.y,p.z,p.ry||0);});
+      updatePCount();
+      startGame();
+      return;
+    }
+    if(msg.type==='playerJoin'){addRP(msg.id,msg.username,rpIdx++);addMsg('',`✦ ${msg.username} se unió`,true);updatePCount();}
+    if(msg.type==='playerLeave'){const p=rPlayers.get(msg.id);if(p)addMsg('',`✦ ${p.u} salió`,true);removeRP(msg.id);updatePCount();}
+    if(msg.type==='playerMove'&&msg.id!==myId) moveRP(msg.id,msg.x,msg.y,msg.z,msg.ry||0);
+    if(msg.type==='blockChange'){sb(msg.x,msg.y,msg.z,msg.blockType);needsRebuild=true;}
+    if(msg.type==='chat') addMsg(msg.username,msg.message);
+  };
+  ws.onerror=()=>{setStatus('❌ Error de conexión. ¿Está el servidor activo?');};
+  ws.onclose=()=>{if(gameOn)addMsg('','Desconectado del servidor',true);};
+}
+function updatePCount(){document.getElementById('pcount').textContent=rPlayers.size+1;}
+
+// ══════════════════════════════════════════
+// GAME LOOP
+// ══════════════════════════════════════════
+function startGame(){
+  document.getElementById('loading').style.display='none';
+  document.getElementById('screen').style.display='none';
+  document.getElementById('canvas').style.display='block';
+  document.getElementById('crosshair').style.display='block';
+  document.getElementById('hud').style.display='flex';
+  document.getElementById('info').style.display='block';
+  document.getElementById('badge').style.display='block';
+  document.getElementById('chatbox').style.display='block';
+  document.getElementById('hint').style.display='block';
+  gameOn=true;
+
+  // Spawn point — top of center column
+  let sy=H-1;
+  const sx=W/2,sz=D/2;
+  while(sy>0&&gb(Math.floor(sx),sy,Math.floor(sz))===0) sy--;
+  camera.position.set(sx,sy+PH+1.5,sz);
+
+  initThree();
+  buildHotbar();
+
+  document.getElementById('canvas').requestPointerLock();
+
+  function loop(){
+    requestAnimationFrame(loop);
+    const dt=Math.min(clock.getDelta(),0.05);
+    updatePhysics(dt);
+    castRay();
+    if(needsRebuild) buildWorld();
+    mvTimer+=dt;
+    if(mvTimer>0.05){sendMove();mvTimer=0;}
+    const p=camera.position;
+    document.getElementById('info').textContent=
+      `XYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}\nBloque: ${BNAME[selBlock]}`;
+    renderer.render(scene,camera);
+  }
+  loop();
+}
+
+// ══════════════════════════════════════════
+// UI
+// ══════════════════════════════════════════
+function setStatus(t){document.getElementById('lstatus').textContent=t;}
+function show(id){['smain','screate','sjoin'].forEach(x=>document.getElementById(x).style.display=x===id?'block':'none');}
+function showMain(){show('smain');}
+function showCreate(){
+  show('screate');
+  try{const u=JSON.parse(localStorage.getItem('cw_user')||'{}');if(u.username)document.getElementById('cu').value=u.username;}catch{}
+}
+function showJoin(){
+  show('sjoin');
+  try{const u=JSON.parse(localStorage.getItem('cw_user')||'{}');if(u.username)document.getElementById('ju').value=u.username;}catch{}
+}
+function doCreate(){
+  const u=document.getElementById('cu').value.trim();
+  if(!u){document.getElementById('cerr').textContent='Ingresa tu nombre';return;}
+  document.getElementById('cerr').textContent='';
+  myUser=u;
+  document.getElementById('screen').style.display='none';
+  document.getElementById('loading').style.display='flex';
+  connect(u,null);
+}
+function doJoin(){
+  const u=document.getElementById('ju').value.trim();
+  const c=document.getElementById('jc').value.trim().toUpperCase();
+  if(!u){document.getElementById('jerr').textContent='Ingresa tu nombre';return;}
+  if(c.length!==6){document.getElementById('jerr').textContent='El código debe tener 6 caracteres';return;}
+  document.getElementById('jerr').textContent='';
+  myUser=u;
+  document.getElementById('screen').style.display='none';
+  document.getElementById('loading').style.display='flex';
+  connect(u,c);
+}
+</script>
+</body>
+</html>
