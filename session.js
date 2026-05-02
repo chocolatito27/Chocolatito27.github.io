@@ -115,22 +115,36 @@
     const sidebar = document.querySelector(".sidebar");
     if (sidebar) {
       document.getElementById("cw-sidebar-user")?.remove();
-      const sec = document.createElement("div");
-      sec.id = "cw-sidebar-user";
-      sec.innerHTML = `
-        <div style="padding:14px 20px 10px;border-bottom:1px solid rgba(255,255,255,0.12);">
+      document.getElementById("cw-sidebar-logout-wrap")?.remove();
+
+      /* Usuario e ID — justo después del header */
+      const userSec = document.createElement("div");
+      userSec.id = "cw-sidebar-user";
+      userSec.innerHTML = `
+        <div style="padding:14px 20px 12px;border-bottom:1px solid rgba(255,255,255,0.12);">
           <div style="color:#33FFFF;font-weight:700;font-size:1rem;">${escHtml(user.username)}</div>
           <div style="color:rgba(255,255,255,0.5);font-size:0.78rem;margin-top:3px;">ID: ${escHtml(user.id)}</div>
         </div>
-        <div style="padding:12px 20px;border-bottom:1px solid rgba(255,255,255,0.12);">
-          <button id="cw-sidebar-logout" style="background:none;border:none;color:#ff5470;cursor:pointer;font-size:0.9rem;padding:0;display:flex;align-items:center;gap:6px;">
-            &#8594; Cerrar sesi&oacute;n
-          </button>
-        </div>
       `;
       const header = sidebar.querySelector(".sidebar-header");
-      if (header) header.after(sec);
-      else sidebar.prepend(sec);
+      if (header) header.after(userSec);
+      else sidebar.prepend(userSec);
+
+      /* Cerrar sesión — siempre al fondo */
+      const logoutWrap = document.createElement("div");
+      logoutWrap.id = "cw-sidebar-logout-wrap";
+      logoutWrap.style.cssText = "padding:16px 20px;border-top:1px solid rgba(255,255,255,0.12);margin-top:auto;";
+      logoutWrap.innerHTML = `
+        <button id="cw-sidebar-logout" style="background:none;border:none;color:#ff5470;cursor:pointer;font-size:0.95rem;padding:0;display:flex;align-items:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          Cerrar sesi&oacute;n
+        </button>
+      `;
+      sidebar.appendChild(logoutWrap);
 
       document.getElementById("cw-sidebar-logout").addEventListener("click", () => {
         if (confirm("¿Cerrar sesión?")) { clearSession(); window.location.href = LOGIN_PAGE; }
