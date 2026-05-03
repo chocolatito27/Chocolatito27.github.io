@@ -554,6 +554,8 @@ function setProgress(pct,text){
 }
 function connect(username,roomCode,mode){
   setProgress(10,'Conectando al servidor…');
+  // Init Three.js NOW so scene is ready before any WS messages arrive
+  initThree();
   ws=new WebSocket(WS_URL);
   ws.onopen=()=>{
     setProgress(30,'Entrando a la sala…');
@@ -600,7 +602,7 @@ function updatePCount(){document.getElementById('pcount').textContent=rP.size+1;
 function startGame(){
   document.getElementById('loading').style.display='none';
   stopLobbyChar();
-  initThree();buildHotbar();updateHealthbar();setFog(gfog);
+  buildHotbar();updateHealthbar();setFog(gfog);
 
   const sx=Math.floor(W/2),sz=Math.floor(D/2);
   let sy=H-1;while(sy>0&&gb(sx,sy,sz)===0) sy--;
