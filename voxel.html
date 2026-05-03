@@ -191,6 +191,7 @@
 <div id="badge">
   <div class="rc" id="rcdisp">------</div>
   <div class="cp">Jugadores: <span id="pcount">1</span></div>
+  <div id="kill-counter" style="display:none;font-size:0.75rem;margin-top:2px;color:rgba(255,255,255,0.6)"></div>
 </div>
 
 <!-- Top buttons -->
@@ -275,6 +276,16 @@
     <div id="craft-grid" class="craft-grid"></div>
     <div id="craft-success" class="craft-success"></div>
     <button class="btn btn-secondary" style="margin-top:12px" onclick="closeCraft()">← Cerrar</button>
+  </div>
+</div>
+
+<!-- ══ GAME OVER ══ -->
+<div class="overlay" id="ogameover">
+  <div class="ocard" style="max-width:380px">
+    <div id="go-title" style="font-size:2rem;font-weight:900;margin-bottom:8px">Partida terminada</div>
+    <div id="go-winner" style="font-size:1rem;color:#ffd700;font-weight:700;margin-bottom:6px"></div>
+    <div id="go-kills"  style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:22px"></div>
+    <button class="btn btn-primary" onclick="location.reload()">🏠 Volver al menú</button>
   </div>
 </div>
 
