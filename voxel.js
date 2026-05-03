@@ -4,7 +4,10 @@
 
 // ── CONFIG ──────────────────────────────────────────────
 const WS_URL='wss://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev/api/game/ws';
+const API_BASE='https://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev';
 const W=64,H=64,D=64;
+// Block type → resource key needed to place it (null = can't place)
+const BLOCK_COST=['','dirt','dirt','stone','wood',null,'sand',null];
 const GRAV=-20,JUMP=7,SPEED=4.3,REACH=6.5,PH=1.8,PW=0.3,STEP_H=0.55;
 const FOG_DISTS=[18,32,48,68,90];
 const ATTACK_RANGE=2.5;
@@ -76,6 +79,8 @@ const WEAPONS={
 const inv={dirt:0,stone:0,wood:0,sand:0,apple:0};
 let equippedWeapon='fist';
 let attackTimer=0;
+let myKills=0;
+let mySpawnX=32,mySpawnZ=32;
 
 // Hunger (survival only)
 let hunger=20,hungerTimer=0,starveTimer=0;
@@ -88,6 +93,7 @@ function collectResource(blockType){
   inv[key]=(inv[key]||0)+amt;
   showCollect(key,amt);
   updateResourceHUD();
+  updateHotbarCounts();
 }
 
 let collectMsgTimer=null;
@@ -564,12 +570,24 @@ function castRay(){
   if(breaking.active){breaking.active=false;breaking.progress=0;document.getElementById('breakwrap').style.display='none';}
 }
 
+// Proper AABB check — prevents placing blocks that overlap the player body
+function wouldOverlapPlayer(bx,by,bz){
+  const p=camera.position,foot=p.y-PH;
+  return bx<p.x+PW+0.05&&bx+1>p.x-PW-0.05&&
+         by<p.y+0.05&&by+1>foot-0.05&&
+         bz<p.z+PW+0.05&&bz+1>p.z-PW-0.05;
+}
 function placeBlock(){
   if(!tgtF||tgtF.x<0)return;
   const{x,y,z}=tgtF;
   if(x<0||x>=W||y<0||y>=H||z<0||z>=D)return;
-  const p=camera.position;
-  if(Math.abs(x+0.5-p.x)<0.4&&y>=p.y-PH-0.1&&y<p.y+0.1&&Math.abs(z+0.5-p.z)<0.4)return;
+  if(wouldOverlapPlayer(x,y,z))return;
+  // Check finite inventory
+  const cost=BLOCK_COST[selBlock];
+  if(!cost){addMsg('','No puedes colocar ese bloque',true);return;}
+  if((inv[cost]||0)<=0){addMsg('','No tienes '+({dirt:'Tierra',stone:'Piedra',wood:'Madera',sand:'Arena'}[cost]||cost),true);return;}
+  inv[cost]--;
+  updateResourceHUD();updateHotbarCounts();
   sb(x,y,z,selBlock);needsRebuild=true;sendBlock(x,y,z,selBlock);
 }
 
@@ -641,11 +659,26 @@ function receiveAttack(damage,fromName){
   takeDamage(damage);showHitEffect('red');
   addMsg('',`⚔ ${fromName} te golpeó (-${damage}❤)`,true);
 }
-function addKillFeed(killer,victim){
+function addKillFeed(killer,victim,killerKills,killsToWin){
   const kf=document.getElementById('killfeed');
   const d=document.createElement('div');d.className='kf-item';
-  d.innerHTML=`<b>${killer}</b> ⚔ <b>${victim}</b>`;
+  const progress=killerKills?` (${killerKills}/${killsToWin||5})`:'' ;
+  d.innerHTML=`<b>${killer}</b> ⚔ <b>${victim}</b><span style="color:#ffd700;font-size:0.65rem">${progress}</span>`;
   kf.appendChild(d);setTimeout(()=>d.remove(),3200);
+}
+function updateKillDisplay(){
+  const el=document.getElementById('kill-counter');if(!el)return;
+  el.textContent=`⚔ ${myKills}/5`;
+  el.style.color=myKills>=4?'#ff4444':myKills>=2?'#ffd700':'rgba(255,255,255,0.6)';
+}
+function showGameOver(winnerName,kills){
+  gameOn=false;document.exitPointerLock();
+  const el=document.getElementById('ogameover');if(!el)return;
+  const isWinner=winnerName===myUser;
+  document.getElementById('go-title').textContent=isWinner?'🏆 ¡GANASTE!':'💀 Partida terminada';
+  document.getElementById('go-winner').textContent=`${winnerName} ganó con ${kills} kills`;
+  document.getElementById('go-kills').textContent=`Tus kills: ${myKills}`;
+  el.style.display='flex';
 }
 
 // ════════════════════════════════════════════════════════
@@ -657,8 +690,8 @@ function takeDamage(dmg){
 }
 function respawn(){
   health=20;hunger=20;updateHealthbar();updateHungerBar();
-  const sx=Math.floor(W/2)+Math.floor(Math.random()*10-5);
-  const sz=Math.floor(D/2)+Math.floor(Math.random()*10-5);
+  // Always respawn at personal spawn point
+  const sx=mySpawnX,sz=mySpawnZ;
   let sy=H-1;while(sy>0&&gb(sx,sy,sz)===0)sy--;
   camera.position.set(sx+0.5,sy+PH+1.5,sz+0.5);velY=0;
 }
@@ -690,6 +723,9 @@ function removeRP(id){const p=rP.get(id);if(p&&scene){scene.remove(p.g);rP.delet
 // ════════════════════════════════════════════════════════
 // HUD
 // ════════════════════════════════════════════════════════
+// Which resource backs each block slot for display
+const SLOT_RES=['','dirt','dirt','stone','wood',null,'sand',null];
+function getSlotCount(i){const r=SLOT_RES[i];return r?(inv[r]||0):0;}
 function buildHotbar(){
   const hb=document.getElementById('hotbar');hb.innerHTML='';
   // Weapon slot
@@ -701,11 +737,24 @@ function buildHotbar(){
   for(let i=1;i<=7;i++){
     const s=document.createElement('div');
     s.className='hslot'+(i===selBlock?' sel':'');s.id='hs'+i;
-    s.innerHTML=`<span class="num">${i}</span><div class="sw" style="background:${HCOL[i]}"></div><div>${BNAME[i]}</div>`;
+    const cnt=getSlotCount(i);
+    const canPlace=BLOCK_COST[i]&&cnt>0;
+    s.innerHTML=`<span class="num">${i}</span><div class="sw" style="background:${HCOL[i]};opacity:${canPlace||!BLOCK_COST[i]?1:0.35}"></div>`+
+      (BLOCK_COST[i]?`<div class="hcount" style="color:${cnt>0?'#fff':'rgba(255,255,255,0.3)'}">${cnt}</div>`:`<div style="font-size:0.45rem;color:rgba(255,255,255,0.3)">∞</div>`);
     hb.appendChild(s);
   }
 }
-function updateHotbar(){for(let i=1;i<=7;i++){const s=document.getElementById('hs'+i);if(s)s.className='hslot'+(i===selBlock?' sel':'');}}
+function updateHotbar(){
+  for(let i=1;i<=7;i++){
+    const s=document.getElementById('hs'+i);if(!s)continue;
+    s.className='hslot'+(i===selBlock?' sel':'');
+    const cnt=getSlotCount(i);
+    const canPlace=BLOCK_COST[i]&&cnt>0;
+    s.innerHTML=`<span class="num">${i}</span><div class="sw" style="background:${HCOL[i]};opacity:${canPlace||!BLOCK_COST[i]?1:0.35}"></div>`+
+      (BLOCK_COST[i]?`<div class="hcount" style="color:${cnt>0?'#fff':'rgba(255,255,255,0.3)'}">${cnt}</div>`:`<div style="font-size:0.45rem;color:rgba(255,255,255,0.3)">∞</div>`);
+  }
+}
+function updateHotbarCounts(){updateHotbar();}
 function updateHealthbar(){
   const hb=document.getElementById('healthbar');if(!hb)return;hb.innerHTML='';
   for(let i=0;i<10;i++){const h=document.createElement('div');h.className='heart';h.textContent=i<Math.ceil(health/2)?'❤️':'🖤';hb.appendChild(h);}
@@ -769,6 +818,7 @@ function copyInvLink(){
 // WEBSOCKET
 // ════════════════════════════════════════════════════════
 let ws,myId,myUser,myRoom,mvTimer=0;
+let onlineFriendIds=new Set();
 const sendWS=msg=>{if(ws&&ws.readyState===1)ws.send(JSON.stringify(msg));};
 const sendBlock=(x,y,z,t)=>sendWS({type:'block',x,y,z,blockType:t});
 const sendMove=()=>{if(myId)sendWS({type:'move',x:camera.position.x,y:camera.position.y,z:camera.position.z,rx:pitch,ry:yaw});};
@@ -790,6 +840,9 @@ function connect(username,roomCode,mode){
     if(msg.type==='init'){
       myId=msg.playerId;myRoom=msg.roomCode;
       if(msg.mode)gameMode=msg.mode;
+      // Store personal spawn position from server
+      if(typeof msg.spawnX==='number')mySpawnX=msg.spawnX;
+      if(typeof msg.spawnZ==='number')mySpawnZ=msg.spawnZ;
       document.getElementById('rcdisp').textContent=myRoom;
       document.getElementById('prc2').textContent='Sala: '+myRoom;
       const url=new URL(location.href);url.searchParams.set('sala',myRoom);history.replaceState({},'',url);
@@ -803,6 +856,7 @@ function connect(username,roomCode,mode){
         updatePCount();setProgress(100,'¡Listo!');setTimeout(startGame,400);
       },50);return;
     }
+    if(msg.type==='error'){setProgress(0,'❌ '+msg.message);return;}
     if(msg.type==='playerJoin'){addRP(msg.id,msg.username,rpIdx++);addMsg('',`✦ ${msg.username} entró`,true);updatePCount();}
     if(msg.type==='playerLeave'){const p=rP.get(msg.id);if(p)addMsg('',`✦ ${p.u} salió`,true);removeRP(msg.id);updatePCount();}
     if(msg.type==='playerMove'&&msg.id!==myId)moveRP(msg.id,msg.x,msg.y,msg.z,msg.ry||0);
@@ -812,7 +866,12 @@ function connect(username,roomCode,mode){
       receiveAttack(msg.damage,msg.fromName);
       if(health<=0)sendWS({type:'playerKilled',killerId:msg.fromId,killerName:msg.fromName,victimName:myUser});
     }
-    if(msg.type==='killConfirm')addKillFeed(msg.killerName,msg.victimName);
+    if(msg.type==='killConfirm'){
+      addKillFeed(msg.killerName,msg.victimName,msg.killerKills,msg.killsToWin);
+      // Update my kill counter if I was the killer
+      if(msg.killerName===myUser){myKills=msg.killerKills;updateKillDisplay();}
+    }
+    if(msg.type==='gameOver'){showGameOver(msg.winnerName,msg.kills);}
   };
   ws.onerror=()=>setProgress(0,'❌ Error de conexión. Intenta de nuevo.');
   ws.onclose=()=>{if(gameOn)addMsg('','⚠ Desconectado',true);};
@@ -827,7 +886,8 @@ function startGame(){
   stopLobbyChar();
   buildHotbar();updateWeaponSlot();updateHealthbar();updateHungerBar();updateResourceHUD();setFog(gfog);
 
-  const sx=Math.floor(W/2),sz=Math.floor(D/2);
+  // Use server-assigned spawn point
+  const sx=mySpawnX,sz=mySpawnZ;
   let sy=H-1;while(sy>0&&gb(sx,sy,sz)===0)sy--;
   camera.position.set(sx+0.5,sy+PH+1.5,sz+0.5);
 
@@ -842,6 +902,10 @@ function startGame(){
   // Show/hide hunger bar based on mode
   const hbar=document.getElementById('hungerbar');
   if(hbar)hbar.style.display=gameMode==='survival'?'flex':'none';
+  // Show kill counter in PvP
+  const kc=document.getElementById('kill-counter');
+  if(kc)kc.style.display=gameMode==='pvp'?'block':'none';
+  if(gameMode==='pvp')updateKillDisplay();
 
   // Mode badge
   const mb=document.getElementById('modebadge');
@@ -937,14 +1001,26 @@ function addFriend(){
   renderFriendList();
 }
 function removeFriend(i){const f=getFriends();f.splice(i,1);saveFriends(f);renderFriendList();}
+function fetchOnlineFriends(){
+  fetch(API_BASE+'/api/game/online')
+    .then(r=>r.json())
+    .then(ids=>{onlineFriendIds=new Set(ids);renderFriendList();})
+    .catch(()=>{});
+}
 function renderFriendList(){
   const fl=document.getElementById('friendlist');
   const friends=getFriends();
   if(!friends.length){fl.innerHTML='<div style="color:rgba(255,255,255,0.3);font-size:0.82rem;padding:20px;text-align:center">No tienes amigos agregados aún.</div>';return;}
   fl.innerHTML='';
   friends.forEach((f,i)=>{
+    const online=onlineFriendIds.has(f.id);
     const d=document.createElement('div');d.className='friend-item';
-    d.innerHTML=`<div class="fav">${f.name.charAt(0).toUpperCase()}</div><div class="finfo"><div class="fn">${f.name}</div><div class="fid2">ID: ${f.id}</div></div><button class="fdel" onclick="removeFriend(${i})">✕</button>`;
+    d.innerHTML=`<div class="fav">${f.name.charAt(0).toUpperCase()}</div>`+
+      `<div class="finfo">`+
+        `<div class="fn">${f.name} <span class="online-dot ${online?'on':'off'}" title="${online?'En línea':'Desconectado'}"></span></div>`+
+        `<div class="fid2">ID: ${f.id}${online?' · 🟢 En línea':''}</div>`+
+      `</div>`+
+      `<button class="fdel" onclick="removeFriend(${i})">✕</button>`;
     fl.appendChild(d);
   });
 }
@@ -979,7 +1055,17 @@ window.addEventListener('load',()=>{
   document.getElementById('myidshow').textContent=SESSION.id;
   document.getElementById('play-greeting').innerHTML=`Bienvenido, <span>${SESSION.username}</span>`;
   selectMode('pvp');
+  fetchOnlineFriends();
+  // Poll online status every 30s
+  setInterval(fetchOnlineFriends,30000);
   renderFriendList();
   buildInventory();
   setTimeout(initLobbyChar,100);
 });
+
+// Refresh online status whenever the friends tab is opened
+const _origSwitchTab=switchTab;
+function switchTab(name){
+  _origSwitchTab(name);
+  if(name==='fr') fetchOnlineFriends();
+}
