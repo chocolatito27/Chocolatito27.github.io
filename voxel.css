@@ -87,6 +87,9 @@ body{background:#080812;font-family:'Segoe UI',Arial,sans-serif;overflow:hidden;
 .fav{width:36px;height:36px;border-radius:10px;background:linear-gradient(135deg,#7b2ff7,#00f5d4);display:flex;align-items:center;justify-content:center;font-weight:900;flex-shrink:0}
 .finfo{flex:1}.finfo .fn{font-size:0.85rem;font-weight:700}.finfo .fid2{font-size:0.68rem;color:rgba(255,255,255,0.35);font-family:monospace}
 .fdel{padding:5px 10px;border-radius:7px;border:none;cursor:pointer;background:rgba(255,60,60,0.1);color:#ff6060;font-size:0.72rem;font-weight:700}
+.online-dot{display:inline-block;width:8px;height:8px;border-radius:50%;vertical-align:middle;margin-left:4px}
+.online-dot.on{background:#22c55e;box-shadow:0 0 5px rgba(34,197,94,0.7)}
+.online-dot.off{background:rgba(255,255,255,0.2)}
 .my-id-box{margin-top:14px;background:rgba(0,245,212,0.05);border:1px solid rgba(0,245,212,0.15);border-radius:10px;padding:12px;font-size:0.78rem;color:rgba(255,255,255,0.5);}
 .my-id-box span{color:#00f5d4;font-family:monospace;font-weight:700;letter-spacing:2px}
 .copy-btn{margin-left:8px;padding:3px 8px;border-radius:5px;border:none;cursor:pointer;background:rgba(0,245,212,0.12);color:#00f5d4;font-size:0.7rem;font-weight:700}
@@ -165,6 +168,7 @@ body{background:#080812;font-family:'Segoe UI',Arial,sans-serif;overflow:hidden;
 .hslot.weapon-sel{border-color:rgba(0,245,212,0.6);background:rgba(0,245,212,0.08);min-width:58px}
 .hslot .sw{width:28px;height:28px;border-radius:4px}
 .hslot .num{position:absolute;top:2px;left:4px;font-size:0.56rem;color:rgba(255,255,255,0.3)}
+.hcount{font-size:0.7rem;font-weight:700;line-height:1}
 
 /* Resource mini HUD */
 #res-hud{position:fixed;top:10px;left:12px;display:none;font-size:0.78rem;color:rgba(255,255,255,0.75);background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.08);padding:5px 10px;border-radius:10px;pointer-events:none;letter-spacing:2px;text-shadow:1px 1px 3px rgba(0,0,0,0.9)}
