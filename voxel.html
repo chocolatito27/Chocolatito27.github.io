@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>VoxelWorld — ChocolatitoWeb</title>
+<link rel="stylesheet" href="voxel.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     LOBBY
+═══════════════════════════════════════════════════ -->
+<div id="lobby">
+  <div class="lobby-wrap">
+
+    <!-- LEFT — Character preview -->
+    <div class="char-panel">
+      <canvas id="charcanvas" width="200" height="240"></canvas>
+      <div class="char-platform"></div>
+      <div class="char-name" id="char-name">Jugador</div>
+      <div id="char-level" class="char-level">Lv.1 Novato</div>
+      <div class="char-id" id="char-id">ID: ????????</div>
+      <div class="char-status"><span class="status-dot"></span> En línea</div>
+      <div class="char-stats-row">
+        <div class="cstat"><div class="cstat-v" id="stat-kills">0</div><div class="cstat-l">Kills</div></div>
+        <div class="cstat-div"></div>
+        <div class="cstat"><div class="cstat-v" id="stat-games">0</div><div class="cstat-l">Partidas</div></div>
+        <div class="cstat-div"></div>
+        <div class="cstat"><div class="cstat-v" id="stat-cape">—</div><div class="cstat-l">Capa</div></div>
+      </div>
+      <div id="char-cape" class="char-cape-label">Sin capa</div>
+      <div class="credits-badge">
+        <span class="coin">🪙</span>
+        <div>
+          <div class="amount" id="credits-amount">0</div>
+          <div class="label">CRÉDITOS</div>
+        </div>
+      </div>
+      <button class="edit-btn" onclick="switchTab('inv')">🧣 Capas y tienda</button>
+    </div>
+
+    <!-- RIGHT — Main panel -->
+    <div class="main-panel">
+      <div class="tab-bar">
+        <button class="tab-btn active" data-tab="play"  onclick="switchTab('play')">⚔ JUGAR</button>
+        <button class="tab-btn"        data-tab="inv"   onclick="switchTab('inv')">👕 INVENTARIO</button>
+        <button class="tab-btn"        data-tab="fr"    onclick="switchTab('fr')">👥 AMIGOS</button>
+        <button class="tab-btn"        data-tab="cfg"   onclick="switchTab('cfg')">⚙ CONFIG</button>
+      </div>
+
+      <div class="tab-content">
+
+        <!-- ── JUGAR ── -->
+        <div class="tab-pane active" id="tab-play">
+          <div class="play-greeting" id="play-greeting">Bienvenido, <span>Jugador</span></div>
+          <div class="play-sub">Elige un modo y entra al mundo</div>
+          <div class="mode-cards">
+            <div class="mode-card pvp" id="mc-pvp" onclick="selectMode('pvp')">
+              <div class="mode-icon">⚔️</div>
+              <div class="mode-name">PvP</div>
+              <div class="mode-desc">Elimina rivales. Fabrica armas y combate en tiempo real.</div>
+              <span class="mode-badge hot">🔥 Popular</span>
+            </div>
+            <div class="mode-card surv" id="mc-surv" onclick="selectMode('surv')">
+              <div class="mode-icon">🌿</div>
+              <div class="mode-name">Supervivencia</div>
+              <div class="mode-desc">Recolecta recursos, fabrica herramientas y sobrevive al hambre.</div>
+              <span class="mode-badge new">✨ Nuevo</span>
+            </div>
+          </div>
+          <div class="play-actions">
+            <button class="btn btn-primary" style="flex:1.4" onclick="openRoomDialog('create')">＋ Crear sala</button>
+            <button class="btn btn-secondary" style="flex:1" onclick="openRoomDialog('join')">🚪 Unirse</button>
+          </div>
+          <!-- Guide -->
+          <div class="guide-box">
+            <div class="guide-title">⌨ Controles</div>
+            <div class="guide-row"><span class="key">WASD</span> Mover &nbsp; <span class="key">Espacio</span> Saltar</div>
+            <div class="guide-row"><span class="key">Click izq.</span> Romper (hold) &nbsp; <span class="key">Click der.</span> Colocar</div>
+            <div class="guide-row"><span class="key">F</span> Atacar &nbsp; <span class="key">C</span> Craftear &nbsp; <span class="key">B</span> Mochila &nbsp; <span class="key">E</span> Comer</div>
+          </div>
+        </div>
+
+        <!-- ── INVENTARIO ── -->
+        <div class="tab-pane" id="tab-inv">
+          <div class="inv-header">
+            <h3>Mi equipamiento</h3>
+            <div class="inv-credits">🪙 <span id="inv-credits">0</span> créditos</div>
+          </div>
+          <div class="equipment" id="inv-grid"></div>
+
+          <!-- Cape shop -->
+          <div class="shop-section">
+            <div class="shop-title">🧣 Tienda de Capas</div>
+            <div class="shop-sub">Muéstrate único en el mundo. Cada capa cuesta <strong>5 🪙</strong>.</div>
+            <div id="shop-msg" class="shop-msg"></div>
+            <div class="cape-grid" id="cape-grid"></div>
+            <div class="shop-remove" id="cape-remove-row" style="display:none">
+              <button class="cape-btn cape-btn-remove" onclick="removeCapeEquip()">✕ Quitar capa</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── AMIGOS ── -->
+        <div class="tab-pane" id="tab-fr">
+          <div class="friends-add">
+            <input id="addid"   placeholder="ID del amigo (8 chars)" maxlength="8"
+                   oninput="this.value=this.value.toUpperCase()"/>
+            <input id="addname" placeholder="Nombre" maxlength="16" style="max-width:130px"/>
+            <button onclick="addFriend()">＋</button>
+          </div>
+          <div class="err" id="adderr"></div>
+          <div id="friendlist"></div>
+          <div class="my-id-box">
+            Tu ID: <span id="myidshow">????????</span>
+            <button class="copy-btn" onclick="copyMyId()">Copiar</button>
+          </div>
+        </div>
+
+        <!-- ── CONFIG ── -->
+        <div class="tab-pane" id="tab-cfg">
+          <div class="setting-section">Controles</div>
+          <div class="setting-row">
+            <label>Sensibilidad del mouse</label>
+            <input type="range" id="ls-sens" min="1" max="10" value="5"
+                   oninput="gsens=this.value/2000;document.getElementById('ls-sens-v').textContent=this.value"/>
+            <span id="ls-sens-v">5</span>
+          </div>
+          <div class="setting-section">Gráficos</div>
+          <div class="setting-row">
+            <label>Distancia de visión</label>
+            <input type="range" id="ls-fog" min="1" max="5" value="3"
+                   oninput="gfog=parseInt(this.value);document.getElementById('ls-fog-v').textContent=['Baja','Media','Normal','Alta','Máx'][this.value-1]"/>
+            <span id="ls-fog-v">Normal</span>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     ROOM DIALOGS
+═══════════════════════════════════════════════════ -->
+<div class="room-dialog" id="dlg-create">
+  <div class="rcard">
+    <h2>＋ Nueva Sala</h2>
+    <div class="rsub">Crea un mundo y comparte el código</div>
+    <input class="inp" id="cu" placeholder="Tu nombre de usuario" maxlength="16"/>
+    <div class="err" id="cerr"></div>
+    <button class="btn btn-primary" onclick="doCreate()">Crear y entrar</button>
+    <button class="btn btn-secondary" onclick="closeDialog('dlg-create')">← Cancelar</button>
+  </div>
+</div>
+
+<div class="room-dialog" id="dlg-join">
+  <div class="rcard">
+    <h2>🚪 Unirse a Sala</h2>
+    <div class="rsub">Ingresa el código que te compartieron</div>
+    <input class="inp" id="ju" placeholder="Tu nombre de usuario" maxlength="16"/>
+    <input class="inp code-inp" id="jc" placeholder="CÓDIGO" maxlength="6"
+           oninput="this.value=this.value.toUpperCase()"/>
+    <div class="err" id="jerr"></div>
+    <button class="btn btn-primary" onclick="doJoin()">Entrar</button>
+    <button class="btn btn-secondary" onclick="closeDialog('dlg-join')">← Cancelar</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     LOADING
+═══════════════════════════════════════════════════ -->
+<div id="loading">
+  <div class="spin"></div>
+  <p id="lstatus">Conectando…</p>
+  <div class="progress"><div class="progress-bar" id="pbar"></div></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     GAME CANVAS
+═══════════════════════════════════════════════════ -->
+<canvas id="canvas"></canvas>
+<div id="xhair"></div>
+<div id="breakwrap"><div id="breakprog"></div></div>
+<div id="swing-fx"></div>
+
+<!-- Mode badge -->
+<div id="modebadge"></div>
+
+<!-- Resource collect notification -->
+<div id="collect-msg"></div>
+
+<!-- HUD -->
+<div id="hud">
+  <div id="hungerbar" style="display:none"></div>
+  <div id="healthbar"></div>
+  <div id="hotbar"></div>
+</div>
+
+<!-- Info (top-left) -->
+<div id="info"></div>
+
+<!-- Resource mini HUD -->
+<div id="res-hud"></div>
+
+<!-- Room badge (top-right) -->
+<div id="badge">
+  <div class="rc" id="rcdisp">------</div>
+  <div class="cp">Jugadores: <span id="pcount">1</span></div>
+  <div id="kill-counter" style="display:none;font-size:0.75rem;margin-top:2px;color:rgba(255,255,255,0.6)"></div>
+</div>
+
+<!-- Top buttons -->
+<div id="topbtns">
+  <button id="invbtn"  onclick="openInvite()">🔗 Invitar</button>
+  <button id="craftbtn" onclick="openCraft()">⚒ Craftear</button>
+  <button id="bpbtn"   onclick="openBackpack()">🎒 Mochila</button>
+  <button id="setbtn"  onclick="openSettings()">⚙</button>
+</div>
+
+<!-- Kill feed -->
+<div id="killfeed"></div>
+
+<!-- Chat -->
+<div id="chatbox">
+  <div id="chatlog"></div>
+  <div id="cinp-wrap">
+    <input id="cinp" type="text" placeholder="Escribe… (Enter envía)" maxlength="100"/>
+  </div>
+</div>
+
+<!-- Hint -->
+<div id="hint"></div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     GAME OVERLAYS
+═══════════════════════════════════════════════════ -->
+
+<!-- Pause -->
+<div class="overlay" id="opause">
+  <div class="ocard">
+    <h2>⏸ Pausa</h2>
+    <div class="osub" id="prc2"></div>
+    <button class="btn btn-primary"   onclick="resume()">▶ Continuar</button>
+    <button class="btn btn-secondary" onclick="openCraft()">⚒ Craftear armas</button>
+    <button class="btn btn-secondary" onclick="openBackpack()">🎒 Mochila</button>
+    <button class="btn btn-secondary" onclick="openInvite()">🔗 Invitar amigos</button>
+    <button class="btn btn-secondary" onclick="openSettings()">⚙ Ajustes</button>
+    <button class="btn btn-danger"    onclick="location.reload()">✕ Salir al menú</button>
+  </div>
+</div>
+
+<!-- Invite -->
+<div class="overlay" id="oinvite">
+  <div class="ocard">
+    <h2>🔗 Invitar amigos</h2>
+    <div class="osub">Comparte el código o el enlace</div>
+    <div class="big-code" id="icode">------</div>
+    <div class="invite-link-box" id="ilink"></div>
+    <button class="btn btn-primary" onclick="copyInvLink()" id="copybtn">Copiar enlace</button>
+    <button class="btn btn-secondary" onclick="closeOverlay('oinvite');if(gameOn)resume()">← Volver</button>
+  </div>
+</div>
+
+<!-- Settings -->
+<div class="overlay" id="osettings">
+  <div class="ocard">
+    <h2>⚙ Ajustes</h2>
+    <div class="setting-row">
+      <label>Sensibilidad</label>
+      <input type="range" id="gs-sens" min="1" max="10" value="5"
+             oninput="gsens=this.value/2000;document.getElementById('gs-sens-v').textContent=this.value"/>
+      <span id="gs-sens-v">5</span>
+    </div>
+    <div class="setting-row">
+      <label>Visión</label>
+      <input type="range" id="gs-fog" min="1" max="5" value="3"
+             oninput="setFog(this.value);document.getElementById('gs-fog-v').textContent=['Baja','Media','Normal','Alta','Máx'][this.value-1]"/>
+      <span id="gs-fog-v">Normal</span>
+    </div>
+    <button class="btn btn-primary" onclick="closeOverlay('osettings');if(gameOn)resume()">Guardar</button>
+  </div>
+</div>
+
+<!-- ══ CRAFTING OVERLAY ══ -->
+<div class="overlay" id="ocraft">
+  <div class="ocard craft-card-wrap">
+    <h2>⚒ Mesa de Crafteo</h2>
+    <div class="osub">Fabrica armas y herramientas con tus recursos</div>
+    <div class="craft-resources">Materiales: <span id="craft-inv">—</span></div>
+    <div id="craft-grid" class="craft-grid"></div>
+    <div id="craft-success" class="craft-success"></div>
+    <button class="btn btn-secondary" style="margin-top:12px" onclick="closeCraft()">← Cerrar</button>
+  </div>
+</div>
+
+<!-- ══ GAME OVER ══ -->
+<div class="overlay" id="ogameover">
+  <div class="ocard" style="max-width:380px">
+    <div id="go-title" style="font-size:2rem;font-weight:900;margin-bottom:8px">Partida terminada</div>
+    <div id="go-winner" style="font-size:1rem;color:#ffd700;font-weight:700;margin-bottom:6px"></div>
+    <div id="go-kills"  style="font-size:0.85rem;color:rgba(255,255,255,0.5);margin-bottom:22px"></div>
+    <button class="btn btn-primary" onclick="location.reload()">🏠 Volver al menú</button>
+  </div>
+</div>
+
+<!-- ══ BACKPACK OVERLAY ══ -->
+<div class="overlay" id="obackpack">
+  <div class="ocard">
+    <h2>🎒 Mochila</h2>
+    <div class="osub">Recursos recolectados</div>
+    <div id="bp-content" class="bp-grid"></div>
+    <div class="bp-section">⚔ Armas</div>
+    <div id="bp-weapons" class="bp-grid"></div>
+    <button class="btn btn-secondary" style="margin-top:12px" onclick="closeBackpack()">← Cerrar</button>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════
+     SCRIPTS
+═══════════════════════════════════════════════════ -->
+<script src="https://cdn.jsdelivr.net/npm/three@0.158.0/build/three.min.js"></script>
+<script src="voxel.js"></script>
+</body>
+</html>
