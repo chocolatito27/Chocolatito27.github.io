@@ -59,14 +59,22 @@ const BNAME=['','Pasto','Tierra','Piedra','Madera','Hojas','Arena','Cristal','Co
 const HCOL =['','#4CAF50','#8B6914','#707070','#6B4226','#2D7D32','#D4B483','#ADD8E6','#D4A017'];
 const BREAK_DUR=[0,0.75,0.5,2.0,1.2,0.25,0.55,0.45,0.9];
 const BCOL=[null,
-  {t:[0.29,0.66,0.29],s:[0.52,0.36,0.13],b:[0.45,0.31,0.10]},
-  {t:[0.53,0.37,0.13],s:[0.51,0.36,0.12],b:[0.48,0.34,0.10]},
-  {t:[0.49,0.49,0.50],s:[0.44,0.44,0.45],b:[0.40,0.40,0.41]},
-  {t:[0.59,0.44,0.22],s:[0.42,0.27,0.11],b:[0.55,0.41,0.20]},
-  {t:[0.20,0.52,0.22],s:[0.19,0.50,0.21],b:[0.17,0.46,0.18]},
-  {t:[0.84,0.72,0.51],s:[0.83,0.71,0.50],b:[0.80,0.68,0.47]},
+  // 1 Grass — vivid green top, dirt-brown sides (shader-style)
+  {t:[0.22,0.76,0.16],s:[0.50,0.34,0.10],b:[0.44,0.30,0.08]},
+  // 2 Dirt
+  {t:[0.55,0.39,0.14],s:[0.52,0.36,0.12],b:[0.48,0.32,0.10]},
+  // 3 Stone — cool blue-gray like the image
+  {t:[0.54,0.57,0.60],s:[0.49,0.52,0.55],b:[0.43,0.46,0.49]},
+  // 4 Wood trunk — warm amber brown
+  {t:[0.62,0.46,0.22],s:[0.44,0.30,0.12],b:[0.58,0.42,0.20]},
+  // 5 Leaves — rich dark green
+  {t:[0.16,0.65,0.13],s:[0.15,0.60,0.12],b:[0.13,0.54,0.10]},
+  // 6 Sand
+  {t:[0.86,0.76,0.54],s:[0.84,0.73,0.52],b:[0.80,0.69,0.48]},
+  // 7 Glass
   {t:[0.62,0.82,0.94],s:[0.60,0.80,0.92],b:[0.56,0.76,0.88]},
-  {t:[0.82,0.61,0.18],s:[0.60,0.38,0.10],b:[0.55,0.34,0.09]}, // chest: golden-wood
+  // 8 Chest
+  {t:[0.84,0.64,0.20],s:[0.62,0.42,0.12],b:[0.56,0.36,0.10]},
 ];
 function bCol(type,face){const b=BCOL[type];if(!b)return[1,1,1];return face==='t'?b.t:face==='b'?b.b:b.s;}
 
@@ -335,10 +343,14 @@ function terrHeight(x,z,seed){
   return Math.floor(18+sn(x,z,28,seed)*12+sn(x,z,14,seed+1)*6+sn(x,z,7,seed+2)*3+sn(x,z,3,seed+3)*1.5);
 }
 function placeTree(x,z,h,seed){
-  const trunk=4+Math.floor(n2(x,z,seed+3)*3);
+  // Taller trunks (5-7), bigger rounder canopy for shader look
+  const trunk=5+Math.floor(n2(x,z,seed+3)*3);
   for(let ty=1;ty<=trunk;ty++) if(h+ty<H) sb(x,h+ty,z,4);
-  for(let lx=-2;lx<=2;lx++) for(let lz=-2;lz<=2;lz++) for(let ly=trunk-2;ly<=trunk+1;ly++)
-    if(Math.abs(lx)+Math.abs(lz)<=3&&h+ly<H&&h+ly>0&&gb(x+lx,h+ly,z+lz)===0)sb(x+lx,h+ly,z+lz,5);
+  // Round leaf ball
+  for(let lx=-3;lx<=3;lx++) for(let lz=-3;lz<=3;lz++) for(let ly=trunk-2;ly<=trunk+2;ly++){
+    const dd=lx*lx+lz*lz+(ly-trunk)*(ly-trunk)*0.5;
+    if(dd<=9.5&&h+ly<H&&h+ly>0&&gb(x+lx,h+ly,z+lz)===0) sb(x+lx,h+ly,z+lz,5);
+  }
 }
 function generateTerrain(seed){
   if(gameMode==='pvp') generatePvpIsland(seed);
@@ -346,33 +358,110 @@ function generateTerrain(seed){
 }
 function generatePvpIsland(seed){
   world.fill(0);
-  const cx=W/2,cz=D/2;
-  // ── Terrain ──
+  const CX=W/2, CZ=D/2;
+  const R=27; // island radius
+  const BASE_H=22; // ground level
+
+  // ── 1. Floating island terrain ────────────────────────
   for(let x=0;x<W;x++) for(let z=0;z<D;z++){
-    const dx=x-cx,dz=z-cz,dist=Math.sqrt(dx*dx+dz*dz);
-    if(dist>27) continue; // sea
-    const shore=(dist>22);
-    let h;
-    if(dist<10)       h=22+Math.floor(sn(x,z,4,seed)*1.2);
-    else if(dist<20)  h=22+Math.floor(sn(x,z,6,seed+1)*2.5+(dist-10)*0.12);
-    else              h=21+Math.floor(sn(x,z,5,seed+2)*1.8+(27-dist)*0.2);
-    h=Math.min(h,H-12);
-    for(let y=0;y<=h;y++){
-      if(shore&&y>=h-1) sb(x,y,z,6);    // sand beach top
-      else if(shore&&y>=h-4) sb(x,y,z,6);
-      else if(y<h-5)    sb(x,y,z,3);    // stone
-      else if(y<h)      sb(x,y,z,2);    // dirt
-      else              sb(x,y,z,1);    // grass
+    const dx=x-CX, dz=z-CZ;
+    const dist=Math.sqrt(dx*dx+dz*dz);
+    if(dist>=R) continue;
+
+    // Surface height: gently rolling
+    const roll=sn(x,z,7,seed)*2.2+sn(x,z,14,seed+1)*1.2+sn(x,z,3,seed+2)*0.6;
+    const edgeDrop=Math.max(0,(dist-20)*0.35);
+    const h=Math.min(Math.floor(BASE_H+roll-edgeDrop), H-14);
+
+    // Island underside: spherical slab (thicker in center)
+    const slab=Math.max(4, Math.floor(8-dist*0.18));
+    const hBot=Math.max(1, h-slab);
+
+    for(let y=hBot;y<=h;y++){
+      const fromTop=h-y;
+      const onEdge=dist>R-6;
+      if(fromTop===0)          sb(x,y,z,1); // grass top
+      else if(fromTop<=2)      sb(x,y,z,2); // dirt
+      else if(onEdge)          sb(x,y,z,3); // exposed stone edge
+      else                     sb(x,y,z,3); // stone core
     }
-    // Trees — middle ring, not central arena
-    if(!shore&&dist>=10&&dist<=22&&n2(x*3.3,z*2.7,seed+5)>0.85) placeTree(x,z,h,seed);
+    // Overwrite top 2 with dirt on edge for cliff look
+    if(dist>R-5){ sb(x,h,z,3); sb(x,h-1,z,3); }
+
+    // Trees — outer ring, in clusters
+    const treeNoise=n2(x*3.1,z*2.8,seed+5)+sn(x,z,5,seed+6)*0.4;
+    if(dist>=8&&dist<=21&&treeNoise>0.80) placeTree(x,z,h,seed);
   }
-  // ── Chests at 8 positions around the arena ──
-  const chestR=13;
-  [0,45,90,135,180,225,270,315].forEach((deg,i)=>{
+
+  // ── 2. Central tower (stone column + wood dome) ────────
+  const TX=Math.floor(CX), TZ=Math.floor(CZ);
+  let TY=H-1; while(TY>0&&gb(TX,TY,TZ)===0) TY--;
+  TY++; // one above ground
+
+  // Stone base platform 5×5, 2 thick
+  for(let x=-2;x<=2;x++) for(let z=-2;z<=2;z++){
+    sb(TX+x,TY,TZ+z,3); sb(TX+x,TY+1,TZ+z,3);
+  }
+  // Stone pillar 3×3, 10 tall
+  for(let dy=2;dy<=11;dy++){
+    for(let x=-1;x<=1;x++) for(let z=-1;z<=1;z++) sb(TX+x,TY+dy,TZ+z,3);
+    // Hollow center above y+5 for visual depth
+    if(dy>5) sb(TX,TY+dy,TZ,0);
+  }
+  // Stone observation deck 7×7 ring, 2 thick
+  const DECK=TY+12;
+  for(let x=-3;x<=3;x++) for(let z=-3;z<=3;z++){
+    if(Math.abs(x)+Math.abs(z)<=5){ sb(TX+x,DECK,TZ+z,3); sb(TX+x,DECK+1,TZ+z,3); }
+  }
+  // 4 corner pillars on deck (2×2, 4 tall)
+  [[-2,-2],[-2,2],[2,-2],[2,2]].forEach(([ox,oz])=>{
+    for(let dy=2;dy<=6;dy++) sb(TX+ox,DECK+dy,TZ+oz,4);
+  });
+  // Wood dome — sphere approximation
+  const domeProfile=[0,4,5,5,5,4,4,3,2,1]; // radius per layer
+  domeProfile.forEach((r,ly)=>{
+    for(let dx=-r;dx<=r;dx++) for(let dz=-r;dz<=r;dz++){
+      if(Math.sqrt(dx*dx+dz*dz)<=r+0.5) sb(TX+dx,DECK+2+ly,TZ+dz,4);
+    }
+    // Hollow the dome (only outer shell)
+    if(ly>0&&ly<domeProfile.length-1){
+      const ri=r-1;
+      for(let dx=-(ri);dx<=ri;dx++) for(let dz=-(ri);dz<=ri;dz++){
+        if(Math.sqrt(dx*dx+dz*dz)<ri-0.5) sb(TX+dx,DECK+2+ly,TZ+dz,0);
+      }
+    }
+  });
+  // Dome spire
+  for(let dy=0;dy<=2;dy++) sb(TX,DECK+2+domeProfile.length+dy,TZ,4);
+
+  // ── 3. Stone ruins/formations around the island ────────
+  const ruinSpots=[
+    {r:11,deg:0,size:4,h:3},{r:11,deg:90,size:4,h:3},
+    {r:11,deg:180,size:4,h:3},{r:11,deg:270,size:4,h:3},
+    {r:15,deg:45,size:3,h:2},{r:15,deg:135,size:3,h:2},
+    {r:15,deg:225,size:3,h:2},{r:15,deg:315,size:3,h:2},
+    {r:8, deg:22, size:2,h:2},{r:8, deg:112,size:2,h:2},
+    {r:8, deg:202,size:2,h:2},{r:8, deg:292,size:2,h:2},
+  ];
+  ruinSpots.forEach(({r,deg,size,h:rh})=>{
     const rad=deg*Math.PI/180;
-    const cx2=Math.floor(cx+Math.cos(rad)*chestR);
-    const cz2=Math.floor(cz+Math.sin(rad)*chestR);
+    const rx=Math.floor(CX+Math.cos(rad)*r);
+    const rz=Math.floor(CZ+Math.sin(rad)*r);
+    let gy=H-1; while(gy>0&&gb(rx,gy,rz)===0) gy--;
+    // Step pyramid
+    for(let step=0;step<rh;step++){
+      const sr=size-step;
+      for(let x=-sr;x<=sr;x++) for(let z=-sr;z<=sr;z++){
+        if(gy+step+1<H) sb(rx+x,gy+step+1,rz+z,3);
+      }
+    }
+  });
+
+  // ── 4. Chests — 8 hidden near ruins ───────────────────
+  [0,45,90,135,180,225,270,315].forEach(deg=>{
+    const rad=deg*Math.PI/180;
+    const cx2=Math.floor(CX+Math.cos(rad)*13);
+    const cz2=Math.floor(CZ+Math.sin(rad)*13);
     if(cx2<1||cx2>=W-1||cz2<1||cz2>=D-1) return;
     let cy=H-1; while(cy>0&&gb(cx2,cy,cz2)===0) cy--;
     if(cy>0&&cy<H-2) sb(cx2,cy+1,cz2,8);
@@ -401,27 +490,36 @@ let scene,camera,renderer,wMesh,wMat,hlBox,clock;
 let needsRebuild=true;
 
 const FACES=[
-  {d:[0, 1,0],c:[[0,1,1],[1,1,1],[1,1,0],[0,1,0]],f:'t',bri:1.00},
-  {d:[0,-1,0],c:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]],f:'b',bri:0.55},
-  {d:[0, 0,1],c:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]],f:'s',bri:0.80},
-  {d:[0, 0,-1],c:[[1,0,0],[0,0,0],[0,1,0],[1,1,0]],f:'s',bri:0.85},
-  {d:[1, 0,0],c:[[1,0,1],[1,0,0],[1,1,0],[1,1,1]],f:'s',bri:0.82},
-  {d:[-1,0,0],c:[[0,0,0],[0,0,1],[0,1,1],[0,1,0]],f:'s',bri:0.78},
+  {d:[0, 1,0],c:[[0,1,1],[1,1,1],[1,1,0],[0,1,0]],f:'t',bri:1.00},  // top — full sun
+  {d:[0,-1,0],c:[[0,0,0],[1,0,0],[1,0,1],[0,0,1]],f:'b',bri:0.38},  // bottom — very dark (island underside)
+  {d:[0, 0,1],c:[[0,0,1],[1,0,1],[1,1,1],[0,1,1]],f:'s',bri:0.74},  // south
+  {d:[0, 0,-1],c:[[1,0,0],[0,0,0],[0,1,0],[1,1,0]],f:'s',bri:0.92}, // north — bright (facing sun)
+  {d:[1, 0,0],c:[[1,0,1],[1,0,0],[1,1,0],[1,1,1]],f:'s',bri:0.84},  // east
+  {d:[-1,0,0],c:[[0,0,0],[0,0,1],[0,1,1],[0,1,0]],f:'s',bri:0.68},  // west — shadowed
 ];
 
 function initThree(){
   scene=new THREE.Scene();
-  scene.background=new THREE.Color(0x87ceeb);
+  const SKY=0x78b4f0;
+  scene.background=new THREE.Color(SKY);
   setFog(gfog);
   camera=new THREE.PerspectiveCamera(75,innerWidth/innerHeight,0.05,220);
-  renderer=new THREE.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:false,powerPreference:'high-performance'});
+  renderer=new THREE.WebGLRenderer({canvas:document.getElementById('canvas'),antialias:true,powerPreference:'high-performance'});
   renderer.setSize(innerWidth,innerHeight);
-  renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
+  renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+  // ACES Filmic tone mapping — the "shader" cinematic look
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.18;
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
   clock=new THREE.Clock();
-  scene.add(new THREE.AmbientLight(0xffffff,0.38));
-  const sun=new THREE.DirectionalLight(0xfffaee,0.95);sun.position.set(0.6,1,0.5).normalize();scene.add(sun);
-  const fill=new THREE.DirectionalLight(0x8090cc,0.14);fill.position.set(-0.5,-0.5,-0.5).normalize();scene.add(fill);
-  wMat=new THREE.MeshLambertMaterial({vertexColors:true,side:THREE.FrontSide});
+  // Hemisphere light: sky-blue from above, warm ground from below
+  scene.add(new THREE.HemisphereLight(0x9ecff7,0x886644,0.65));
+  // Main sun — strong, warm, angled
+  const sun=new THREE.DirectionalLight(0xfff4d6,1.35);sun.position.set(1.2,2.0,0.8).normalize();scene.add(sun);
+  // Soft fill from opposite side
+  const fill=new THREE.DirectionalLight(0xb0c8e8,0.28);fill.position.set(-1.0,0.4,-0.8).normalize();scene.add(fill);
+  // Phong material — enables specular highlights (shader look)
+  wMat=new THREE.MeshPhongMaterial({vertexColors:true,shininess:9,specular:new THREE.Color(0x181818),side:THREE.FrontSide});
   const hg=new THREE.BoxGeometry(1.005,1.005,1.005);
   const hm=new THREE.MeshBasicMaterial({color:0x000000,wireframe:true,transparent:true,opacity:0.38});
   hlBox=new THREE.Mesh(hg,hm);hlBox.visible=false;scene.add(hlBox);
@@ -429,14 +527,14 @@ function initThree(){
 }
 function setFog(v){
   gfog=parseInt(v);if(!scene)return;
-  const fd=FOG_DISTS[gfog-1];scene.fog=new THREE.Fog(0x87ceeb,fd*0.35,fd);
+  const fd=FOG_DISTS[gfog-1];scene.fog=new THREE.Fog(0x78b4f0,fd*0.38,fd);
 }
 function buildWorld(){
   if(wMesh){scene.remove(wMesh);wMesh.geometry.dispose();}
   const pos=[],col=[],nor=[],idx=[];let vi=0;
   for(let x=0;x<W;x++) for(let y=0;y<H;y++) for(let z=0;z<D;z++){
     const bt=gb(x,y,z);if(!bt)continue;
-    const hshade=0.6+(y/H)*0.4;
+    const hshade=Math.min(1.0,0.74+(y/H)*0.40);
     for(const fc of FACES){
       if(gb(x+fc.d[0],y+fc.d[1],z+fc.d[2])!==0)continue;
       const bc=bCol(bt,fc.f),shade=fc.bri*hshade;
