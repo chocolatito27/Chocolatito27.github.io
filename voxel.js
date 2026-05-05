@@ -7,7 +7,7 @@ const WS_URL='wss://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.
 const API_BASE='https://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev';
 const W=64,H=64,D=64;
 // Block type → resource key needed to place it (null = can't place)
-const BLOCK_COST=['','dirt','dirt','stone','wood',null,'sand',null];
+const BLOCK_COST=['','dirt','dirt','stone','wood',null,'sand',null,null];
 const GRAV=-20,JUMP=7,SPEED=4.3,REACH=6.5,PH=1.8,PW=0.3,STEP_H=0.55;
 const FOG_DISTS=[18,32,48,68,90];
 const ATTACK_RANGE=2.5;
@@ -55,9 +55,9 @@ let gameMode='pvp';
 // ════════════════════════════════════════════════════════
 // BLOCK DATA
 // ════════════════════════════════════════════════════════
-const BNAME=['','Pasto','Tierra','Piedra','Madera','Hojas','Arena','Cristal'];
-const HCOL =['','#4CAF50','#8B6914','#707070','#6B4226','#2D7D32','#D4B483','#ADD8E6'];
-const BREAK_DUR=[0,0.75,0.5,2.0,1.2,0.25,0.55,0.45];
+const BNAME=['','Pasto','Tierra','Piedra','Madera','Hojas','Arena','Cristal','Cofre'];
+const HCOL =['','#4CAF50','#8B6914','#707070','#6B4226','#2D7D32','#D4B483','#ADD8E6','#D4A017'];
+const BREAK_DUR=[0,0.75,0.5,2.0,1.2,0.25,0.55,0.45,0.9];
 const BCOL=[null,
   {t:[0.29,0.66,0.29],s:[0.52,0.36,0.13],b:[0.45,0.31,0.10]},
   {t:[0.53,0.37,0.13],s:[0.51,0.36,0.12],b:[0.48,0.34,0.10]},
@@ -66,6 +66,7 @@ const BCOL=[null,
   {t:[0.20,0.52,0.22],s:[0.19,0.50,0.21],b:[0.17,0.46,0.18]},
   {t:[0.84,0.72,0.51],s:[0.83,0.71,0.50],b:[0.80,0.68,0.47]},
   {t:[0.62,0.82,0.94],s:[0.60,0.80,0.92],b:[0.56,0.76,0.88]},
+  {t:[0.82,0.61,0.18],s:[0.60,0.38,0.10],b:[0.55,0.34,0.09]}, // chest: golden-wood
 ];
 function bCol(type,face){const b=BCOL[type];if(!b)return[1,1,1];return face==='t'?b.t:face==='b'?b.b:b.s;}
 
@@ -83,6 +84,7 @@ const DROPS=[
   ['apple',1,0.2],            // 5 leaves → 20% apple
   ['sand',1,1.0],             // 6 sand  → 1 sand
   null,                       // 7 glass → nothing
+  null,                       // 8 chest → handled by openChestLoot()
 ];
 
 // Weapons / tools
@@ -101,11 +103,13 @@ let equippedWeapon='fist';
 let attackTimer=0;
 let myKills=0;
 let mySpawnX=32,mySpawnZ=32;
+let immunityTimer=0;
 
 // Hunger (survival only)
 let hunger=20,hungerTimer=0,starveTimer=0;
 
 function collectResource(blockType){
+  if(blockType===8){openChestLoot();return;}
   const drop=DROPS[blockType];
   if(!drop) return;
   const[key,amt,chance]=drop;
@@ -114,6 +118,44 @@ function collectResource(blockType){
   showCollect(key,amt);
   updateResourceHUD();
   updateHotbarCounts();
+}
+const CHEST_POOLS=[
+  [{type:'wood',  amt:6},{type:'stone',amt:4}],
+  [{type:'stone', amt:6},{type:'apple',amt:3}],
+  [{type:'wood',  amt:8},{type:'apple',amt:2}],
+  [{type:'stone', amt:5},{type:'wood', amt:3},{type:'apple',amt:2}],
+  [{type:'weapon',key:'wood_sword'},{type:'apple',amt:3}],
+  [{type:'weapon',key:'stone_sword'},{type:'stone',amt:3}],
+  [{type:'weapon',key:'wood_axe'},{type:'wood',amt:5}],
+  [{type:'stone', amt:8},{type:'wood', amt:5}],
+];
+function openChestLoot(){
+  const pool=CHEST_POOLS[Math.floor(Math.random()*CHEST_POOLS.length)];
+  const el=document.getElementById('chest-popup');
+  const list=document.getElementById('chest-items');
+  if(!el||!list) return;
+  const icons={dirt:'🟫',stone:'⬜',wood:'🪵',sand:'🟡',apple:'🍎'};
+  list.innerHTML='';
+  pool.forEach(item=>{
+    const div=document.createElement('div');
+    div.className='chest-item';
+    if(item.type==='weapon'){
+      const w=WEAPONS[item.key];
+      div.innerHTML=`${w.icon} <b>${w.name}</b>`;
+      equippedWeapon=item.key;updateWeaponSlot();
+    } else {
+      inv[item.type]=(inv[item.type]||0)+item.amt;
+      div.innerHTML=`${icons[item.type]||'📦'} <b>+${item.amt} ${item.type==='apple'?'Manzana':''}${item.type==='wood'?'Madera':''}${item.type==='stone'?'Piedra':''}${item.type==='dirt'?'Tierra':''}</b>`;
+    }
+    list.appendChild(div);
+  });
+  updateResourceHUD();updateHotbarCounts();
+  el.style.display='flex';
+  document.exitPointerLock();
+}
+function closeChestPopup(){
+  const el=document.getElementById('chest-popup');if(el)el.style.display='none';
+  document.getElementById('canvas').requestPointerLock();
 }
 
 let collectMsgTimer=null;
@@ -292,7 +334,51 @@ function sn(x,z,sc,s){
 function terrHeight(x,z,seed){
   return Math.floor(18+sn(x,z,28,seed)*12+sn(x,z,14,seed+1)*6+sn(x,z,7,seed+2)*3+sn(x,z,3,seed+3)*1.5);
 }
+function placeTree(x,z,h,seed){
+  const trunk=4+Math.floor(n2(x,z,seed+3)*3);
+  for(let ty=1;ty<=trunk;ty++) if(h+ty<H) sb(x,h+ty,z,4);
+  for(let lx=-2;lx<=2;lx++) for(let lz=-2;lz<=2;lz++) for(let ly=trunk-2;ly<=trunk+1;ly++)
+    if(Math.abs(lx)+Math.abs(lz)<=3&&h+ly<H&&h+ly>0&&gb(x+lx,h+ly,z+lz)===0)sb(x+lx,h+ly,z+lz,5);
+}
 function generateTerrain(seed){
+  if(gameMode==='pvp') generatePvpIsland(seed);
+  else generateSurvivalWorld(seed);
+}
+function generatePvpIsland(seed){
+  world.fill(0);
+  const cx=W/2,cz=D/2;
+  // ── Terrain ──
+  for(let x=0;x<W;x++) for(let z=0;z<D;z++){
+    const dx=x-cx,dz=z-cz,dist=Math.sqrt(dx*dx+dz*dz);
+    if(dist>27) continue; // sea
+    const shore=(dist>22);
+    let h;
+    if(dist<10)       h=22+Math.floor(sn(x,z,4,seed)*1.2);
+    else if(dist<20)  h=22+Math.floor(sn(x,z,6,seed+1)*2.5+(dist-10)*0.12);
+    else              h=21+Math.floor(sn(x,z,5,seed+2)*1.8+(27-dist)*0.2);
+    h=Math.min(h,H-12);
+    for(let y=0;y<=h;y++){
+      if(shore&&y>=h-1) sb(x,y,z,6);    // sand beach top
+      else if(shore&&y>=h-4) sb(x,y,z,6);
+      else if(y<h-5)    sb(x,y,z,3);    // stone
+      else if(y<h)      sb(x,y,z,2);    // dirt
+      else              sb(x,y,z,1);    // grass
+    }
+    // Trees — middle ring, not central arena
+    if(!shore&&dist>=10&&dist<=22&&n2(x*3.3,z*2.7,seed+5)>0.85) placeTree(x,z,h,seed);
+  }
+  // ── Chests at 8 positions around the arena ──
+  const chestR=13;
+  [0,45,90,135,180,225,270,315].forEach((deg,i)=>{
+    const rad=deg*Math.PI/180;
+    const cx2=Math.floor(cx+Math.cos(rad)*chestR);
+    const cz2=Math.floor(cz+Math.sin(rad)*chestR);
+    if(cx2<1||cx2>=W-1||cz2<1||cz2>=D-1) return;
+    let cy=H-1; while(cy>0&&gb(cx2,cy,cz2)===0) cy--;
+    if(cy>0&&cy<H-2) sb(cx2,cy+1,cz2,8);
+  });
+}
+function generateSurvivalWorld(seed){
   world.fill(0);
   for(let x=0;x<W;x++) for(let z=0;z<D;z++){
     const h=Math.min(terrHeight(x,z,seed),H-8);
@@ -303,12 +389,8 @@ function generateTerrain(seed){
       else if(y<h)  sb(x,y,z,2);
       else          sb(x,y,z,1);
     }
-    if(!sand&&h>22&&x>3&&x<W-4&&z>3&&z<D-4&&n2(x*3.7,z*2.9,seed+5)>0.88){
-      const trunk=4+Math.floor(n2(x,z,seed+3)*3);
-      for(let ty=1;ty<=trunk;ty++) if(h+ty<H) sb(x,h+ty,z,4);
-      for(let lx=-2;lx<=2;lx++) for(let lz=-2;lz<=2;lz++) for(let ly=trunk-1;ly<=trunk+1;ly++)
-        if(Math.abs(lx)+Math.abs(lz)<=3&&h+ly<H&&gb(x+lx,h+ly,z+lz)===0)sb(x+lx,h+ly,z+lz,5);
-    }
+    if(!sand&&h>22&&x>3&&x<W-4&&z>3&&z<D-4&&n2(x*3.7,z*2.9,seed+5)>0.88)
+      placeTree(x,z,h,seed);
   }
 }
 
@@ -566,11 +648,22 @@ function initLobbyChar(){
   }
   lobbyChar=buildCharacter(getOutfitWithCape());lobbyScene.add(lobbyChar);
 
+  // ── Free-Fire-style orbital drag ──
+  let lobbyAutoYaw=0,lobbyDragYaw=0,lobbyDragging=false,lobbyLastX=0;
+  canvas.style.cursor='grab';
+  canvas.addEventListener('mousedown',e=>{lobbyDragging=true;lobbyLastX=e.clientX;canvas.style.cursor='grabbing';e.preventDefault();});
+  document.addEventListener('mouseup',()=>{lobbyDragging=false;canvas.style.cursor='grab';});
+  canvas.addEventListener('mousemove',e=>{if(!lobbyDragging)return;lobbyDragYaw+=(e.clientX-lobbyLastX)*0.013;lobbyLastX=e.clientX;});
+  canvas.addEventListener('touchstart',e=>{lobbyDragging=true;lobbyLastX=e.touches[0].clientX;e.preventDefault();},{passive:false});
+  canvas.addEventListener('touchend',()=>lobbyDragging=false);
+  canvas.addEventListener('touchmove',e=>{if(!lobbyDragging)return;lobbyDragYaw+=(e.touches[0].clientX-lobbyLastX)*0.013;lobbyLastX=e.touches[0].clientX;e.preventDefault();},{passive:false});
+
   function animateLobby(){
     lobbyAnimId=requestAnimationFrame(animateLobby);
     const t=Date.now()*0.001;
-    // Float + rotate
-    lobbyChar.rotation.y+=0.006;
+    // Float + auto-rotate (stops when dragging)
+    if(!lobbyDragging) lobbyAutoYaw+=0.006;
+    lobbyChar.rotation.y=lobbyAutoYaw+lobbyDragYaw;
     lobbyChar.position.y=Math.sin(t*0.9)*0.06;
     // Animate flame licks + flame point light
     let hasFlames=false;
@@ -913,15 +1006,34 @@ function showGameOver(winnerName,kills){
 // HEALTH
 // ════════════════════════════════════════════════════════
 function takeDamage(dmg){
+  if(immunityTimer>0) return; // post-respawn immunity
   health=Math.max(0,health-dmg);updateHealthbar();
   if(health<=0){addMsg('','💀 Fuiste eliminado… reapareciendo',true);setTimeout(respawn,1500);}
 }
 function respawn(){
   health=20;hunger=20;updateHealthbar();updateHungerBar();
+  // 2-second immunity
+  immunityTimer=2.0;
+  const ib=document.getElementById('immunity-border');
+  if(ib){ib.style.opacity='1';setTimeout(()=>{if(immunityTimer<=0)ib.style.opacity='0';},2200);}
+  // Screen flash white
+  showHitEffect('white');
   // Always respawn at personal spawn point
   const sx=mySpawnX,sz=mySpawnZ;
   let sy=H-1;while(sy>0&&gb(sx,sy,sz)===0)sy--;
   camera.position.set(sx+0.5,sy+PH+1.5,sz+0.5);velY=0;
+  addMsg('','🛡 ¡Reapareciste! Inmune 2 segundos',true);
+}
+function showKillFlash(victimName){
+  const flash=document.getElementById('kill-flash');
+  const banner=document.getElementById('kill-banner');
+  if(flash){flash.style.animation='none';void flash.offsetWidth;flash.style.animation='killFlashAnim 1.4s ease-out forwards';}
+  if(banner){
+    const v=document.getElementById('kban-victim');const k=document.getElementById('kban-kills');
+    if(v)v.textContent=`💀 ${victimName} eliminado`;
+    if(k)k.textContent=`⚔ Kill ${myKills}/5`;
+    banner.style.animation='none';void banner.offsetWidth;banner.style.animation='killBannerAnim 2s ease-out forwards';
+  }
 }
 
 // ════════════════════════════════════════════════════════
@@ -1061,7 +1173,9 @@ function connect(username,roomCode,mode){
   ws=new WebSocket(WS_URL);
   ws.onopen=()=>{
     setProgress(30,'Entrando a la sala…');
-    sendWS({type:'join',username,roomCode:roomCode||null,userId:SESSION.id,mode});
+    const _cape=getEquippedCape();
+    const _outfitSend=_cape?{...currentOutfit,capeColor:_cape.color,capeLining:_cape.lining}:{...currentOutfit};
+    sendWS({type:'join',username,roomCode:roomCode||null,userId:SESSION.id,mode,outfit:_outfitSend});
   };
   ws.onmessage=e=>{
     const msg=JSON.parse(e.data);
@@ -1080,12 +1194,12 @@ function connect(username,roomCode,mode){
         msg.blocks.forEach(b=>sb(b.x,b.y,b.z,b.type));
         needsRebuild=true;
         setProgress(80,'Cargando jugadores…');
-        msg.players.forEach(p=>{addRP(p.id,p.username,rpIdx++);moveRP(p.id,p.x,p.y,p.z,p.ry||0);});
+        msg.players.forEach(p=>{addRP(p.id,p.username,rpIdx++,p.outfit||{});moveRP(p.id,p.x,p.y,p.z,p.ry||0);});
         updatePCount();setProgress(100,'¡Listo!');setTimeout(startGame,400);
       },50);return;
     }
     if(msg.type==='error'){setProgress(0,'❌ '+msg.message);return;}
-    if(msg.type==='playerJoin'){addRP(msg.id,msg.username,rpIdx++);addMsg('',`✦ ${msg.username} entró`,true);updatePCount();}
+    if(msg.type==='playerJoin'){addRP(msg.id,msg.username,rpIdx++,msg.outfit||{});addMsg('',`✦ ${msg.username} entró`,true);updatePCount();}
     if(msg.type==='playerLeave'){const p=rP.get(msg.id);if(p)addMsg('',`✦ ${p.u} salió`,true);removeRP(msg.id);updatePCount();}
     if(msg.type==='playerMove'&&msg.id!==myId)moveRP(msg.id,msg.x,msg.y,msg.z,msg.ry||0);
     if(msg.type==='blockChange'){sb(msg.x,msg.y,msg.z,msg.blockType);needsRebuild=true;}
@@ -1096,8 +1210,7 @@ function connect(username,roomCode,mode){
     }
     if(msg.type==='killConfirm'){
       addKillFeed(msg.killerName,msg.victimName,msg.killerKills,msg.killsToWin);
-      // Update my kill counter if I was the killer
-      if(msg.killerName===myUser){myKills=msg.killerKills;updateKillDisplay();}
+      if(msg.killerName===myUser){myKills=msg.killerKills;updateKillDisplay();showKillFlash(msg.victimName);}
     }
     if(msg.type==='gameOver'){showGameOver(msg.winnerName,msg.kills);}
   };
@@ -1166,9 +1279,28 @@ function startGame(){
     requestAnimationFrame(loop);
     const dt=Math.min(clock.getDelta(),0.05);
     attackTimer=Math.max(0,attackTimer-dt);
+    // Immunity timer
+    if(immunityTimer>0){
+      immunityTimer=Math.max(0,immunityTimer-dt);
+      const ib=document.getElementById('immunity-border');
+      if(ib)ib.style.opacity=Math.sin(Date.now()*0.014)>0?'1':'0';
+      if(immunityTimer<=0&&ib)ib.style.opacity='0';
+    }
     updatePhysics(dt);castRay();updateBreaking(dt);updateHunger(dt);
     if(needsRebuild)buildWorld();
     mvTimer+=dt;if(mvTimer>0.05){sendMove();mvTimer=0;}
+    // Animate cape flames on local player mesh (3rd person)
+    if(localPlayerMesh){
+      const tF=Date.now()*0.001;
+      localPlayerMesh.traverse(child=>{
+        if(!child.userData.isFlame)return;
+        const ph=child.userData.flamePhase;
+        const s=Math.max(0.1,0.55+Math.sin(tF*3.1+ph)*0.38+Math.sin(tF*5.7+ph*1.3)*0.08);
+        child.scale.y=s;
+        child.position.y=child.userData.baseY+child.userData.flameH*(1-s)/2;
+        child.rotation.z=Math.sin(tF*2.3+ph)*0.10;
+      });
+    }
     const p=camera.position;
     document.getElementById('info').innerHTML=
       `XYZ: ${p.x.toFixed(1)} / ${p.y.toFixed(1)} / ${p.z.toFixed(1)}<br>`+
