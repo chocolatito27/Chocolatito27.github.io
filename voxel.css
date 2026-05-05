@@ -258,6 +258,37 @@ body{background:#080812;font-family:'Segoe UI',Arial,sans-serif;overflow:hidden;
 .big-code{font-size:2.4rem;letter-spacing:12px;color:#00f5d4;font-weight:900;font-family:monospace;margin:14px 0;text-shadow:0 0 20px rgba(0,245,212,0.35)}
 .invite-link-box{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:8px;padding:10px 14px;font-size:0.72rem;color:rgba(255,255,255,0.4);word-break:break-all;margin-bottom:12px;text-align:left;font-family:monospace}
 
+/* ══ KILL FLASH & BANNER ══ */
+#kill-flash{position:fixed;inset:0;pointer-events:none;z-index:450;opacity:0;
+  background:radial-gradient(ellipse at 50% 40%,rgba(255,180,0,0.75) 0%,rgba(255,80,0,0.5) 35%,transparent 70%);}
+@keyframes killFlashAnim{0%{opacity:1}60%{opacity:0.7}100%{opacity:0}}
+#kill-banner{position:fixed;top:38%;left:50%;transform:translateX(-50%);text-align:center;pointer-events:none;z-index:451;opacity:0;}
+.kban-title{font-size:2.2rem;font-weight:900;color:#ffd700;text-shadow:0 0 40px rgba(255,200,0,0.9),0 2px 8px rgba(0,0,0,0.8);letter-spacing:1px;}
+.kban-kills{font-size:1.1rem;font-weight:700;color:rgba(255,255,255,0.85);margin-top:4px;text-shadow:0 0 10px rgba(255,200,0,0.5);}
+@keyframes killBannerAnim{0%{opacity:0;transform:translateX(-50%) translateY(-24px)}15%{opacity:1;transform:translateX(-50%) translateY(0)}75%{opacity:1}100%{opacity:0;transform:translateX(-50%) translateY(10px)}}
+
+/* ══ IMMUNITY BORDER ══ */
+#immunity-border{position:fixed;inset:0;pointer-events:none;z-index:400;opacity:0;
+  box-shadow:inset 0 0 0 4px rgba(0,220,255,0.75),inset 0 0 40px rgba(0,200,255,0.25);
+  transition:opacity 0.15s;}
+
+/* ══ CHEST POPUP ══ */
+#chest-popup{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:600;
+  background:rgba(0,0,0,0.65);backdrop-filter:blur(6px);}
+.chest-card{background:linear-gradient(160deg,#1a1208 0%,#0e0a04 100%);border:2px solid rgba(212,160,23,0.5);
+  border-radius:20px;padding:28px 32px;min-width:280px;text-align:center;
+  box-shadow:0 0 60px rgba(212,160,23,0.25),0 20px 60px rgba(0,0,0,0.7);}
+.chest-title{font-size:1.4rem;font-weight:900;color:#ffd700;margin-bottom:18px;
+  text-shadow:0 0 20px rgba(255,200,0,0.6);}
+.chest-item{display:flex;align-items:center;gap:10px;font-size:1rem;color:#fff;
+  background:rgba(255,200,0,0.07);border:1px solid rgba(255,200,0,0.15);
+  border-radius:10px;padding:10px 14px;margin-bottom:8px;font-weight:600;}
+.chest-item b{color:#ffd700}
+.chest-close-btn{margin-top:12px;width:100%;padding:12px;border-radius:12px;border:none;
+  background:linear-gradient(90deg,#D4A017,#ff8800);color:#fff;font-size:1rem;
+  font-weight:800;cursor:pointer;transition:all 0.2s;}
+.chest-close-btn:hover{opacity:0.88;transform:translateY(-1px)}
+
 /* ══ CRAFTING ══ */
 .craft-card-wrap{max-width:520px}
 .craft-resources{font-size:0.82rem;color:#ffd700;margin-bottom:14px;background:rgba(255,200,0,0.07);border:1px solid rgba(255,200,0,0.15);border-radius:10px;padding:8px 14px;}
