@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  const API_BASE  = "https://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev/api";
+  const API_BASE  = "https://chocolatito-api-production.up.railway.app/api";
   const LOGIN_PAGE = "login.html";
 
   if ("serviceWorker" in navigator) {
