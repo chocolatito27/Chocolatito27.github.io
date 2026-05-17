@@ -40,7 +40,7 @@ particlesJS("particles-js", {
 /* ══════════════════════════════════════════════════════════════════
    CHAT
 ══════════════════════════════════════════════════════════════════ */
-const BACKEND_URL = "https://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev/api/chat";
+const BACKEND_URL = "https://chocolatito-api-production.up.railway.app/api/chat";
 
 const messagesEl = document.getElementById("cai-messages");
 const inputBox   = document.getElementById("cai-input");
