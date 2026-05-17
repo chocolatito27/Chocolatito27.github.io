@@ -3,8 +3,8 @@
 // ════════════════════════════════════════════════════════
 
 // ── CONFIG ──────────────────────────────────────────────
-const WS_URL='wss://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev/api/game/ws';
-const API_BASE='https://385fd47d-e4b4-4453-981e-7afca555f923-00-9lnnok86qrfn.picard.replit.dev';
+const WS_URL='wss://chocolatito-api-production.up.railway.app/api/game/ws';
+const API_BASE='https://chocolatito-api-production.up.railway.app';
 const W=64,H=64,D=64;
 // Block type → resource key needed to place it (null = can't place)
 const BLOCK_COST=['','dirt','dirt','stone','wood',null,'sand',null,null];
