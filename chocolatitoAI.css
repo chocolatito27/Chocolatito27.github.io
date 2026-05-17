@@ -109,7 +109,6 @@ body, html {
   position: relative;
   z-index: 2;
   width: 100%;
-  max-width: 760px;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -145,7 +144,7 @@ body, html {
 .cai-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 20px 18px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
   gap: 14px;
@@ -162,10 +161,10 @@ body, html {
 .bubble-row.assistant { justify-content: flex-start; }
 
 .bubble {
-  max-width: 80%;
+  max-width: 75%;
   padding: 12px 16px;
   border-radius: 16px;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   line-height: 1.7;
   word-break: break-word;
   animation: cai-pop 0.18s ease;
@@ -276,7 +275,7 @@ body, html {
   display: flex;
   align-items: flex-end;
   gap: 10px;
-  padding: 12px 18px;
+  padding: 14px 24px;
   background: rgba(0,0,0,0.85);
   border-top: 1px solid rgba(0,255,255,0.2);
   flex-shrink: 0;
@@ -289,7 +288,7 @@ body, html {
   padding: 10px 14px;
   color: #fff;
   font-family: Arial, sans-serif;
-  font-size: 0.92rem;
+  font-size: 0.95rem;
   line-height: 1.5;
   max-height: 120px;
   overflow-y: auto;
@@ -312,15 +311,18 @@ body, html {
 .cai-send:disabled               { opacity: 0.3; cursor: not-allowed; }
 
 /* ── Responsive ───────────────────────────────────────────────────── */
-@media (max-width: 600px) {
-  .cai-header     { padding: 12px 14px 12px 62px; }
+@media (max-width: 768px) {
+  .cai-header     { padding: 12px 14px 12px 56px; }
   .cai-logo       { font-size: 1rem; }
-  .cai-messages   { padding: 14px 10px; gap: 10px; }
-  .bubble         { max-width: 92%; font-size: 0.88rem; padding: 10px 13px; }
-  .cai-input-area { padding: 10px; gap: 8px; }
-  .cai-input      { font-size: 0.88rem; padding: 9px 12px; }
+  .cai-messages   { padding: 14px 12px; gap: 10px; }
+  .bubble         { max-width: 88%; font-size: 0.9rem; padding: 10px 13px; }
+  .cai-input-area { padding: 10px 12px; gap: 8px; }
+  .cai-input      { font-size: 0.9rem; padding: 9px 12px; }
   .cai-send       { width: 40px; height: 40px; }
 }
-@media (max-width: 400px) {
-  .bubble { max-width: 96%; }
+
+@media (max-width: 480px) {
+  .bubble         { max-width: 94%; font-size: 0.85rem; }
+  .cai-messages   { padding: 10px 8px; }
+  .cai-input-area { padding: 8px 10px; }
 }
