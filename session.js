@@ -112,25 +112,11 @@
     });
     document.body.appendChild(div);
 
+    // Add only logout button to sidebar (no user info)
     const sidebar = document.querySelector(".sidebar");
     if (sidebar) {
-      document.getElementById("cw-sidebar-user")?.remove();
       document.getElementById("cw-sidebar-logout-wrap")?.remove();
 
-      /* Usuario e ID — justo después del header */
-      const userSec = document.createElement("div");
-      userSec.id = "cw-sidebar-user";
-      userSec.innerHTML = `
-        <div style="padding:14px 20px 12px;border-bottom:1px solid rgba(255,255,255,0.12);">
-          <div style="color:#33FFFF;font-weight:700;font-size:1rem;">${escHtml(user.username)}</div>
-          <div style="color:rgba(255,255,255,0.5);font-size:0.78rem;margin-top:3px;">ID: ${escHtml(user.id)}</div>
-        </div>
-      `;
-      const header = sidebar.querySelector(".sidebar-header");
-      if (header) header.after(userSec);
-      else sidebar.prepend(userSec);
-
-      /* Cerrar sesión — siempre al fondo */
       const logoutWrap = document.createElement("div");
       logoutWrap.id = "cw-sidebar-logout-wrap";
       logoutWrap.style.cssText = "padding:16px 20px;border-top:1px solid rgba(255,255,255,0.12);margin-top:auto;";
