@@ -8,7 +8,7 @@ const API_BASE='https://chocolatito-api-production.up.railway.app';
 const W=64,H=64,D=64;
 // Block type → resource key needed to place it (null = can't place)
 const BLOCK_COST=['','dirt','dirt','stone','wood',null,'sand',null,null];
-const GRAV=-20,JUMP=7,SPEED=4.3,REACH=6.5,PH=1.8,PW=0.3,STEP_H=0.55;
+const GRAV=-22,JUMP=8.5,SPEED=4.8,REACH=6.5,PH=1.8,PW=0.3,STEP_H=0.55;
 const FOG_DISTS=[18,32,48,68,90];
 const ATTACK_RANGE=2.5;
 let gsens=0.0025,gfog=3;
@@ -59,22 +59,22 @@ const BNAME=['','Pasto','Tierra','Piedra','Madera','Hojas','Arena','Cristal','Co
 const HCOL =['','#4CAF50','#8B6914','#707070','#6B4226','#2D7D32','#D4B483','#ADD8E6','#D4A017'];
 const BREAK_DUR=[0,0.75,0.5,2.0,1.2,0.25,0.55,0.45,0.9];
 const BCOL=[null,
-  // 1 Grass — vivid green top, dirt sides
-  {t:[0.24,0.80,0.17],s:[0.50,0.34,0.10],b:[0.44,0.30,0.08]},
-  // 2 Dirt — warm brown
-  {t:[0.58,0.42,0.16],s:[0.54,0.38,0.13],b:[0.50,0.34,0.11]},
-  // 3 Stone — warm gray (cobblestone PvP feel)
-  {t:[0.66,0.64,0.62],s:[0.60,0.58,0.56],b:[0.52,0.50,0.48]},
-  // 4 Wood — warm amber, used for torch poles too
-  {t:[0.64,0.48,0.24],s:[0.46,0.32,0.13],b:[0.60,0.44,0.21]},
-  // 5 Leaves — deep forest green
-  {t:[0.17,0.68,0.14],s:[0.16,0.62,0.13],b:[0.14,0.56,0.11]},
-  // 6 Sandstone — light warm beige (PvP arena material)
-  {t:[0.91,0.84,0.66],s:[0.87,0.80,0.62],b:[0.82,0.75,0.57]},
-  // 7 Glass
-  {t:[0.62,0.82,0.94],s:[0.60,0.80,0.92],b:[0.56,0.76,0.88]},
-  // 8 Chest
-  {t:[0.86,0.66,0.22],s:[0.64,0.44,0.14],b:[0.58,0.38,0.11]},
+  // 1 Grass — vivid emerald top, rich earthy sides
+  {t:[0.22,0.82,0.15],s:[0.48,0.32,0.09],b:[0.42,0.28,0.07]},
+  // 2 Dirt — rich warm brown with depth
+  {t:[0.60,0.44,0.18],s:[0.55,0.39,0.14],b:[0.50,0.35,0.12]},
+  // 3 Stone — pro cobblestone with contrast
+  {t:[0.68,0.66,0.64],s:[0.58,0.56,0.54],b:[0.48,0.46,0.44]},
+  // 4 Wood — warm amber with rich grain
+  {t:[0.66,0.50,0.26],s:[0.48,0.34,0.14],b:[0.58,0.42,0.19]},
+  // 5 Leaves — lush vibrant forest canopy
+  {t:[0.18,0.72,0.15],s:[0.15,0.64,0.12],b:[0.12,0.55,0.10]},
+  // 6 Sandstone — warm golden beige pro
+  {t:[0.93,0.86,0.68],s:[0.88,0.82,0.64],b:[0.80,0.73,0.54]},
+  // 7 Glass — crystal clear blue tint
+  {t:[0.65,0.85,0.96],s:[0.62,0.82,0.94],b:[0.58,0.78,0.90]},
+  // 8 Chest — golden oak treasure
+  {t:[0.88,0.70,0.24],s:[0.66,0.46,0.16],b:[0.56,0.36,0.10]},
 ];
 function bCol(type,face){const b=BCOL[type];if(!b)return[1,1,1];return face==='t'?b.t:face==='b'?b.b:b.s;}
 
@@ -567,17 +567,21 @@ function initThree(){
   renderer.setPixelRatio(Math.min(devicePixelRatio,2));
   // ACES Filmic tone mapping — the "shader" cinematic look
   renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.18;
+  renderer.toneMappingExposure=1.28;
   renderer.outputColorSpace=THREE.SRGBColorSpace;
   clock=new THREE.Clock();
   // Hemisphere light: sky-blue from above, warm ground from below
   scene.add(new THREE.HemisphereLight(0x9ecff7,0x886644,0.65));
   // Main sun — strong, warm, angled
-  const sun=new THREE.DirectionalLight(0xfff4d6,1.35);sun.position.set(1.2,2.0,0.8).normalize();scene.add(sun);
+  const sun=new THREE.DirectionalLight(0xfff4d6,1.5);sun.position.set(1.2,2.0,0.8).normalize();scene.add(sun);
+  // Enable shadows for pro look
+  sun.castShadow=true;sun.shadow.mapSize.set(1024,1024);sun.shadow.camera.near=0.5;sun.shadow.camera.far=120;
+  sun.shadow.camera.left=-40;sun.shadow.camera.right=40;sun.shadow.camera.top=40;sun.shadow.camera.bottom=-40;
+  renderer.shadowMap.enabled=true;renderer.shadowMap.type=THREE.PCFSoftShadowMap;
   // Soft fill from opposite side
   const fill=new THREE.DirectionalLight(0xb0c8e8,0.28);fill.position.set(-1.0,0.4,-0.8).normalize();scene.add(fill);
   // Phong material — enables specular highlights (shader look)
-  wMat=new THREE.MeshPhongMaterial({vertexColors:true,shininess:9,specular:new THREE.Color(0x181818),side:THREE.FrontSide});
+  wMat=new THREE.MeshPhongMaterial({vertexColors:true,shininess:22,specular:new THREE.Color(0x222222),side:THREE.FrontSide,flatShading:false});
   const hg=new THREE.BoxGeometry(1.005,1.005,1.005);
   const hm=new THREE.MeshBasicMaterial({color:0x000000,wireframe:true,transparent:true,opacity:0.38});
   hlBox=new THREE.Mesh(hg,hm);hlBox.visible=false;scene.add(hlBox);
@@ -610,16 +614,19 @@ function buildWorld(){
       if(gb(x+fc.d[0],y+fc.d[1],z+fc.d[2])!==0)continue;
 
       // Per-face base noise
-      const fv=(n2(x*7.3+fc.d[0]*3.7+y*0.9,z*5.9+fc.d[2]*2.1+y*1.3,77.7)-0.5)*0.14;
-      const base=fc.bri*hs*(1+fv);
+      const fv=(n2(x*7.3+fc.d[0]*3.7+y*0.9,z*5.9+fc.d[2]*2.1+y*1.3,77.7)-0.5)*0.18;
       const bc=bCol(bt,fc.f);
       const isSide=fc.f==='s';
       const isTop=fc.f==='t';
+      // Extra AO: darken vertices near block edges for depth (applied per-vertex below)
+      const base=fc.bri*hs*(1+fv);
 
       // Build per-vertex colors (4 vertices: indices 0-3 from fc.c)
       // fc.c vertex layout for side faces: [0,1]=bottom (cy=0), [2,3]=top (cy=1)
       const vC=fc.c.map(([cx,cy,cz],vi2)=>{
-        let r=bc[0],g=bc[1],b=bc[2],s=base;
+        // Extra AO: darken bottom vertices on side faces
+        const edgeAO = isSide ? (cy===0 ? 0.88 : 1.0) : 1.0;
+        let r=bc[0],g=bc[1],b=bc[2],s=base*edgeAO;
 
         // ── GRASS BLOCK ───────────────────────────────────
         if(bt===1){
@@ -842,23 +849,31 @@ function buildCharacter(outfit={}){
 
   // ── Arms ─────────────────────────────────────
   [-1,1].forEach(s=>{
+    const armGroup=new THREE.Group();
+    armGroup.position.set(s*0.45,1.28,0); // pivot at shoulder
+    armGroup.userData.isArm=true;
+    armGroup.userData.armSide=s;
     const arm=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.62,0.28),mat(o.shirtColor));
-    arm.position.set(s*0.45,0.98,0);g.add(arm);
+    arm.position.y=-0.31;armGroup.add(arm);
     const hand=new THREE.Mesh(new THREE.BoxGeometry(0.26,0.18,0.26),mat(o.skinColor));
-    hand.position.set(s*0.45,0.64,0);g.add(hand);
-    // Sleeve cuff
+    hand.position.y=-0.64;armGroup.add(hand);
     const cuff=new THREE.Mesh(new THREE.BoxGeometry(0.29,0.06,0.29),mat(0xffffff));
-    cuff.position.set(s*0.45,0.73,0);g.add(cuff);
+    cuff.position.y=-0.55;armGroup.add(cuff);
+    g.add(armGroup);
   });
 
   // ── Legs ─────────────────────────────────────
   [-1,1].forEach(s=>{
+    const legGroup=new THREE.Group();
+    legGroup.position.set(s*0.16,0.72,0); // pivot at hip
+    legGroup.userData.isLeg=true;
+    legGroup.userData.legSide=s;
     const leg=new THREE.Mesh(new THREE.BoxGeometry(0.28,0.72,0.28),mat(o.pantsColor));
-    leg.position.set(s*0.16,0.36,0);g.add(leg);
-    // Knee detail
+    leg.position.y=-0.36;legGroup.add(leg);
     const knee=new THREE.Mesh(new THREE.BoxGeometry(0.30,0.06,0.30),mat(
       typeof o.pantsColor==='number'?o.pantsColor-0x111111:0x1a2040));
-    knee.position.set(s*0.16,0.46,0);g.add(knee);
+    knee.position.y=-0.26;legGroup.add(knee);
+    g.add(legGroup);
   });
 
   // ── Shoes ────────────────────────────────────
@@ -1042,6 +1057,9 @@ let selBlock=1,gameOn=false,chatOpen=false;
 let camMode=0; // 0=primera persona, 1=tercera detrás, 2=tercera frente
 let localPlayerMesh=null;
 let tgtB=null,tgtF=null,health=20,mouseHeld=false;
+// ── Animation state ──
+let walkCycle=0, isWalking=false, wasOnGround=true, jumpSquash=0, landBounce=0, attackAnim=0;
+let headBob=0, headBobActive=false;
 const breaking={active:false,x:-1,y:-1,z:-1,progress:0,duration:1};
 
 document.addEventListener('keydown',e=>{
@@ -1112,7 +1130,10 @@ function updatePhysics(dt){
   if(keys['KeyA']||keys['ArrowLeft']) mv.sub(rgt);
   if(keys['KeyD']||keys['ArrowRight'])mv.add(rgt);
   if(mv.lengthSq()>0)mv.normalize().multiplyScalar(SPEED*dt);
-  if(keys['Space']&&onGround){velY=JUMP;onGround=false;}
+  if(keys['Space']&&onGround){velY=JUMP;onGround=false;jumpSquash=0.35;
+    // Visual jump feedback - subtle screen effect
+    const jb=document.getElementById('jump-bob');if(jb){jb.style.animation='none';void jb.offsetWidth;jb.style.animation='jumpBob 0.4s ease-out forwards';}
+  }
   let px=camera.position.x,foot=camera.position.y-PH,pz=camera.position.z;
   if(mv.x!==0){const nx=px+mv.x;
     if(!playerHitsAny(nx,foot,pz))px=nx;
@@ -1127,29 +1148,69 @@ function updatePhysics(dt){
   px=Math.max(PW+0.01,Math.min(W-PW-0.01,px));
   pz=Math.max(PW+0.01,Math.min(D-PW-0.01,pz));
   if(foot<-5){respawn();return;}
-  // ── Camera mode (P key) ───────────────────────
+  // ── Camera mode (P key) + animations ──────────
   const bodyX=px, bodyY=foot+PH-0.3, bodyZ=pz;
   const fwdX=-Math.sin(yaw), fwdZ=-Math.cos(yaw);
+  const moving=keys['KeyW']||keys['KeyS']||keys['KeyA']||keys['KeyD'];
+  
+  // Walk cycle animation
+  if(moving && onGround){
+    walkCycle+=dt*10;
+    isWalking=true;
+    headBob+=dt*12;
+  } else {
+    isWalking=false;
+    walkCycle*=0.85; // decay smoothly
+    headBob*=0.85;
+  }
+  
+  // Jump squash & stretch
+  if(!onGround && wasOnGround){ jumpSquash=0.3; }
+  if(onGround && !wasOnGround){ landBounce=0.25; }
+  wasOnGround=onGround;
+  jumpSquash*=0.85;
+  landBounce*=0.88;
+  
   if(camMode===0){
     // Primera persona — vista desde dentro de la cabeza
-    camera.position.set(px,foot+PH,pz);
+    const bobY=isWalking?Math.sin(headBob)*0.04:0;
+    const bobX=isWalking?Math.cos(headBob*0.5)*0.02:0;
+    camera.position.set(px+bobX,foot+PH+bobY,pz);
     camera.quaternion.setFromEuler(new THREE.Euler(pitch,yaw,0,'YXZ'));
     if(localPlayerMesh)localPlayerMesh.visible=false;
     document.getElementById('xhair').style.display='block';
   } else {
     const DIST=3.8, UP=1.6;
     if(camMode===1){
-      // Tercera persona — detrás del personaje
       camera.position.set(bodyX-fwdX*DIST, bodyY+UP, bodyZ-fwdZ*DIST);
     } else {
-      // Tercera persona — frente al personaje
       camera.position.set(bodyX+fwdX*DIST, bodyY+UP*0.9, bodyZ+fwdZ*DIST);
     }
     camera.lookAt(bodyX, bodyY+0.5, bodyZ);
     if(localPlayerMesh){
       localPlayerMesh.visible=true;
       localPlayerMesh.position.set(px, foot, pz);
+      // Fix: character faces +Z locally, game forward is -Z when yaw=0
       localPlayerMesh.rotation.y=yaw+Math.PI;
+      // Walk animation — swing arms and legs
+      const swing=isWalking?Math.sin(walkCycle)*0.6:0;
+      const breathe=Math.sin(Date.now()*0.002)*0.02;
+      localPlayerMesh.traverse(child=>{
+        if(child.userData.isArm){
+          child.rotation.x=swing*child.userData.armSide*-0.8;
+        }
+        if(child.userData.isLeg){
+          child.rotation.x=swing*child.userData.legSide*0.7;
+        }
+      });
+      // Jump squash/stretch
+      if(jumpSquash>0.01){
+        localPlayerMesh.scale.set(1+jumpSquash*0.3, 1-jumpSquash*0.5, 1+jumpSquash*0.3);
+      } else if(landBounce>0.01){
+        localPlayerMesh.scale.set(1+landBounce*0.4, 1-landBounce*0.6, 1+landBounce*0.4);
+      } else {
+        localPlayerMesh.scale.set(1,1+breathe,1);
+      }
     }
     document.getElementById('xhair').style.display='none';
   }
