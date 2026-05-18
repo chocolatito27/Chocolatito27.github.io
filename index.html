@@ -50,30 +50,33 @@
     (function() {
         const logo = document.getElementById('hero-logo-wrap');
         let isDragging = false;
-        let startX, startY, origX, origY;
+        let startX, startY, startLeft, startTop;
+
+        function init() {
+            // Calculate actual centered position and set it as explicit left/top
+            const rect = logo.getBoundingClientRect();
+            logo.style.transform = 'none';
+            logo.style.left = rect.left + 'px';
+            logo.style.top = rect.top + 'px';
+            logo.style.cursor = 'grab';
+        }
 
         function onStart(e) {
             isDragging = true;
             const touch = e.touches ? e.touches[0] : e;
-            origX = logo.offsetLeft;
-            origY = logo.offsetTop;
             startX = touch.clientX;
             startY = touch.clientY;
-            logo.style.transform = 'none';
-            logo.style.left = origX + 'px';
-            logo.style.top = origY + 'px';
+            startLeft = parseInt(logo.style.left) || 0;
+            startTop = parseInt(logo.style.top) || 0;
             logo.style.cursor = 'grabbing';
-            logo.style.transition = 'none';
             e.preventDefault();
         }
 
         function onMove(e) {
             if (!isDragging) return;
             const touch = e.touches ? e.touches[0] : e;
-            const dx = touch.clientX - startX;
-            const dy = touch.clientY - startY;
-            logo.style.left = (origX + dx) + 'px';
-            logo.style.top = (origY + dy) + 'px';
+            logo.style.left = (startLeft + touch.clientX - startX) + 'px';
+            logo.style.top = (startTop + touch.clientY - startY) + 'px';
             e.preventDefault();
         }
 
@@ -82,6 +85,10 @@
             isDragging = false;
             logo.style.cursor = 'grab';
         }
+
+        // Wait for layout to settle, then init position
+        window.addEventListener('load', init);
+        window.addEventListener('resize', init);
 
         logo.addEventListener('mousedown', onStart);
         document.addEventListener('mousemove', onMove);
