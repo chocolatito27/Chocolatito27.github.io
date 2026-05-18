@@ -38,7 +38,7 @@
         <div class="hero-logo-wrap" id="hero-logo-wrap">
             <img src="favicon.png" alt="Chocolatito" class="hero-logo" id="hero-logo" />
         </div>
-        <h1 class="hero-title">Chocolatito<span>Web</span></h1>
+        <h1 class="hero-title" id="hero-title">ChocolatitoWeb</h1>
     </section>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
@@ -55,15 +55,13 @@
         function onStart(e) {
             isDragging = true;
             const touch = e.touches ? e.touches[0] : e;
-            const rect = logo.getBoundingClientRect();
-            origX = rect.left;
-            origY = rect.top;
+            origX = logo.offsetLeft;
+            origY = logo.offsetTop;
             startX = touch.clientX;
             startY = touch.clientY;
-            logo.style.position = 'fixed';
+            logo.style.transform = 'none';
             logo.style.left = origX + 'px';
             logo.style.top = origY + 'px';
-            logo.style.zIndex = '9999';
             logo.style.cursor = 'grabbing';
             logo.style.transition = 'none';
             e.preventDefault();
@@ -85,7 +83,6 @@
             logo.style.cursor = 'grab';
         }
 
-        logo.style.cursor = 'grab';
         logo.addEventListener('mousedown', onStart);
         document.addEventListener('mousemove', onMove);
         document.addEventListener('mouseup', onEnd);

@@ -391,13 +391,17 @@ canvas {
 }
 
 .hero-logo-wrap {
+    position: fixed;
+    top: calc(50% - 77px - 65px);
+    left: 50%;
+    transform: translateX(-50%);
     width: 130px;
     height: 130px;
-    margin-bottom: 24px;
     cursor: grab;
     user-select: none;
     -webkit-user-select: none;
     touch-action: none;
+    z-index: 3;
 }
 
 .hero-logo-wrap:active {
@@ -420,18 +424,17 @@ canvas {
     text-shadow: 0 0 40px rgba(51,255,255,0.3);
     letter-spacing: -0.02em;
     line-height: 1.1;
-    animation: heroFadeIn 0.8s ease-out both;
+    position: fixed;
+    top: calc(50% + 77px);
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    animation: heroTitleFade 0.8s ease-out both;
 }
 
-.hero-title span {
-    color: #fff;
-    font-weight: 400;
-    opacity: 0.7;
-}
-
-@keyframes heroFadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
+@keyframes heroTitleFade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
 
 /* ── Responsive ────────────────────────────────────────────────── */
