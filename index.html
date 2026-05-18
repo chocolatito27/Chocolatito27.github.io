@@ -7,6 +7,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
     <!-- Protección: si no hay sesión, va al login -->
     <script>
@@ -15,43 +17,63 @@
         }
     </script>
 </head>
-<body>
+<body class="home-page">
     <div id="particles-js"></div>
+
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
     <div class="sidebar">
         <div class="sidebar-header">
             <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
         </div>
-
         <ul>
-            <li><a href="#inicio" onclick="scrollToSection('inicio')">Inicio</a></li>
+            <li><a href="#hero" class="active" onclick="toggleMenu()">Inicio</a></li>
             <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
             <li><a href="entretenimiento.html">Entretenimiento</a></li>
             <li><a href="juegos.html">Juegos</a></li>
         </ul>
     </div>
 
-    <div class="main-content" id="inicio">
-        <h1>ChocolatitoWeb</h1>
-        <p class="lema">Bienvenido a este mundo, esperamos que tengas una buena experiencia</p>
-    </div>
+    <!-- ══ HERO: Logo + Marca ══ -->
+    <section class="hero" id="hero">
+        <div class="hero-logo-wrap">
+            <img src="favicon.png" alt="Chocolatito" class="hero-logo" />
+            <div class="hero-logo-glow"></div>
+        </div>
+        <h1 class="hero-title">Chocolatito<span>Web</span></h1>
+        <p class="hero-tagline">Tu mundo digital. Tu experiencia.</p>
+    </section>
 
-    <div class="social-icons">
-        <a href="https://wa.me/6285640549937" target="_blank">
-            <i class="fab fa-whatsapp" style="color: #25D366;"></i>
-        </a>
-        <a href="https://www.instagram.com/chocolatitoadm?igsh=em9ocnowajN6cWxv" target="_blank">
-            <i class="fab fa-instagram" style="color: #E1306C;"></i>
-        </a>
-        <a href="https://www.facebook.com/share/15pPDtcREs" target="_blank">
-            <i class="fab fa-facebook" style="color: #1877F2;"></i>
-        </a>
+    <!-- ══ FEATURES ══ -->
+    <section class="features" id="features">
+        <div class="feature-card" onclick="window.location.href='chocolatitoAI.html'">
+            <div class="feature-icon"><i class="fas fa-robot"></i></div>
+            <h2>ChocolatitoAI</h2>
+            <p>Tu asistente inteligente. Pregúntale lo que quieras.</p>
+            <span class="feature-arrow"><i class="fas fa-arrow-right"></i></span>
+        </div>
+        <div class="feature-card" onclick="window.location.href='juegos.html'">
+            <div class="feature-icon"><i class="fas fa-gamepad"></i></div>
+            <h2>Juegos</h2>
+            <p>Derribalos, VoxelWorld y más diversión esperándote.</p>
+            <span class="feature-arrow"><i class="fas fa-arrow-right"></i></span>
+        </div>
+        <div class="feature-card" onclick="window.location.href='entretenimiento.html'">
+            <div class="feature-icon"><i class="fas fa-palette"></i></div>
+            <h2>Entretenimiento</h2>
+            <p>Pizarra creativa y herramientas para exprimir tu imaginación.</p>
+            <span class="feature-arrow"><i class="fas fa-arrow-right"></i></span>
+        </div>
+    </section>
+
+    <!-- ══ SOCIAL ══ -->
+    <div class="home-social">
+        <a href="https://wa.me/6285640549937" target="_blank" aria-label="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://www.instagram.com/chocolatitoadm?igsh=em9ocnowajN6cWxv" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://www.facebook.com/share/15pPDtcREs" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
     </div>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
-
-
     <script src="session.js"></script>
 </body>
 </html>

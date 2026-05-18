@@ -362,3 +362,302 @@ canvas {
 .social-icons a:hover {
     transform: scale(1.2);
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   HOME PAGE — Premium Brand Landing
+   ═══════════════════════════════════════════════════════════════════ */
+
+.home-page {
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+}
+
+.home-page #particles-js {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+}
+
+/* ── Hero ──────────────────────────────────────────────────────── */
+.hero {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 60px 24px 40px;
+    text-align: center;
+}
+
+.hero-logo-wrap {
+    position: relative;
+    width: 180px;
+    height: 180px;
+    margin-bottom: 32px;
+    animation: heroFloat 4s ease-in-out infinite;
+}
+
+.hero-logo {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 0 30px rgba(51,255,255,0.4));
+    position: relative;
+    z-index: 2;
+}
+
+.hero-logo-glow {
+    position: absolute;
+    inset: -30px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(51,255,255,0.15) 0%, transparent 70%);
+    animation: heroGlow 3s ease-in-out infinite alternate;
+    z-index: 1;
+}
+
+@keyframes heroFloat {
+    0%, 100% { transform: translateY(0); }
+    50%      { transform: translateY(-12px); }
+}
+
+@keyframes heroGlow {
+    from { transform: scale(1);   opacity: 0.6; }
+    to   { transform: scale(1.2); opacity: 1; }
+}
+
+.hero-title {
+    font-family: 'Inter', 'Arial Black', sans-serif;
+    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-weight: 900;
+    margin: 0;
+    color: #33FFFF;
+    text-shadow: 0 0 40px rgba(51,255,255,0.3);
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+    animation: heroFadeIn 0.8s ease-out both;
+}
+
+.hero-title span {
+    color: #fff;
+    font-weight: 400;
+    opacity: 0.7;
+}
+
+.hero-tagline {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: clamp(1rem, 3vw, 1.35rem);
+    color: rgba(255,255,255,0.55);
+    margin-top: 14px;
+    font-weight: 400;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    animation: heroFadeIn 0.8s ease-out 0.2s both;
+}
+
+@keyframes heroFadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Features ──────────────────────────────────────────────────── */
+.features {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    max-width: 900px;
+    margin: 0 auto 60px;
+    padding: 0 24px;
+}
+
+.feature-card {
+    position: relative;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(51,255,255,0.12);
+    border-radius: 20px;
+    padding: 32px 24px 28px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.35s cubic-bezier(.4,0,.2,1),
+                background 0.35s ease,
+                border-color 0.35s ease,
+                box-shadow 0.35s ease;
+    overflow: hidden;
+    animation: heroFadeIn 0.8s ease-out 0.4s both;
+}
+
+.feature-card::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 50% 0%, rgba(51,255,255,0.08) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.35s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-8px);
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(51,255,255,0.35);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 30px rgba(51,255,255,0.1);
+}
+
+.feature-card:hover::before {
+    opacity: 1;
+}
+
+.feature-icon {
+    position: relative;
+    width: 60px;
+    height: 60px;
+    margin: 0 auto 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(51,255,255,0.08);
+    border: 1px solid rgba(51,255,255,0.2);
+    border-radius: 16px;
+    font-size: 24px;
+    color: #33FFFF;
+    transition: background 0.35s ease, transform 0.35s ease;
+}
+
+.feature-card:hover .feature-icon {
+    background: rgba(51,255,255,0.15);
+    transform: scale(1.1);
+}
+
+.feature-card h2 {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #fff;
+    margin: 0 0 8px;
+    position: relative;
+}
+
+.feature-card p {
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: 0.85rem;
+    color: rgba(255,255,255,0.5);
+    margin: 0;
+    line-height: 1.5;
+    position: relative;
+}
+
+.feature-arrow {
+    position: absolute;
+    bottom: 16px;
+    right: 20px;
+    color: rgba(51,255,255,0.3);
+    font-size: 14px;
+    transition: color 0.3s ease, transform 0.3s ease;
+}
+
+.feature-card:hover .feature-arrow {
+    color: #33FFFF;
+    transform: translateX(4px);
+}
+
+/* ── Home Social ───────────────────────────────────────────────── */
+.home-social {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    padding: 0 24px 40px;
+    animation: heroFadeIn 0.8s ease-out 0.6s both;
+}
+
+.home-social a {
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 50%;
+    color: rgba(255,255,255,0.5);
+    font-size: 18px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.home-social a:hover {
+    background: rgba(51,255,255,0.1);
+    border-color: rgba(51,255,255,0.4);
+    color: #33FFFF;
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgba(51,255,255,0.15);
+}
+
+/* ── Responsive ────────────────────────────────────────────────── */
+@media (max-width: 768px) {
+    .hero-logo-wrap {
+        width: 130px;
+        height: 130px;
+        margin-bottom: 24px;
+    }
+
+    .features {
+        grid-template-columns: 1fr;
+        gap: 14px;
+        max-width: 400px;
+        margin: 0 auto 50px;
+    }
+
+    .feature-card {
+        padding: 24px 20px 22px;
+        border-radius: 16px;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        text-align: left;
+    }
+
+    .feature-icon {
+        width: 50px;
+        height: 50px;
+        margin: 0;
+        flex-shrink: 0;
+        font-size: 20px;
+        border-radius: 12px;
+    }
+
+    .feature-card h2 {
+        font-size: 1rem;
+    }
+
+    .feature-card p {
+        font-size: 0.8rem;
+    }
+
+    .feature-arrow {
+        bottom: auto;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    .feature-card:hover .feature-arrow {
+        transform: translateY(-50%) translateX(4px);
+    }
+}
+
+@media (max-width: 480px) {
+    .hero {
+        min-height: 85vh;
+        padding: 50px 16px 30px;
+    }
+
+    .hero-logo-wrap {
+        width: 110px;
+        height: 110px;
+    }
+}
