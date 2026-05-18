@@ -387,16 +387,16 @@ canvas {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh;
-    padding: 60px 24px 40px;
+    min-height: 70vh;
+    padding: 50px 24px 30px;
     text-align: center;
 }
 
 .hero-logo-wrap {
     position: relative;
-    width: 180px;
-    height: 180px;
-    margin-bottom: 32px;
+    width: 110px;
+    height: 110px;
+    margin-bottom: 20px;
     animation: heroFloat 4s ease-in-out infinite;
 }
 
@@ -430,7 +430,7 @@ canvas {
 
 .hero-title {
     font-family: 'Inter', 'Arial Black', sans-serif;
-    font-size: clamp(2.5rem, 8vw, 4.5rem);
+    font-size: clamp(1.8rem, 5vw, 3rem);
     font-weight: 900;
     margin: 0;
     color: #33FFFF;
@@ -448,11 +448,11 @@ canvas {
 
 .hero-tagline {
     font-family: 'Inter', Arial, sans-serif;
-    font-size: clamp(1rem, 3vw, 1.35rem);
-    color: rgba(255,255,255,0.55);
-    margin-top: 14px;
+    font-size: clamp(0.85rem, 2vw, 1.05rem);
+    color: rgba(255,255,255,0.45);
+    margin-top: 10px;
     font-weight: 400;
-    letter-spacing: 0.08em;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     animation: heroFadeIn 0.8s ease-out 0.2s both;
 }
@@ -600,9 +600,9 @@ canvas {
 /* ── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .hero-logo-wrap {
-        width: 130px;
-        height: 130px;
-        margin-bottom: 24px;
+        width: 90px;
+        height: 90px;
+        margin-bottom: 16px;
     }
 
     .features {
@@ -652,12 +652,12 @@ canvas {
 
 @media (max-width: 480px) {
     .hero {
-        min-height: 85vh;
-        padding: 50px 16px 30px;
+        min-height: 65vh;
+        padding: 40px 16px 20px;
     }
 
     .hero-logo-wrap {
-        width: 110px;
-        height: 110px;
+        width: 80px;
+        height: 80px;
     }
 }
