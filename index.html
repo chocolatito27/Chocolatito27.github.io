@@ -21,8 +21,6 @@
     <div class="sidebar">
         <div class="sidebar-header">
             <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
-            <div id="sidebar-username">Usuario</div>
-            <div id="sidebar-uid">ID: —</div>
         </div>
 
         <ul>
@@ -53,20 +51,7 @@
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
 
-    <!-- Cargar datos del usuario desde localStorage -->
-    <script>
-        const cwUser = JSON.parse(localStorage.getItem('cw_user') || '{}');
-        if (cwUser.username) {
-            document.getElementById('sidebar-username').textContent = cwUser.username;
-            document.getElementById('sidebar-uid').textContent = 'ID: ' + (cwUser.id || '—');
-        }
 
-        function cwLogout() {
-            localStorage.removeItem('cw_token');
-            localStorage.removeItem('cw_user');
-            window.location.replace('login.html');
-        }
-    </script>
     <script src="session.js"></script>
 </body>
 </html>
