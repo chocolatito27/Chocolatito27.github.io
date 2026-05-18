@@ -319,10 +319,148 @@ body, html {
   .cai-input-area { padding: 10px 12px; gap: 8px; }
   .cai-input      { font-size: 0.9rem; padding: 9px 12px; }
   .cai-send       { width: 40px; height: 40px; }
+  .cai-img-btn    { width: 40px; height: 40px; }
+  .img-modal      { width: calc(100% - 32px); padding: 20px; }
 }
 
 @media (max-width: 480px) {
   .bubble         { max-width: 94%; font-size: 0.85rem; }
   .cai-messages   { padding: 10px 8px; }
   .cai-input-area { padding: 8px 10px; }
+  .ai-generated-img { max-height: 200px; }
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   IMAGE GENERATION
+   ═══════════════════════════════════════════════════════════════════ */
+
+/* ── Image button ───────────────────────────────────────────────── */
+.cai-img-btn {
+  flex-shrink: 0; width: 44px; height: 44px;
+  border-radius: 50%; background: transparent;
+  border: 1.5px solid #c084fc; color: #c084fc; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+}
+.cai-img-btn:hover { background: rgba(192,132,252,0.15); box-shadow: 0 0 12px rgba(192,132,252,0.5); }
+.cai-img-btn:active { transform: scale(0.9); }
+
+/* ── Image Modal ────────────────────────────────────────────────── */
+.img-modal-overlay {
+  position: fixed; inset: 0; z-index: 9000;
+  background: rgba(0,0,0,0.7);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.img-modal-overlay.open {
+  opacity: 1; pointer-events: auto;
+}
+
+.img-modal {
+  background: rgba(20,20,30,0.97);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 20px;
+  padding: 28px;
+  width: 420px; max-width: calc(100% - 32px);
+  animation: img-modal-in 0.25s ease;
+}
+@keyframes img-modal-in {
+  from { transform: scale(0.92); opacity: 0; }
+  to   { transform: scale(1);    opacity: 1; }
+}
+
+.img-modal h3 {
+  color: #c084fc;
+  font-size: 1.15rem;
+  margin-bottom: 8px;
+}
+.img-modal p {
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+
+.img-prompt-input {
+  width: 100%;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 12px;
+  padding: 12px 14px;
+  color: #fff;
+  font-family: Arial, sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.img-prompt-input:focus {
+  border-color: #c084fc;
+  box-shadow: 0 0 12px rgba(192,132,252,0.3);
+}
+.img-prompt-input::placeholder { color: rgba(255,255,255,0.3); }
+
+.img-modal-btns {
+  display: flex; gap: 10px; margin-top: 16px; justify-content: flex-end;
+}
+.img-cancel-btn {
+  background: none; border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 10px; color: rgba(255,255,255,0.6);
+  padding: 8px 18px; font-size: 0.9rem; cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.img-cancel-btn:hover { background: rgba(255,255,255,0.06); color: #fff; }
+
+.img-gen-btn {
+  background: rgba(192,132,252,0.15); border: 1px solid rgba(192,132,252,0.4);
+  border-radius: 10px; color: #c084fc;
+  padding: 8px 18px; font-size: 0.9rem; font-weight: 700; cursor: pointer;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.img-gen-btn:hover { background: rgba(192,132,252,0.28); box-shadow: 0 0 14px rgba(192,132,252,0.4); }
+
+/* ── Generated Image Bubble ─────────────────────────────────────── */
+.bubble.image-bubble {
+  max-width: 80%;
+  padding: 14px;
+}
+
+.img-gen-label {
+  font-size: 0.85rem;
+  color: #c084fc;
+  margin-bottom: 10px;
+  font-style: italic;
+}
+
+.ai-generated-img {
+  width: 100%;
+  max-height: 320px;
+  object-fit: contain;
+  border-radius: 12px;
+  border: 1px solid rgba(192,132,252,0.2);
+  display: block;
+}
+
+.img-gen-meta {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.45);
+  margin-top: 8px;
+}
+.img-gen-meta strong { color: #4ade80; }
+
+.img-download-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  margin-top: 10px;
+  background: rgba(192,132,252,0.1);
+  border: 1px solid rgba(192,132,252,0.3);
+  border-radius: 8px;
+  color: #c084fc;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.img-download-btn:hover { background: rgba(192,132,252,0.22); }

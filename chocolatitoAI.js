@@ -40,12 +40,23 @@ particlesJS("particles-js", {
 /* ══════════════════════════════════════════════════════════════════
    CHAT
 ══════════════════════════════════════════════════════════════════ */
-const BACKEND_URL = "https://chocolatito-api-production.up.railway.app/api/chat";
+const API_BASE   = "https://chocolatito-api-production.up.railway.app/api";
+const CHAT_URL   = API_BASE + "/chat";
+const IMAGE_URL  = API_BASE + "/image/generate";
+const IMAGE_COST = 5;
 
 const messagesEl = document.getElementById("cai-messages");
 const inputBox   = document.getElementById("cai-input");
 const sendBtn    = document.getElementById("cai-send");
-let chatHistory  = [{ role: "assistant", content: "¡Hola! Soy **ChocolatitoAI**. ¿En qué te puedo ayudar hoy?" }];
+const imgBtn     = document.getElementById("cai-img-btn");
+const imgModal   = document.getElementById("img-modal");
+const imgInput   = document.getElementById("img-prompt-input");
+const imgGenBtn  = document.getElementById("img-gen-btn");
+const imgCancel  = document.getElementById("img-cancel-btn");
+
+let chatHistory  = [{ role: "assistant", content: "¡Hola! Soy **ChocolatitoAI**. ¿En qué te puedo ayudar hoy?\n\n🎨 También puedo **generar imágenes con IA**. Cuesta **5 créditos** por imagen. Haz clic en el botón de imagen (🖼️) para empezar." }];
+
+function getToken() { return localStorage.getItem("cw_token"); }
 
 /* ── Normaliza LaTeX ──────────────────────────────────────────────── */
 function normalizeMath(text) {
@@ -120,6 +131,45 @@ function addBubble(role, content, isTyping = false) {
   return row;
 }
 
+/* ── Agregar burbuja con imagen ──────────────────────────────────── */
+function addImageBubble(role, prompt, imageUrl, creditsLeft) {
+  const row    = document.createElement("div");
+  row.className = `bubble-row ${role}`;
+  const bubble = document.createElement("div");
+  bubble.className = `bubble ${role} image-bubble`;
+
+  const label = document.createElement("div");
+  label.className = "img-gen-label";
+  label.textContent = `🎨 Imagen generada: "${prompt}"`;
+  bubble.appendChild(label);
+
+  const img = document.createElement("img");
+  img.className = "ai-generated-img";
+  img.src = imageUrl;
+  img.alt = prompt;
+  img.loading = "lazy";
+  img.onerror = () => { img.style.display = "none"; label.textContent = "❌ Error cargando la imagen. Intenta de nuevo."; };
+  bubble.appendChild(img);
+
+  const meta = document.createElement("div");
+  meta.className = "img-gen-meta";
+  meta.innerHTML = `Costó <strong>${IMAGE_COST}</strong> créditos · Quedan <strong>${creditsLeft}</strong>`;
+  bubble.appendChild(meta);
+
+  const dlBtn = document.createElement("a");
+  dlBtn.className = "img-download-btn";
+  dlBtn.href = imageUrl;
+  dlBtn.target = "_blank";
+  dlBtn.download = "chocolatito-ai-image.png";
+  dlBtn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Descargar';
+  bubble.appendChild(dlBtn);
+
+  row.appendChild(bubble);
+  messagesEl.appendChild(row);
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+  return row;
+}
+
 /* ── Enviar mensaje ──────────────────────────────────────────────── */
 async function sendMessage() {
   const text = inputBox.value.trim();
@@ -135,7 +185,7 @@ async function sendMessage() {
   const typingRow = addBubble("assistant", "", true);
 
   try {
-    const res  = await fetch(BACKEND_URL, {
+    const res  = await fetch(CHAT_URL, {
       method:  "POST",
       headers: { "Content-Type": "application/json" },
       body:    JSON.stringify({ messages: chatHistory })
@@ -154,6 +204,83 @@ async function sendMessage() {
     inputBox.focus();
   }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   IMAGE GENERATION
+══════════════════════════════════════════════════════════════════ */
+
+/* ── Modal ──────────────────────────────────────────────────────── */
+imgBtn.addEventListener("click", () => {
+  imgInput.value = "";
+  imgModal.classList.add("open");
+  setTimeout(() => imgInput.focus(), 100);
+});
+
+imgCancel.addEventListener("click", () => {
+  imgModal.classList.remove("open");
+});
+
+imgModal.addEventListener("click", (e) => {
+  if (e.target === imgModal) imgModal.classList.remove("open");
+});
+
+imgInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); generateImage(); }
+  if (e.key === "Escape") imgModal.classList.remove("open");
+});
+
+/* ── Generate ───────────────────────────────────────────────────── */
+async function generateImage() {
+  const prompt = imgInput.value.trim();
+  if (!prompt) return;
+
+  const token = getToken();
+  if (!token) { alert("No hay sesión activa"); return; }
+
+  imgModal.classList.remove("open");
+
+  // Show user prompt as bubble
+  addBubble("user", `🖼️ Generar imagen: ${prompt}`);
+
+  // Loading bubble
+  const loadingRow = addBubble("assistant", "", true);
+
+  try {
+    const res = await fetch(IMAGE_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({ prompt })
+    });
+
+    const data = await res.json();
+    loadingRow.remove();
+
+    if (!res.ok) {
+      addBubble("assistant", `❌ ${data.error || "Error generando imagen"}`);
+      return;
+    }
+
+    addImageBubble("assistant", data.prompt, data.imageUrl, data.creditsRemaining);
+
+    // Update cached user credits in sidebar
+    const cwUser = JSON.parse(localStorage.getItem("cw_user") || "{}");
+    if (cwUser && data.creditsRemaining !== undefined) {
+      cwUser.credits = data.creditsRemaining;
+      localStorage.setItem("cw_user", JSON.stringify(cwUser));
+      const creditSpan = document.querySelector("#cw-sidebar-user-wrap span[style*='4ade80']");
+      if (creditSpan) creditSpan.textContent = data.creditsRemaining;
+    }
+
+  } catch (err) {
+    loadingRow.remove();
+    addBubble("assistant", "❌ No se pudo conectar con el servidor de imágenes.");
+  }
+}
+
+imgGenBtn.addEventListener("click", generateImage);
 
 /* ── Eventos ─────────────────────────────────────────────────────── */
 inputBox.addEventListener("keydown", e => {
