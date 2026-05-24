@@ -3,463 +3,959 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Plano tipo GeoGebra</title>
+  <title>Pizarra — ChocolatitoWeb</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
   <link rel="icon" type="image/png" href="/favicon.png">
   <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      margin: 0;
-      overflow: hidden;
-      background: black;
-      font-family: sans-serif;
+      margin: 0; overflow: hidden;
+      background: #000; font-family: 'Segoe UI', Arial, sans-serif; color: #fff;
     }
-    canvas {
-      display: block;
-      background-color: black;
-      cursor: crosshair;
+
+    /* ═══ Partículas ═══ */
+    #particles-js { position: fixed; inset: 0; z-index: 0; }
+
+    /* ═══ Sidebar ═══ */
+    .menu-icon {
+      position: fixed; top: 20px; left: 20px; font-size: 30px;
+      color: #fff; cursor: pointer; z-index: 1100;
     }
+    .sidebar {
+      position: fixed; top: 0; left: -260px; width: 260px; height: 100%;
+      background: rgba(20,20,20,0.97); backdrop-filter: blur(8px);
+      transition: left 0.3s ease; z-index: 1050;
+      display: flex; flex-direction: column;
+      border-right: 1px solid rgba(51,255,255,0.15);
+    }
+    .sidebar.open { left: 0; }
+    .sidebar-header {
+      padding: 20px; background: rgba(10,10,10,0.9);
+      text-align: right; border-bottom: 1px solid rgba(255,255,255,0.08);
+    }
+    .back-arrow { cursor: pointer; font-size: 22px; color: #33FFFF; }
+    .sidebar ul { list-style: none; padding: 0; margin: 0; flex: 1; }
+    .sidebar ul li { border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .sidebar ul li a {
+      display: block; padding: 15px 20px; color: #fff;
+      text-decoration: none; font-size: 16px; transition: all 0.2s;
+    }
+    .sidebar ul li a:hover, .sidebar ul li a.active { color: #33FFFF; background: rgba(51,255,255,0.06); }
+
+    /* ═══ Toolbar ═══ */
     .toolbar {
-      position: absolute;
-      top: 10px;
-      left: 10px;
-      background: rgba(0, 0, 0, 0.4);
-      padding: 15px;
-      border-radius: 15px;
-      color: white;
-      z-index: 20;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      width: 200px;
+      position: fixed; top: 50%; left: 14px;
+      transform: translateY(-50%);
+      background: rgba(10,10,10,0.92); backdrop-filter: blur(10px);
+      padding: 12px 8px; border-radius: 16px;
+      color: white; z-index: 20;
+      display: flex; flex-direction: column; gap: 4px;
+      border: 1px solid rgba(51,255,255,0.15);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      max-height: 90vh; overflow-y: auto;
     }
-    .toolbar label, .toolbar button {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: rgba(255, 255, 255, 0.1);
-      border: none;
-      border-radius: 8px;
-      padding: 5px 10px;
-      color: white;
-      font-size: 14px;
+    .toolbar::-webkit-scrollbar { width: 4px; }
+    .toolbar::-webkit-scrollbar-thumb { background: rgba(51,255,255,0.3); border-radius: 4px; }
+
+    .tool-section { 
+      padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.06);
     }
-    .toolbar button {
-      cursor: pointer;
-      text-align: left;
+    .tool-section:last-child { border-bottom: none; }
+    .tool-label {
+      font-size: 9px; text-transform: uppercase; letter-spacing: 1px;
+      color: rgba(255,255,255,0.4); padding: 2px 6px; margin-bottom: 4px;
     }
+
+    .tool-btn {
+      display: flex; align-items: center; gap: 8px;
+      width: 100%; padding: 8px 10px;
+      background: rgba(255,255,255,0.04); border: 1px solid transparent;
+      border-radius: 8px; color: #ccc; font-size: 13px;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .tool-btn:hover { background: rgba(51,255,255,0.1); color: #fff; }
+    .tool-btn.active {
+      background: rgba(51,255,255,0.15); color: #33FFFF;
+      border-color: rgba(51,255,255,0.3); box-shadow: 0 0 8px rgba(51,255,255,0.15);
+    }
+    .tool-btn i { width: 18px; text-align: center; font-size: 14px; }
+
+    .tool-btn.danger { color: #ff5470; }
+    .tool-btn.danger:hover { background: rgba(255,84,112,0.1); }
+
+    .tool-btn.success { color: #4ade80; }
+    .tool-btn.success:hover { background: rgba(74,222,128,0.1); }
+
+    /* Sliders */
+    .slider-row {
+      display: flex; align-items: center; gap: 6px;
+      padding: 4px 6px; font-size: 11px; color: #aaa;
+    }
+    .slider-row input[type="range"] {
+      flex: 1; height: 4px; -webkit-appearance: none; appearance: none;
+      background: rgba(255,255,255,0.15); border-radius: 4px; outline: none;
+    }
+    .slider-row input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none; width: 14px; height: 14px;
+      background: #33FFFF; border-radius: 50%; cursor: pointer;
+    }
+    .slider-val { min-width: 22px; text-align: right; color: #33FFFF; font-weight: 600; }
+
+    /* Color presets */
+    .color-presets {
+      display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 6px;
+    }
+    .color-swatch {
+      width: 22px; height: 22px; border-radius: 6px; cursor: pointer;
+      border: 2px solid transparent; transition: all 0.15s;
+    }
+    .color-swatch:hover { transform: scale(1.15); }
+    .color-swatch.active { border-color: #fff; box-shadow: 0 0 6px rgba(51,255,255,0.4); }
+
+    .color-picker-row {
+      display: flex; align-items: center; gap: 6px; padding: 4px 6px;
+    }
+    .color-picker-row input[type="color"] {
+      width: 32px; height: 28px; border: none; border-radius: 6px;
+      cursor: pointer; background: transparent;
+    }
+    .color-picker-row span { font-size: 11px; color: #aaa; }
+
+    /* Fill toggle */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 6px 10px; font-size: 12px; color: #aaa;
+    }
+    .toggle-switch {
+      width: 36px; height: 20px; background: rgba(255,255,255,0.15);
+      border-radius: 20px; cursor: pointer; position: relative;
+      transition: background 0.2s;
+    }
+    .toggle-switch.on { background: rgba(51,255,255,0.4); }
+    .toggle-switch::after {
+      content: ''; position: absolute; top: 2px; left: 2px;
+      width: 16px; height: 16px; background: #fff; border-radius: 50%;
+      transition: transform 0.2s;
+    }
+    .toggle-switch.on::after { transform: translateX(16px); background: #33FFFF; }
+
+    /* Canvas */
+    canvas {
+      display: block; cursor: crosshair; position: fixed; inset: 0; z-index: 1;
+    }
+
+    /* Text box */
     .text-box {
-      position: absolute;
-      background: transparent;
-      color: white;
-      font-weight: bold;
-      padding: 2px;
-      resize: both;
-      overflow: auto;
-      font-size: 20px;
-      min-width: 50px;
-      min-height: 30px;
-      z-index: 15;
-      border: none;
-      outline: none;
+      position: fixed; background: transparent; color: white;
+      font-weight: bold; padding: 2px; resize: both; overflow: auto;
+      font-size: 20px; min-width: 50px; min-height: 30px;
+      z-index: 15; border: 1px dashed rgba(51,255,255,0.4);
+      outline: none; border-radius: 4px;
+    }
+
+    /* Top bar */
+    .top-bar {
+      position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
+      display: flex; align-items: center; gap: 10px;
+      background: rgba(10,10,10,0.9); backdrop-filter: blur(10px);
+      padding: 8px 16px; border-radius: 12px; z-index: 20;
+      border: 1px solid rgba(51,255,255,0.15);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+    }
+    .top-bar .title {
+      font-size: 16px; font-weight: 800; color: #33FFFF;
+      text-shadow: 0 0 10px rgba(51,255,255,0.3);
+    }
+    .top-bar .sep {
+      width: 1px; height: 20px; background: rgba(255,255,255,0.15);
+    }
+    .top-bar button {
+      padding: 6px 12px; background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
+      color: #ccc; font-size: 12px; cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; gap: 5px;
+    }
+    .top-bar button:hover { background: rgba(51,255,255,0.1); color: #33FFFF; border-color: rgba(51,255,255,0.3); }
+    .top-bar button i { font-size: 12px; }
+
+    /* Grid toggle indicator */
+    .grid-badge {
+      position: fixed; bottom: 14px; right: 14px;
+      background: rgba(10,10,10,0.85); backdrop-filter: blur(6px);
+      padding: 6px 12px; border-radius: 8px; z-index: 20;
+      font-size: 11px; color: rgba(255,255,255,0.5);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .toolbar {
+        top: auto; bottom: 0; left: 0; right: 0;
+        transform: none; flex-direction: row;
+        border-radius: 16px 16px 0 0;
+        max-height: 60px; overflow-x: auto; overflow-y: hidden;
+        padding: 8px 12px;
+      }
+      .tool-section {
+        padding: 0 8px; border-bottom: none;
+        border-right: 1px solid rgba(255,255,255,0.06);
+        display: flex; align-items: center; gap: 4px;
+      }
+      .tool-label { display: none; }
+      .tool-btn span { display: none; }
+      .tool-btn { padding: 8px; }
+      .slider-row, .color-presets, .color-picker-row, .toggle-row { display: none; }
+      .top-bar { font-size: 12px; padding: 6px 10px; }
     }
   </style>
 </head>
 <body>
-  <div class="toolbar">
-    <label>🎨 Color: <input type="color" id="colorPicker" value="#ffffff"></label>
-    <label>🖌️ Pincel: <input type="range" id="brushSize" min="1" max="10" value="2"></label>
-    <label>🧽 Borrador: <input type="range" id="eraserSize" min="5" max="50" value="10"></label>
-    <label>🔠 Tamaño texto: <input type="range" id="fontSize" min="10" max="48" value="20"></label>
 
-    <button onclick="setMode('draw')">✏️ Pincel</button>
-    <button onclick="setMode('erase')">🧼 Borrador</button>
-    <button onclick="setMode('text')">📝 Texto</button>
+<!-- Particles -->
+<div id="particles-js"></div>
 
-    <button onclick="setMode('line')">📏 Línea recta</button>
-    <button onclick="setMode('rect')">▭ Rectángulo</button>
-    <button onclick="setMode('circle')">⚪ Círculo</button>
-    <button onclick="setMode('triangle')">🔺 Triángulo</button>
+<!-- Sidebar -->
+<div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-header">
+    <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
+  </div>
+  <ul>
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
+    <li><a href="entretenimiento.html" class="active">Entretenimiento</a></li>
+    <li><a href="juegos.html">Juegos</a></li>
+  </ul>
+</div>
 
-    <button onclick="clearCanvas()">🗑️ Limpiar</button>
+<!-- Top bar -->
+<div class="top-bar">
+  <span class="title">✏️ Pizarra</span>
+  <div class="sep"></div>
+  <button onclick="undo()" title="Deshacer (Ctrl+Z)"><i class="fas fa-undo"></i> <span>Deshacer</span></button>
+  <button onclick="redo()" title="Rehacer (Ctrl+Y)"><i class="fas fa-redo"></i> <span>Rehacer</span></button>
+  <div class="sep"></div>
+  <button onclick="savePNG()" title="Guardar como PNG"><i class="fas fa-download"></i> <span>Guardar</span></button>
+  <button onclick="clearCanvas()" class="danger" style="color:#ff5470" title="Limpiar todo"><i class="fas fa-trash"></i> <span>Limpiar</span></button>
+</div>
+
+<!-- Toolbar -->
+<div class="toolbar" id="toolbar">
+  <!-- Drawing tools -->
+  <div class="tool-section">
+    <div class="tool-label">Herramientas</div>
+    <button class="tool-btn active" data-mode="draw" onclick="setMode('draw')"><i class="fas fa-pen"></i> <span>Pincel</span></button>
+    <button class="tool-btn" data-mode="erase" onclick="setMode('erase')"><i class="fas fa-eraser"></i> <span>Borrador</span></button>
+    <button class="tool-btn" data-mode="text" onclick="setMode('text')"><i class="fas fa-font"></i> <span>Texto</span></button>
+    <button class="tool-btn" data-mode="fill" onclick="setMode('fill')"><i class="fas fa-fill-drip"></i> <span>Relleno</span></button>
   </div>
 
-  <canvas id="canvas"></canvas>
+  <!-- Shapes -->
+  <div class="tool-section">
+    <div class="tool-label">Formas</div>
+    <button class="tool-btn" data-mode="line" onclick="setMode('line')"><i class="fas fa-minus"></i> <span>Línea</span></button>
+    <button class="tool-btn" data-mode="rect" onclick="setMode('rect')"><i class="far fa-square"></i> <span>Rectángulo</span></button>
+    <button class="tool-btn" data-mode="circle" onclick="setMode('circle')"><i class="far fa-circle"></i> <span>Círculo</span></button>
+    <button class="tool-btn" data-mode="triangle" onclick="setMode('triangle')"><i class="fas fa-play fa-rotate-270"></i> <span>Triángulo</span></button>
+    <button class="tool-btn" data-mode="arrow" onclick="setMode('arrow')"><i class="fas fa-arrow-right"></i> <span>Flecha</span></button>
+  </div>
 
-  <script>
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
+  <!-- Fill toggle for shapes -->
+  <div class="tool-section">
+    <div class="toggle-row">
+      Rellenar formas
+      <div class="toggle-switch" id="fillToggle" onclick="toggleFill()"></div>
+    </div>
+  </div>
 
-    let scale = 50;
-    let originX = width / 2;
-    let originY = height / 2;
+  <!-- Color -->
+  <div class="tool-section">
+    <div class="tool-label">Color</div>
+    <div class="color-presets" id="colorPresets"></div>
+    <div class="color-picker-row">
+      <input type="color" id="colorPicker" value="#ffffff" />
+      <span>Personalizado</span>
+    </div>
+  </div>
 
-    let isDrawing = false;
-    let mode = "draw";
-    let isPanning = false;
-    let startPan = { x: 0, y: 0 };
+  <!-- Size -->
+  <div class="tool-section">
+    <div class="tool-label">Tamaño</div>
+    <div class="slider-row">
+      <i class="fas fa-pen" style="font-size:10px"></i>
+      <input type="range" id="brushSize" min="1" max="20" value="2">
+      <span class="slider-val" id="brushVal">2</span>
+    </div>
+    <div class="slider-row">
+      <i class="fas fa-eraser" style="font-size:10px"></i>
+      <input type="range" id="eraserSize" min="5" max="60" value="15">
+      <span class="slider-val" id="eraserVal">15</span>
+    </div>
+    <div class="slider-row">
+      <i class="fas fa-font" style="font-size:10px"></i>
+      <input type="range" id="fontSize" min="10" max="72" value="20">
+      <span class="slider-val" id="fontVal">20</span>
+    </div>
+    <div class="slider-row">
+      <i class="fas fa-adjust" style="font-size:10px"></i>
+      <input type="range" id="opacity" min="10" max="100" value="100">
+      <span class="slider-val" id="opacityVal">100%</span>
+    </div>
+  </div>
 
-    const colorPicker = document.getElementById("colorPicker");
-    const brushSize = document.getElementById("brushSize");
-    const eraserSize = document.getElementById("eraserSize");
-    const fontSize = document.getElementById("fontSize");
+  <!-- Grid -->
+  <div class="tool-section">
+    <div class="toggle-row">
+      Cuadrícula
+      <div class="toggle-switch on" id="gridToggle" onclick="toggleGrid()"></div>
+    </div>
+  </div>
+</div>
 
-    const elements = [];
-    let undoStack = []; // ← NUEVO
+<!-- Grid badge -->
+<div class="grid-badge" id="gridBadge">Cuadrícula: ON · Zoom: 100%</div>
 
-    function setMode(newMode) {
-      mode = newMode;
-    }
+<canvas id="canvas"></canvas>
 
-    function clearCanvas() {
-      for (let i = elements.length - 1; i >= 0; i--) {
-        if (elements[i].type !== 'grid') {
-          elements.splice(i, 1);
-        }
-      }
-      document.querySelectorAll(".text-box").forEach(el => el.remove());
-      draw();
-    }
+<!-- Session protection -->
+<script>const CW_PROTECTED = true;</script>
+<script src="session.js"></script>
 
-    // TEMP shape preview
-    let tempShape = null;
+<script>
+/* ═══════════════════════════════════════════════════════════════
+   Partículas
+═══════════════════════════════════════════════════════════════ */
+particlesJS("particles-js", {
+  particles: {
+    number: { value: 60, density: { enable: true, value_area: 800 } },
+    color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
+    shape: { type: "circle" },
+    opacity: { value: 0.3 },
+    size: { value: 2, random: true },
+    line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.2, width: 1 },
+    move: { enable: true, speed: 3, out_mode: "bounce" }
+  },
+  interactivity: {
+    detect_on: "canvas",
+    events: { onhover: { enable: true, mode: "repulse" }, resize: true },
+    modes: { repulse: { distance: 150, duration: 0.4 } }
+  },
+  retina_detect: true
+});
 
-    canvas.addEventListener("mousedown", (e) => {
-      if (e.button === 1) {
-        isPanning = true;
-        startPan = { x: e.clientX, y: e.clientY };
-        return;
-      }
+/* ═══════════════════════════════════════════════════════════════
+   Sidebar
+═══════════════════════════════════════════════════════════════ */
+function toggleMenu() {
+  document.getElementById('sidebar').classList.toggle('open');
+}
 
-      const x = (e.offsetX - originX) / scale;
-      const y = (e.offsetY - originY) / scale;
+/* ═══════════════════════════════════════════════════════════════
+   Canvas Setup
+═══════════════════════════════════════════════════════════════ */
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+let width = window.innerWidth;
+let height = window.innerHeight;
+canvas.width = width;
+canvas.height = height;
 
-      if (["line","rect","circle","triangle"].includes(mode)) {
+let scale = 50;
+let originX = width / 2;
+let originY = height / 2;
+let showGrid = true;
+let fillShapes = false;
 
-        tempShape = {
-          type: mode,
-          color: colorPicker.value,
-          size: parseInt(brushSize.value),
-          x1: x,
-          y1: y,
-          x2: x,
-          y2: y
-        };
-        isDrawing = true;
-        return;
-      }
+let isDrawing = false;
+let mode = "draw";
+let isPanning = false;
+let startPan = { x: 0, y: 0 };
 
-      if (mode === "text") {
-        const textBox = document.createElement("div");
-        textBox.contentEditable = true;
-        textBox.className = "text-box";
-        textBox.style.left = `${e.clientX}px`;
-        textBox.style.top = `${e.clientY}px`;
-        textBox.style.color = colorPicker.value;
-        textBox.style.fontSize = `${fontSize.value}px`;
-        textBox.style.fontWeight = "bold";
-        textBox.innerText = "Escribe aquí";
-        document.body.appendChild(textBox);
-        textBox.focus();
+const colorPicker = document.getElementById("colorPicker");
+const brushSize = document.getElementById("brushSize");
+const eraserSize = document.getElementById("eraserSize");
+const fontSize = document.getElementById("fontSize");
+const opacitySlider = document.getElementById("opacity");
 
-        let offsetX, offsetY, isDragging = false;
+const elements = [];
+let undoStack = [];
+let tempShape = null;
 
-        textBox.addEventListener("mousedown", (ev) => {
-          isDragging = true;
-          offsetX = ev.offsetX;
-          offsetY = ev.offsetY;
-        });
+/* ═══════════════════════════════════════════════════════════════
+   Color Presets
+═══════════════════════════════════════════════════════════════ */
+const presetColors = [
+  "#ffffff","#33FFFF","#ff5470","#4ade80","#facc15",
+  "#a896f0","#f97316","#6c8df5","#ec4899","#8b5cf6",
+  "#14b8a6","#ef4444","#84cc16","#f59e0b","#6366f1"
+];
 
-        document.addEventListener("mousemove", (ev) => {
-          if (isDragging) {
-            textBox.style.left = `${ev.clientX - offsetX}px`;
-            textBox.style.top = `${ev.clientY - offsetY}px`;
-          }
-        });
+const presetsContainer = document.getElementById("colorPresets");
+presetColors.forEach(c => {
+  const swatch = document.createElement("div");
+  swatch.className = "color-swatch" + (c === "#ffffff" ? " active" : "");
+  swatch.style.background = c;
+  swatch.dataset.color = c;
+  swatch.onclick = () => {
+    colorPicker.value = c;
+    document.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("active"));
+    swatch.classList.add("active");
+  };
+  presetsContainer.appendChild(swatch);
+});
 
-        document.addEventListener("mouseup", () => {
-          isDragging = false;
-        });
+colorPicker.addEventListener("input", () => {
+  document.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("active"));
+});
 
-        textBox.addEventListener("dblclick", () => {
-          const rect = textBox.getBoundingClientRect();
-          elements.push({
-            type: "text",
-            text: textBox.innerText,
-            x: (rect.left - originX) / scale,
-            y: (rect.top - originY + parseInt(fontSize.value)) / scale,
-            size: parseInt(fontSize.value),
-            color: colorPicker.value
-          });
-          textBox.remove();
-          draw();
-        });
+/* ═══════════════════════════════════════════════════════════════
+   Slider Labels
+═══════════════════════════════════════════════════════════════ */
+brushSize.oninput = () => document.getElementById("brushVal").textContent = brushSize.value;
+eraserSize.oninput = () => document.getElementById("eraserVal").textContent = eraserSize.value;
+fontSize.oninput = () => document.getElementById("fontVal").textContent = fontSize.value;
+opacitySlider.oninput = () => document.getElementById("opacityVal").textContent = opacitySlider.value + "%";
 
-      } else if (mode === "draw" || mode === "erase") {
-        isDrawing = true;
-        const line = {
-          type: mode,
-          color: colorPicker.value,
-          size: parseInt(mode === 'draw' ? brushSize.value : eraserSize.value),
-          points: [{ x, y }]
-        };
-        elements.push(line);
+/* ═══════════════════════════════════════════════════════════════
+   Mode & Toggles
+═══════════════════════════════════════════════════════════════ */
+function setMode(newMode) {
+  mode = newMode;
+  document.querySelectorAll(".tool-btn[data-mode]").forEach(b => {
+    b.classList.toggle("active", b.dataset.mode === newMode);
+  });
+  canvas.style.cursor = mode === "erase" ? "cell" : mode === "text" ? "text" : mode === "fill" ? "crosshair" : "crosshair";
+}
+
+function toggleFill() {
+  fillShapes = !fillShapes;
+  document.getElementById("fillToggle").classList.toggle("on", fillShapes);
+}
+
+function toggleGrid() {
+  showGrid = !showGrid;
+  document.getElementById("gridToggle").classList.toggle("on", showGrid);
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Undo / Redo
+═══════════════════════════════════════════════════════════════ */
+function undo() {
+  if (elements.length === 0) return;
+  undoStack.push(elements.pop());
+  draw();
+}
+
+function redo() {
+  if (undoStack.length === 0) return;
+  elements.push(undoStack.pop());
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Save as PNG
+═══════════════════════════════════════════════════════════════ */
+function savePNG() {
+  const tmpCanvas = document.createElement("canvas");
+  tmpCanvas.width = width;
+  tmpCanvas.height = height;
+  const tmpCtx = tmpCanvas.getContext("2d");
+
+  // Black background
+  tmpCtx.fillStyle = "#000";
+  tmpCtx.fillRect(0, 0, width, height);
+
+  // Draw grid if visible
+  if (showGrid) drawGridOn(tmpCtx);
+
+  // Draw all elements
+  for (const elem of elements) drawElementOn(tmpCtx, elem);
+
+  const link = document.createElement("a");
+  link.download = "pizarra-chocolatito.png";
+  link.href = tmpCanvas.toDataURL("image/png");
+  link.click();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Clear
+═══════════════════════════════════════════════════════════════ */
+function clearCanvas() {
+  if (!confirm("¿Limpiar toda la pizarra?")) return;
+  elements.length = 0;
+  undoStack.length = 0;
+  document.querySelectorAll(".text-box").forEach(el => el.remove());
+  draw();
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Drawing Logic
+═══════════════════════════════════════════════════════════════ */
+function getOpacity() {
+  return parseInt(opacitySlider.value) / 100;
+}
+
+function getScreenX(wx) { return wx * scale + originX; }
+function getScreenY(wy) { return wy * scale + originY; }
+function getWorldX(sx) { return (sx - originX) / scale; }
+function getWorldY(sy) { return (sy - originY) / scale; }
+
+canvas.addEventListener("mousedown", (e) => {
+  if (e.button === 1) {
+    isPanning = true;
+    startPan = { x: e.clientX, y: e.clientY };
+    canvas.style.cursor = "grab";
+    return;
+  }
+
+  const wx = getWorldX(e.offsetX);
+  const wy = getWorldY(e.offsetY);
+
+  if (["line","rect","circle","triangle","arrow"].includes(mode)) {
+    tempShape = {
+      type: mode, color: colorPicker.value,
+      size: parseInt(brushSize.value), opacity: getOpacity(),
+      fill: fillShapes,
+      x1: wx, y1: wy, x2: wx, y2: wy
+    };
+    isDrawing = true;
+    return;
+  }
+
+  if (mode === "fill") {
+    // Flood fill at this point with current color
+    floodFill(e.offsetX, e.offsetY, colorPicker.value);
+    return;
+  }
+
+  if (mode === "text") {
+    const textBox = document.createElement("div");
+    textBox.contentEditable = true;
+    textBox.className = "text-box";
+    textBox.style.left = `${e.clientX}px`;
+    textBox.style.top = `${e.clientY}px`;
+    textBox.style.color = colorPicker.value;
+    textBox.style.fontSize = `${fontSize.value}px`;
+    textBox.style.opacity = getOpacity();
+    textBox.innerText = "Escribe aquí";
+    document.body.appendChild(textBox);
+    textBox.focus();
+
+    // Select all text
+    const range = document.createRange();
+    range.selectNodeContents(textBox);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    let offsetX, offsetY, isDragging = false;
+    textBox.addEventListener("mousedown", (ev) => {
+      if (ev.detail >= 2) return; // double click = edit
+      isDragging = true;
+      offsetX = ev.offsetX;
+      offsetY = ev.offsetY;
+      ev.stopPropagation();
+    });
+    document.addEventListener("mousemove", (ev) => {
+      if (isDragging) {
+        textBox.style.left = `${ev.clientX - offsetX}px`;
+        textBox.style.top = `${ev.clientY - offsetY}px`;
       }
     });
+    document.addEventListener("mouseup", () => { isDragging = false; });
 
-    canvas.addEventListener("mousemove", (e) => {
-      if (isPanning) {
-        const dx = e.clientX - startPan.x;
-        const dy = e.clientY - startPan.y;
-        originX += dx;
-        originY += dy;
-        startPan = { x: e.clientX, y: e.clientY };
-        draw();
-        return;
-      }
-
-      if (tempShape && isDrawing) {
-        const x = (e.offsetX - originX) / scale;
-        const y = (e.offsetY - originY) / scale;
-        tempShape.x2 = x;
-        tempShape.y2 = y;
-        draw();
-        drawTempShape();
-        return;
-      }
-
-      if (!isDrawing || mode === "text") return;
-      const x = (e.offsetX - originX) / scale;
-      const y = (e.offsetY - originY) / scale;
-      const current = elements[elements.length - 1];
-      current.points.push({ x, y });
-      draw();
-    });
-
-    canvas.addEventListener("mouseup", (e) => {
-      if (e.button === 1) isPanning = false;
-
-      if (tempShape && isDrawing) {
-        elements.push({ ...tempShape });
-        tempShape = null;
-        draw();
-      }
-
-      isDrawing = false;
-    });
-
-    canvas.addEventListener("wheel", (e) => {
-      e.preventDefault();
-      const zoomFactor = 1.1;
-      const mouseX = e.offsetX;
-      const mouseY = e.offsetY;
-      const wx = (mouseX - originX) / scale;
-      const wy = (mouseY - originY) / scale;
-
-      scale *= e.deltaY < 0 ? zoomFactor : 1 / zoomFactor;
-      originX = mouseX - wx * scale;
-      originY = mouseY - wy * scale;
-      draw();
-    });
-
-    function drawTempShape() {
-      if (!tempShape) return;
-
-      ctx.strokeStyle = tempShape.color;
-      ctx.lineWidth = tempShape.size;
-      ctx.beginPath();
-
-      const {x1,y1,x2,y2} = tempShape;
-      const X1 = x1 * scale + originX;
-      const Y1 = y1 * scale + originY;
-      const X2 = x2 * scale + originX;
-      const Y2 = y2 * scale + originY;
-
-      if (tempShape.type === "line") {
-        ctx.moveTo(X1, Y1);
-        ctx.lineTo(X2, Y2);
-      }
-
-      if (tempShape.type === "rect") {
-        ctx.strokeRect(X1, Y1, X2 - X1, Y2 - Y1);
-      }
-
-      if (tempShape.type === "circle") {
-        const r = Math.sqrt((X2-X1)**2 + (Y2-Y1)**2);
-        ctx.arc(X1, Y1, r, 0, Math.PI*2);
-      }
-
-      if (tempShape.type === "triangle") {
-        ctx.moveTo(X1, Y1);
-        ctx.lineTo(X2, Y2);
-        ctx.lineTo(X1 - (X2-X1), Y2);
-        ctx.closePath();
-      }
-
-      ctx.stroke();
-    }
-
-    function drawGrid() {
-      const step = 1;
-      const left = -originX / scale;
-      const right = (width - originX) / scale;
-      const top = -originY / scale;
-      const bottom = (height - originY) / scale;
-
-      ctx.lineWidth = 0.5;
-      ctx.strokeStyle = "#444";
-      for (let x = Math.floor(left); x <= right; x++) {
-        ctx.beginPath();
-        ctx.moveTo(x * scale + originX, 0);
-        // CORRECCIÓN: usar originX (antes estaba originY y eso deformaba la cuadricula)
-        ctx.lineTo(x * scale + originX, height);
-        ctx.stroke();
-        if (x !== 0) {
-          ctx.fillStyle = "white";
-          ctx.font = "12px sans-serif";
-          ctx.fillText(x, x * scale + originX + 2, originY + 12);
-        }
-      }
-
-      for (let y = Math.floor(top); y <= bottom; y++) {
-        ctx.beginPath();
-        ctx.moveTo(0, y * scale + originY);
-        ctx.lineTo(width, y * scale + originY);
-        ctx.stroke();
-        if (y !== 0) {
-          ctx.fillStyle = "white";
-          ctx.font = "12px sans-serif";
-          ctx.fillText(-y, originX + 2, y * scale + originY - 2);
-        }
-      }
-
-      ctx.strokeStyle = "white";
-      ctx.lineWidth = 1;
-      ctx.beginPath();
-      ctx.moveTo(0, originY);
-      ctx.lineTo(width, originY);
-      ctx.stroke();
-
-      ctx.beginPath();
-      ctx.moveTo(originX, 0);
-      ctx.lineTo(originX, height);
-      ctx.stroke();
-    }
-
-    function drawElement(elem) {
-      if (elem.type === "text") {
-        ctx.font = `bold ${elem.size}px sans-serif`;
-        ctx.fillStyle = elem.color;
-        ctx.fillText(elem.text, elem.x * scale + originX, elem.y * scale + originY);
-        return;
-      }
-
-      ctx.strokeStyle = elem.color;
-      ctx.lineWidth = elem.size;
-
-      if (elem.type === "line") {
-        ctx.beginPath();
-        ctx.moveTo(elem.x1 * scale + originX, elem.y1 * scale + originY);
-        ctx.lineTo(elem.x2 * scale + originX, elem.y2 * scale + originY);
-        ctx.stroke();
-        return;
-      }
-
-      if (elem.type === "rect") {
-        ctx.strokeRect(
-          elem.x1 * scale + originX,
-          elem.y1 * scale + originY,
-          (elem.x2 - elem.x1) * scale,
-          (elem.y2 - elem.y1) * scale
-        );
-        return;
-      }
-
-      if (elem.type === "circle") {
-        const X1 = elem.x1 * scale + originX;
-        const Y1 = elem.y1 * scale + originY;
-        const X2 = elem.x2 * scale + originX;
-        const Y2 = elem.y2 * scale + originY;
-
-        const r = Math.sqrt((X2 - X1)**2 + (Y2 - Y1)**2);
-
-        ctx.beginPath();
-        ctx.arc(X1, Y1, r, 0, Math.PI*2);
-        ctx.stroke();
-        return;
-      }
-
-      if (elem.type === "triangle") {
-        const X1 = elem.x1 * scale + originX;
-        const Y1 = elem.y1 * scale + originY;
-        const X2 = elem.x2 * scale + originX;
-        const Y2 = elem.y2 * scale + originY;
-
-        ctx.beginPath();
-        ctx.moveTo(X1, Y1);
-        ctx.lineTo(X2, Y2);
-        ctx.lineTo(X1 - (X2 - X1), Y2);
-        ctx.closePath();
-        ctx.stroke();
-        return;
-      }
-
-      if (elem.type === "draw" || elem.type === "erase") {
-        if (elem.type === "erase") {
-          ctx.save();
-          ctx.globalCompositeOperation = "destination-out";
-        } else {
-          ctx.globalCompositeOperation = "source-over";
-        }
-        ctx.beginPath();
-        elem.points.forEach((p, i) => {
-          const x = p.x * scale + originX;
-          const y = p.y * scale + originY;
-          if (i === 0) ctx.moveTo(x, y);
-          else ctx.lineTo(x, y);
-        });
-        ctx.stroke();
-        if (elem.type === "erase") ctx.restore();
-      }
-    }
-
-    function draw() {
-      ctx.clearRect(0, 0, width, height);
-      drawGrid();
-      for (const elem of elements) drawElement(elem);
-    }
-
-    // CTRL + Z / CTRL + Y
-    document.addEventListener("keydown", (e) => {
-      if (e.ctrlKey && e.key === "z") {
-        if (elements.length > 0) {
-          const last = elements.pop();
-          undoStack.push(last);
-          draw();
-        }
-      }
-
-      if (e.ctrlKey && e.key === "y") {
-        if (undoStack.length > 0) {
-          const restored = undoStack.pop();
-          elements.push(restored);
-          draw();
-        }
-      }
-    });
-
-    window.addEventListener("resize", () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
+    textBox.addEventListener("dblclick", () => {
+      const rect = textBox.getBoundingClientRect();
+      elements.push({
+        type: "text", text: textBox.innerText,
+        x: getWorldX(rect.left), y: getWorldY(rect.top + parseInt(fontSize.value)),
+        size: parseInt(fontSize.value), color: colorPicker.value, opacity: getOpacity()
+      });
+      textBox.remove();
       draw();
     });
+    return;
+  }
 
+  if (mode === "draw" || mode === "erase") {
+    isDrawing = true;
+    const line = {
+      type: mode, color: colorPicker.value,
+      size: parseInt(mode === 'draw' ? brushSize.value : eraserSize.value),
+      opacity: getOpacity(),
+      points: [{ x: wx, y: wy }]
+    };
+    elements.push(line);
+  }
+});
+
+canvas.addEventListener("mousemove", (e) => {
+  // Update grid badge
+  const zoomPercent = Math.round(scale / 50 * 100);
+  document.getElementById("gridBadge").textContent =
+    `Cuadrícula: ${showGrid ? 'ON' : 'OFF'} · Zoom: ${zoomPercent}%`;
+
+  if (isPanning) {
+    const dx = e.clientX - startPan.x;
+    const dy = e.clientY - startPan.y;
+    originX += dx;
+    originY += dy;
+    startPan = { x: e.clientX, y: e.clientY };
     draw();
-  </script>
+    return;
+  }
+
+  if (tempShape && isDrawing) {
+    tempShape.x2 = getWorldX(e.offsetX);
+    tempShape.y2 = getWorldY(e.offsetY);
+    draw();
+    drawTempShape();
+    return;
+  }
+
+  if (!isDrawing || mode === "text" || mode === "fill") return;
+  const wx = getWorldX(e.offsetX);
+  const wy = getWorldY(e.offsetY);
+  const current = elements[elements.length - 1];
+  current.points.push({ x: wx, y: wy });
+  draw();
+});
+
+canvas.addEventListener("mouseup", (e) => {
+  if (e.button === 1) {
+    isPanning = false;
+    canvas.style.cursor = "crosshair";
+  }
+
+  if (tempShape && isDrawing) {
+    elements.push({ ...tempShape });
+    tempShape = null;
+    isDrawing = false;
+    draw();
+    return;
+  }
+
+  isDrawing = false;
+});
+
+// Zoom with scroll
+canvas.addEventListener("wheel", (e) => {
+  e.preventDefault();
+  const zoomFactor = 1.08;
+  const mouseX = e.offsetX;
+  const mouseY = e.offsetY;
+  const wx = getWorldX(mouseX);
+  const wy = getWorldY(mouseY);
+
+  scale *= e.deltaY < 0 ? zoomFactor : 1 / zoomFactor;
+  scale = Math.max(10, Math.min(200, scale));
+
+  originX = mouseX - wx * scale;
+  originY = mouseY - wy * scale;
+  draw();
+}, { passive: false });
+
+// Touch support
+let lastTouch = null;
+canvas.addEventListener("touchstart", (e) => {
+  if (e.touches.length === 1) {
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const offsetX = touch.clientX - rect.left;
+    const offsetY = touch.clientY - rect.top;
+
+    // Simulate mousedown
+    const mouseEvent = new MouseEvent("mousedown", {
+      clientX: touch.clientX, clientY: touch.clientY,
+      offsetX, offsetY, button: 0
+    });
+    canvas.dispatchEvent(mouseEvent);
+    lastTouch = { x: touch.clientX, y: touch.clientY };
+  } else if (e.touches.length === 2) {
+    isPanning = true;
+    lastTouch = {
+      x: (e.touches[0].clientX + e.touches[1].clientX) / 2,
+      y: (e.touches[0].clientY + e.touches[1].clientY) / 2
+    };
+  }
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener("touchmove", (e) => {
+  if (e.touches.length === 1 && !isPanning) {
+    const touch = e.touches[0];
+    const rect = canvas.getBoundingClientRect();
+    const offsetX = touch.clientX - rect.left;
+    const offsetY = touch.clientY - rect.top;
+
+    const mouseEvent = new MouseEvent("mousemove", {
+      clientX: touch.clientX, clientY: touch.clientY,
+      offsetX, offsetY
+    });
+    canvas.dispatchEvent(mouseEvent);
+  } else if (e.touches.length === 2 || (e.touches.length === 1 && isPanning)) {
+    const cx = (e.touches[0].clientX + (e.touches[1]?.clientX || e.touches[0].clientX)) / 2;
+    const cy = (e.touches[0].clientY + (e.touches[1]?.clientY || e.touches[0].clientY)) / 2;
+    if (lastTouch) {
+      originX += cx - lastTouch.x;
+      originY += cy - lastTouch.y;
+      draw();
+    }
+    lastTouch = { x: cx, y: cy };
+  }
+  e.preventDefault();
+}, { passive: false });
+
+canvas.addEventListener("touchend", (e) => {
+  isPanning = false;
+  const mouseEvent = new MouseEvent("mouseup", { button: 0 });
+  canvas.dispatchEvent(mouseEvent);
+  lastTouch = null;
+});
+
+// Keyboard
+document.addEventListener("keydown", (e) => {
+  if (e.ctrlKey && e.key === "z") { e.preventDefault(); undo(); }
+  if (e.ctrlKey && e.key === "y") { e.preventDefault(); redo(); }
+  if (e.ctrlKey && e.key === "s") { e.preventDefault(); savePNG(); }
+});
+
+window.addEventListener("resize", () => {
+  width = window.innerWidth;
+  height = window.innerHeight;
+  canvas.width = width;
+  canvas.height = height;
+  draw();
+});
+
+/* ═══════════════════════════════════════════════════════════════
+   Flood Fill
+═══════════════════════════════════════════════════════════════ */
+function floodFill(startX, startY, fillColor) {
+  // Simple flood fill on the canvas
+  const imageData = ctx.getImageData(0, 0, width, height);
+  const data = imageData.data;
+  const startIdx = (startY * width + startX) * 4;
+  const startR = data[startIdx], startG = data[startIdx+1], startB = data[startIdx+2], startA = data[startIdx+3];
+
+  // Parse fill color
+  const tmp = document.createElement("canvas");
+  tmp.width = tmp.height = 1;
+  const tmpCtx = tmp.getContext("2d");
+  tmpCtx.fillStyle = fillColor;
+  tmpCtx.fillRect(0,0,1,1);
+  const fc = tmpCtx.getImageData(0,0,1,1).data;
+
+  if (startR === fc[0] && startG === fc[1] && startB === fc[2]) return;
+
+  const tolerance = 30;
+  function matches(idx) {
+    return Math.abs(data[idx] - startR) <= tolerance &&
+           Math.abs(data[idx+1] - startG) <= tolerance &&
+           Math.abs(data[idx+2] - startB) <= tolerance;
+  }
+
+  const stack = [[startX, startY]];
+  const visited = new Uint8Array(width * height);
+
+  while (stack.length > 0 && stack.length < 500000) {
+    const [x, y] = stack.pop();
+    const idx = (y * width + x) * 4;
+    const vi = y * width + x;
+
+    if (x < 0 || x >= width || y < 0 || y >= height) continue;
+    if (visited[vi]) continue;
+    if (!matches(idx)) continue;
+
+    visited[vi] = 1;
+    data[idx] = fc[0]; data[idx+1] = fc[1]; data[idx+2] = fc[2]; data[idx+3] = 255;
+
+    stack.push([x+1,y],[x-1,y],[x,y+1],[x,y-1]);
+  }
+
+  ctx.putImageData(imageData, 0, 0);
+  // Save this as an element for undo
+  elements.push({ type: "floodfill", imageData: ctx.getImageData(0, 0, width, height) });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Drawing Functions
+═══════════════════════════════════════════════════════════════ */
+function drawGridOn(c) {
+  const step = 1;
+  const left = -originX / scale;
+  const right = (width - originX) / scale;
+  const top = -originY / scale;
+  const bottom = (height - originY) / scale;
+
+  c.lineWidth = 0.5;
+  c.strokeStyle = "rgba(255,255,255,0.08)";
+  for (let x = Math.floor(left); x <= right; x++) {
+    c.beginPath();
+    c.moveTo(x * scale + originX, 0);
+    c.lineTo(x * scale + originX, height);
+    c.stroke();
+    if (x !== 0) {
+      c.fillStyle = "rgba(255,255,255,0.3)";
+      c.font = "11px monospace";
+      c.fillText(x, x * scale + originX + 3, originY + 14);
+    }
+  }
+  for (let y = Math.floor(top); y <= bottom; y++) {
+    c.beginPath();
+    c.moveTo(0, y * scale + originY);
+    c.lineTo(width, y * scale + originY);
+    c.stroke();
+    if (y !== 0) {
+      c.fillStyle = "rgba(255,255,255,0.3)";
+      c.font = "11px monospace";
+      c.fillText(-y, originX + 4, y * scale + originY - 3);
+    }
+  }
+
+  // Axes
+  c.strokeStyle = "rgba(255,255,255,0.35)";
+  c.lineWidth = 1.5;
+  c.beginPath(); c.moveTo(0, originY); c.lineTo(width, originY); c.stroke();
+  c.beginPath(); c.moveTo(originX, 0); c.lineTo(originX, height); c.stroke();
+}
+
+function drawElementOn(c, elem) {
+  c.globalAlpha = elem.opacity || 1;
+
+  if (elem.type === "floodfill") {
+    c.putImageData(elem.imageData, 0, 0);
+    c.globalAlpha = 1;
+    return;
+  }
+
+  if (elem.type === "text") {
+    c.font = `bold ${elem.size}px 'Segoe UI', sans-serif`;
+    c.fillStyle = elem.color;
+    c.fillText(elem.text, elem.x * scale + originX, elem.y * scale + originY);
+    c.globalAlpha = 1;
+    return;
+  }
+
+  c.strokeStyle = elem.color;
+  c.fillStyle = elem.color;
+  c.lineWidth = elem.size;
+
+  const X1 = elem.x1 * scale + originX;
+  const Y1 = elem.y1 * scale + originY;
+  const X2 = elem.x2 !== undefined ? elem.x2 * scale + originX : X1;
+  const Y2 = elem.y2 !== undefined ? elem.y2 * scale + originY : Y1;
+
+  if (elem.type === "line") {
+    c.beginPath(); c.moveTo(X1, Y1); c.lineTo(X2, Y2); c.stroke();
+    c.globalAlpha = 1; return;
+  }
+
+  if (elem.type === "rect") {
+    if (elem.fill) c.fillRect(X1, Y1, X2-X1, Y2-Y1);
+    else c.strokeRect(X1, Y1, X2-X1, Y2-Y1);
+    c.globalAlpha = 1; return;
+  }
+
+  if (elem.type === "circle") {
+    const r = Math.sqrt((X2-X1)**2 + (Y2-Y1)**2);
+    c.beginPath(); c.arc(X1, Y1, Math.max(1, r), 0, Math.PI*2);
+    elem.fill ? c.fill() : c.stroke();
+    c.globalAlpha = 1; return;
+  }
+
+  if (elem.type === "triangle") {
+    c.beginPath();
+    c.moveTo(X1, Y1);
+    c.lineTo(X2, Y2);
+    c.lineTo(X1 - (X2-X1), Y2);
+    c.closePath();
+    elem.fill ? c.fill() : c.stroke();
+    c.globalAlpha = 1; return;
+  }
+
+  if (elem.type === "arrow") {
+    const angle = Math.atan2(Y2-Y1, X2-X1);
+    const headLen = Math.max(12, elem.size * 5);
+    c.beginPath(); c.moveTo(X1, Y1); c.lineTo(X2, Y2); c.stroke();
+    c.beginPath();
+    c.moveTo(X2, Y2);
+    c.lineTo(X2 - headLen * Math.cos(angle - 0.4), Y2 - headLen * Math.sin(angle - 0.4));
+    c.lineTo(X2 - headLen * Math.cos(angle + 0.4), Y2 - headLen * Math.sin(angle + 0.4));
+    c.closePath();
+    c.fill();
+    c.globalAlpha = 1; return;
+  }
+
+  if (elem.type === "draw" || elem.type === "erase") {
+    if (elem.type === "erase") {
+      c.save();
+      c.globalCompositeOperation = "destination-out";
+      c.globalAlpha = 1;
+    }
+    c.beginPath();
+    elem.points.forEach((p, i) => {
+      const x = p.x * scale + originX;
+      const y = p.y * scale + originY;
+      i === 0 ? c.moveTo(x, y) : c.lineTo(x, y);
+    });
+    c.stroke();
+    if (elem.type === "erase") c.restore();
+    c.globalAlpha = 1;
+  }
+}
+
+function drawTempShape() {
+  if (!tempShape) return;
+  ctx.globalAlpha = tempShape.opacity || 1;
+  ctx.strokeStyle = tempShape.color;
+  ctx.fillStyle = tempShape.color;
+  ctx.lineWidth = tempShape.size;
+  ctx.setLineDash([6, 4]);
+
+  const X1 = getScreenX(tempShape.x1);
+  const Y1 = getScreenY(tempShape.y1);
+  const X2 = getScreenX(tempShape.x2);
+  const Y2 = getScreenY(tempShape.y2);
+
+  if (tempShape.type === "line") {
+    ctx.beginPath(); ctx.moveTo(X1,Y1); ctx.lineTo(X2,Y2); ctx.stroke();
+  }
+  if (tempShape.type === "rect") {
+    tempShape.fill ? ctx.fillRect(X1,Y1,X2-X1,Y2-Y1) : ctx.strokeRect(X1,Y1,X2-X1,Y2-Y1);
+  }
+  if (tempShape.type === "circle") {
+    const r = Math.sqrt((X2-X1)**2 + (Y2-Y1)**2);
+    ctx.beginPath(); ctx.arc(X1,Y1,Math.max(1,r),0,Math.PI*2);
+    tempShape.fill ? ctx.fill() : ctx.stroke();
+  }
+  if (tempShape.type === "triangle") {
+    ctx.beginPath(); ctx.moveTo(X1,Y1); ctx.lineTo(X2,Y2);
+    ctx.lineTo(X1-(X2-X1),Y2); ctx.closePath();
+    tempShape.fill ? ctx.fill() : ctx.stroke();
+  }
+  if (tempShape.type === "arrow") {
+    const angle = Math.atan2(Y2-Y1,X2-X1);
+    const headLen = Math.max(12, tempShape.size * 5);
+    ctx.beginPath(); ctx.moveTo(X1,Y1); ctx.lineTo(X2,Y2); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(X2,Y2);
+    ctx.lineTo(X2-headLen*Math.cos(angle-0.4),Y2-headLen*Math.sin(angle-0.4));
+    ctx.lineTo(X2-headLen*Math.cos(angle+0.4),Y2-headLen*Math.sin(angle+0.4));
+    ctx.closePath(); ctx.fill();
+  }
+
+  ctx.setLineDash([]);
+  ctx.globalAlpha = 1;
+}
+
+function draw() {
+  ctx.clearRect(0, 0, width, height);
+  if (showGrid) drawGridOn(ctx);
+  for (const elem of elements) drawElementOn(ctx, elem);
+}
+
+draw();
+</script>
 </body>
 </html>
-

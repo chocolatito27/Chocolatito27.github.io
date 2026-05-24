@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dados - ChocolatitoWeb</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body, html {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Particles */
+        #particles-js {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+        }
+
+        /* Sidebar */
+        .menu-icon {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            z-index: 1000;
+            transition: transform 0.2s ease;
+        }
+        .menu-icon:hover { transform: scale(1.15); }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: rgba(51, 51, 51, 0.95);
+            transition: left 0.3s ease;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+            backdrop-filter: blur(12px);
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background-color: rgba(34, 34, 34, 0.9);
+            color: white;
+            text-align: right;
+        }
+
+        .back-arrow {
+            cursor: pointer;
+            font-size: 24px;
+            transition: color 0.2s;
+        }
+        .back-arrow:hover { color: #33FFFF; }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+        .sidebar ul li {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            color: #33FFFF;
+        }
+
+        /* Main Container */
+        .main-container {
+            position: relative;
+            z-index: 1;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 30px 20px 60px;
+            min-height: 100vh;
+        }
+
+        /* Title */
+        .page-title {
+            text-align: center;
+            font-size: 2.8rem;
+            font-weight: 800;
+            color: #33FFFF;
+            text-shadow: 0 0 20px rgba(51,255,255,0.5), 0 0 40px rgba(51,255,255,0.25);
+            margin-bottom: 8px;
+            letter-spacing: -0.02em;
+        }
+
+        .page-subtitle {
+            text-align: center;
+            color: rgba(255,255,255,0.5);
+            font-size: 0.95rem;
+            margin-bottom: 30px;
+        }
+
+        /* Card Panels */
+        .panel {
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(51,255,255,0.15);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            backdrop-filter: blur(6px);
+        }
+
+        .panel-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(51,255,255,0.6);
+            margin-bottom: 14px;
+            font-weight: 700;
+        }
+
+        /* Dice Type Selector */
+        .dice-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+        }
+
+        .dice-type-btn {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            padding: 12px 16px;
+            border-radius: 50px;
+            border: 2px solid rgba(51,255,255,0.25);
+            background: rgba(51,255,255,0.06);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            min-width: 72px;
+        }
+
+        .dice-type-btn svg {
+            width: 28px;
+            height: 28px;
+            fill: none;
+            stroke: rgba(255,255,255,0.7);
+            stroke-width: 1.5;
+            transition: stroke 0.25s;
+        }
+
+        .dice-type-btn:hover {
+            border-color: #33FFFF;
+            background: rgba(51,255,255,0.12);
+            transform: translateY(-2px);
+        }
+
+        .dice-type-btn.active {
+            border-color: #33FFFF;
+            background: linear-gradient(135deg, rgba(51,255,255,0.25), rgba(51,255,255,0.08));
+            color: #33FFFF;
+            box-shadow: 0 0 20px rgba(51,255,255,0.15);
+        }
+
+        .dice-type-btn.active svg {
+            stroke: #33FFFF;
+        }
+
+        /* Dice Count */
+        .dice-count-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 18px;
+        }
+
+        .count-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 2px solid rgba(51,255,255,0.3);
+            background: rgba(51,255,255,0.08);
+            color: #33FFFF;
+            font-size: 1.4rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        .count-btn:hover {
+            background: rgba(51,255,255,0.2);
+            border-color: #33FFFF;
+            transform: scale(1.1);
+        }
+
+        .count-btn:active {
+            transform: scale(0.95);
+        }
+
+        .count-display {
+            font-size: 2.2rem;
+            font-weight: 800;
+            color: #33FFFF;
+            min-width: 50px;
+            text-align: center;
+            text-shadow: 0 0 10px rgba(51,255,255,0.3);
+        }
+
+        .dice-visual {
+            display: flex;
+            gap: 4px;
+            justify-content: center;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+
+        .dice-visual-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 3px;
+            background: #33FFFF;
+            opacity: 0.6;
+            transition: all 0.3s;
+            box-shadow: 0 0 6px rgba(51,255,255,0.3);
+        }
+
+        /* Modifiers */
+        .modifiers-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modifier-input-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .modifier-input-group label {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+        }
+
+        .modifier-input {
+            width: 70px;
+            padding: 8px 10px;
+            border-radius: 10px;
+            border: 1px solid rgba(51,255,255,0.3);
+            background: rgba(0,0,0,0.4);
+            color: #fff;
+            font-size: 1rem;
+            text-align: center;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .modifier-input:focus {
+            border-color: #33FFFF;
+        }
+
+        .adv-btn {
+            padding: 8px 16px;
+            border-radius: 50px;
+            border: 1px solid rgba(51,255,255,0.25);
+            background: rgba(51,255,255,0.06);
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .adv-btn:hover {
+            border-color: #33FFFF;
+            background: rgba(51,255,255,0.12);
+        }
+
+        .adv-btn.active {
+            border-color: #33FFFF;
+            background: rgba(51,255,255,0.2);
+            color: #33FFFF;
+            box-shadow: 0 0 12px rgba(51,255,255,0.1);
+        }
+
+        /* Roll Button */
+        .roll-btn {
+            display: block;
+            margin: 0 auto;
+            padding: 18px 64px;
+            font-size: 1.35rem;
+            font-weight: 800;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            color: #000;
+            background: linear-gradient(135deg, #33FFFF, #00CCCC);
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 30px rgba(51,255,255,0.25), 0 4px 15px rgba(0,0,0,0.3);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .roll-btn::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(135deg, transparent, rgba(255,255,255,0.25), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.5s;
+        }
+
+        .roll-btn:hover {
+            transform: translateY(-3px) scale(1.03);
+            box-shadow: 0 0 50px rgba(51,255,255,0.4), 0 6px 20px rgba(0,0,0,0.4);
+        }
+
+        .roll-btn:hover::before {
+            transform: translateX(100%);
+        }
+
+        .roll-btn:active {
+            transform: translateY(0) scale(0.98);
+        }
+
+        .roll-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .roll-btn i {
+            margin-right: 8px;
+        }
+
+        /* Results */
+        .results-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            justify-content: center;
+            min-height: 100px;
+            align-items: center;
+        }
+
+        .die-card {
+            width: 72px;
+            height: 90px;
+            perspective: 600px;
+        }
+
+        .die-card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+            transform-style: preserve-3d;
+        }
+
+        .die-card-inner.flipped {
+            transform: rotateY(180deg);
+        }
+
+        .die-card-front,
+        .die-card-back {
+            position: absolute;
+            inset: 0;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            backface-visibility: hidden;
+            border: 2px solid rgba(51,255,255,0.3);
+        }
+
+        .die-card-front {
+            background: rgba(51,255,255,0.08);
+            color: rgba(51,255,255,0.4);
+            font-size: 1.5rem;
+        }
+
+        .die-card-back {
+            background: linear-gradient(145deg, rgba(51,255,255,0.15), rgba(51,255,255,0.04));
+            transform: rotateY(180deg);
+        }
+
+        .die-card-back .die-value {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #33FFFF;
+            text-shadow: 0 0 12px rgba(51,255,255,0.4);
+            line-height: 1;
+        }
+
+        .die-card-back .die-label {
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.4);
+            margin-top: 4px;
+            text-transform: uppercase;
+        }
+
+        .die-card.is-min .die-card-back {
+            border-color: #FF6B6B;
+            box-shadow: 0 0 12px rgba(255,107,107,0.2);
+        }
+        .die-card.is-min .die-card-back .die-value { color: #FF6B6B; }
+
+        .die-card.is-max .die-card-back {
+            border-color: #4ADE80;
+            box-shadow: 0 0 12px rgba(74,222,128,0.2);
+        }
+        .die-card.is-max .die-card-back .die-value { color: #4ADE80; }
+
+        /* Cycling animation */
+        .die-card-front .cycling-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #33FFFF;
+        }
+
+        /* Total */
+        .total-display {
+            text-align: center;
+            margin-top: 18px;
+            padding-top: 18px;
+            border-top: 1px solid rgba(51,255,255,0.1);
+        }
+
+        .total-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: rgba(255,255,255,0.4);
+        }
+
+        .total-value {
+            font-size: 3.5rem;
+            font-weight: 900;
+            color: #33FFFF;
+            text-shadow: 0 0 30px rgba(51,255,255,0.4);
+            line-height: 1.1;
+        }
+
+        .total-breakdown {
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.45);
+            margin-top: 4px;
+        }
+
+        .total-breakdown span {
+            color: rgba(255,255,255,0.7);
+        }
+
+        .modifier-result {
+            font-size: 0.85rem;
+            color: #FFD700;
+            margin-top: 4px;
+        }
+
+        /* Advantage badge */
+        .adv-badge {
+            display: inline-block;
+            padding: 2px 10px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            margin-left: 8px;
+        }
+
+        .adv-badge.advantage {
+            background: rgba(74,222,128,0.15);
+            color: #4ADE80;
+            border: 1px solid rgba(74,222,128,0.3);
+        }
+
+        .adv-badge.disadvantage {
+            background: rgba(255,107,107,0.15);
+            color: #FF6B6B;
+            border: 1px solid rgba(255,107,107,0.3);
+        }
+
+        .discarded-result {
+            opacity: 0.35;
+            text-decoration: line-through;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 30px 0;
+            color: rgba(255,255,255,0.25);
+            font-size: 0.95rem;
+        }
+
+        .empty-state i {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        /* History */
+        .history-list {
+            max-height: 320px;
+            overflow-y: auto;
+            padding-right: 6px;
+        }
+
+        .history-list::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        .history-list::-webkit-scrollbar-track {
+            background: rgba(255,255,255,0.03);
+            border-radius: 10px;
+        }
+
+        .history-list::-webkit-scrollbar-thumb {
+            background: rgba(51,255,255,0.3);
+            border-radius: 10px;
+        }
+
+        .history-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 14px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.03);
+            margin-bottom: 8px;
+            border: 1px solid rgba(255,255,255,0.05);
+            transition: background 0.2s;
+        }
+
+        .history-item:hover {
+            background: rgba(51,255,255,0.05);
+        }
+
+        .history-left {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .history-dice {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #33FFFF;
+        }
+
+        .history-results {
+            font-size: 0.8rem;
+            color: rgba(255,255,255,0.5);
+        }
+
+        .history-time {
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
+        }
+
+        .history-right {
+            text-align: right;
+        }
+
+        .history-total {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #33FFFF;
+        }
+
+        .history-mod {
+            font-size: 0.75rem;
+            color: #FFD700;
+        }
+
+        .clear-history-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            border: 1px solid rgba(255,107,107,0.25);
+            background: rgba(255,107,107,0.06);
+            color: #FF6B6B;
+            cursor: pointer;
+            font-size: 0.75rem;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            transition: all 0.2s;
+            float: right;
+        }
+
+        .clear-history-btn:hover {
+            background: rgba(255,107,107,0.15);
+            border-color: #FF6B6B;
+        }
+
+        .history-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        /* Sound toggle */
+        .sound-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            border: 1px solid rgba(51,255,255,0.25);
+            background: rgba(0,0,0,0.5);
+            color: #33FFFF;
+            font-size: 1.1rem;
+            cursor: pointer;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            backdrop-filter: blur(8px);
+        }
+
+        .sound-toggle:hover {
+            border-color: #33FFFF;
+            background: rgba(51,255,255,0.1);
+        }
+
+        .sound-toggle.muted {
+            color: rgba(255,255,255,0.3);
+            border-color: rgba(255,255,255,0.1);
+        }
+
+        /* Bounce animation */
+        @keyframes dieBounce {
+            0% { transform: rotateY(180deg) scale(0.8); }
+            50% { transform: rotateY(180deg) scale(1.1); }
+            70% { transform: rotateY(180deg) scale(0.95); }
+            100% { transform: rotateY(180deg) scale(1); }
+        }
+
+        .die-card-inner.bounce {
+            animation: dieBounce 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        /* Responsive */
+        @media (max-width: 600px) {
+            .page-title { font-size: 2rem; }
+            .panel { padding: 16px; }
+            .dice-type-btn { min-width: 58px; padding: 10px 12px; font-size: 0.75rem; }
+            .dice-type-btn svg { width: 22px; height: 22px; }
+            .die-card { width: 60px; height: 76px; }
+            .die-card-back .die-value { font-size: 1.5rem; }
+            .total-value { font-size: 2.8rem; }
+            .roll-btn { padding: 15px 40px; font-size: 1.1rem; }
+            .modifiers-row { gap: 8px; }
+        }
+
+        /* Keyboard shortcut hint */
+        .shortcut-hint {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 0.72rem;
+            color: rgba(255,255,255,0.2);
+        }
+
+        .shortcut-hint kbd {
+            background: rgba(255,255,255,0.08);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 4px;
+            padding: 1px 6px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            font-size: 0.7rem;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
+        </div>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
+            <li><a href="entretenimiento.html" class="active">Entretenimiento</a></li>
+            <li><a href="juegos.html">Juegos</a></li>
+        </ul>
+    </div>
+
+    <button class="sound-toggle" id="soundToggle" onclick="toggleSound()" title="Toggle sound">
+        <i class="fas fa-volume-up"></i>
+    </button>
+
+    <div class="main-container">
+        <h1 class="page-title">🎲 Dados</h1>
+        <p class="page-subtitle">Tira los dados y deja que el azar decida</p>
+
+        <!-- Dice Type -->
+        <div class="panel">
+            <div class="panel-label"><i class="fas fa-shapes"></i> Tipo de Dado</div>
+            <div class="dice-types" id="diceTypes">
+                <button class="dice-type-btn" data-sides="4" onclick="selectDice(4)">
+                    <svg viewBox="0 0 40 40"><polygon points="20,4 36,34 4,34"/></svg>
+                    d4
+                </button>
+                <button class="dice-type-btn active" data-sides="6" onclick="selectDice(6)">
+                    <svg viewBox="0 0 40 40"><rect x="6" y="6" width="28" height="28" rx="3"/></svg>
+                    d6
+                </button>
+                <button class="dice-type-btn" data-sides="8" onclick="selectDice(8)">
+                    <svg viewBox="0 0 40 40"><polygon points="20,2 38,20 20,38 2,20"/></svg>
+                    d8
+                </button>
+                <button class="dice-type-btn" data-sides="10" onclick="selectDice(10)">
+                    <svg viewBox="0 0 40 40"><polygon points="20,2 36,14 32,34 8,34 4,14"/></svg>
+                    d10
+                </button>
+                <button class="dice-type-btn" data-sides="12" onclick="selectDice(12)">
+                    <svg viewBox="0 0 40 40"><polygon points="20,2 34,8 38,22 30,36 10,36 2,22 6,8"/></svg>
+                    d12
+                </button>
+                <button class="dice-type-btn" data-sides="20" onclick="selectDice(20)">
+                    <svg viewBox="0 0 40 40"><polygon points="20,2 37,12 37,30 20,38 3,30 3,12"/></svg>
+                    d20
+                </button>
+            </div>
+        </div>
+
+        <!-- Number of Dice -->
+        <div class="panel">
+            <div class="panel-label"><i class="fas fa-layer-group"></i> Cantidad</div>
+            <div class="dice-count-area">
+                <button class="count-btn" onclick="changeCount(-1)">−</button>
+                <div class="count-display" id="diceCount">1</div>
+                <button class="count-btn" onclick="changeCount(1)">+</button>
+            </div>
+            <div class="dice-visual" id="diceVisual"></div>
+        </div>
+
+        <!-- Modifiers -->
+        <div class="panel">
+            <div class="panel-label"><i class="fas fa-sliders-h"></i> Modificadores</div>
+            <div class="modifiers-row">
+                <div class="modifier-input-group">
+                    <label for="modInput">± Mod:</label>
+                    <input type="number" id="modInput" class="modifier-input" value="0" min="-100" max="100">
+                </div>
+                <button class="adv-btn" id="advNoneBtn" onclick="setAdvMode('none')" data-mode="none">Normal</button>
+                <button class="adv-btn" id="advAdvBtn" onclick="setAdvMode('advantage')" data-mode="advantage">
+                    <i class="fas fa-arrow-up"></i> Ventaja
+                </button>
+                <button class="adv-btn" id="advDisBtn" onclick="setAdvMode('disadvantage')" data-mode="disadvantage">
+                    <i class="fas fa-arrow-down"></i> Desventaja
+                </button>
+            </div>
+        </div>
+
+        <!-- Roll Button -->
+        <div style="margin-bottom: 20px;">
+            <button class="roll-btn" id="rollBtn" onclick="rollDice()">
+                <i class="fas fa-dice"></i> Tirar
+            </button>
+            <div class="shortcut-hint">Presiona <kbd>Espacio</kbd> para tirar</div>
+        </div>
+
+        <!-- Results -->
+        <div class="panel" id="resultsPanel">
+            <div class="panel-label"><i class="fas fa-star"></i> Resultado</div>
+            <div class="results-grid" id="resultsGrid">
+                <div class="empty-state">
+                    <i class="fas fa-dice-d20"></i>
+                    Tira los dados para ver el resultado
+                </div>
+            </div>
+            <div class="total-display" id="totalDisplay" style="display:none;">
+                <div class="total-label">Total</div>
+                <div class="total-value" id="totalValue">0</div>
+                <div class="total-breakdown" id="totalBreakdown"></div>
+                <div class="modifier-result" id="modifierResult"></div>
+            </div>
+        </div>
+
+        <!-- History -->
+        <div class="panel">
+            <div class="history-header">
+                <div class="panel-label" style="margin-bottom:0;"><i class="fas fa-clock-rotate-left"></i> Historial</div>
+                <button class="clear-history-btn" onclick="clearHistory()">
+                    <i class="fas fa-trash-alt"></i> Limpiar
+                </button>
+            </div>
+            <div class="history-list" id="historyList">
+                <div class="empty-state" id="historyEmpty">
+                    <i class="fas fa-scroll"></i>
+                    Sin tiradas aún
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+        /* ═══════════════════════════════════════════
+           State
+           ═══════════════════════════════════════════ */
+        let selectedDice = 6;
+        let diceCount = 1;
+        let advMode = 'none'; // 'none' | 'advantage' | 'disadvantage'
+        let isRolling = false;
+        let soundEnabled = true;
+        let history = [];
+        let audioCtx = null;
+
+        /* ═══════════════════════════════════════════
+           Audio
+           ═══════════════════════════════════════════ */
+        function initAudio() {
+            if (!audioCtx) {
+                audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            }
+        }
+
+        function playTick() {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800 + Math.random() * 400, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.06, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.05);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.05);
+            } catch(e) {}
+        }
+
+        function playReveal() {
+            if (!soundEnabled || !audioCtx) return;
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(1200, audioCtx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(600, audioCtx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.1, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.2);
+                osc.start(audioCtx.currentTime);
+                osc.stop(audioCtx.currentTime + 0.2);
+            } catch(e) {}
+        }
+
+        function toggleSound() {
+            initAudio();
+            soundEnabled = !soundEnabled;
+            const btn = document.getElementById('soundToggle');
+            const icon = btn.querySelector('i');
+            if (soundEnabled) {
+                icon.className = 'fas fa-volume-up';
+                btn.classList.remove('muted');
+            } else {
+                icon.className = 'fas fa-volume-mute';
+                btn.classList.add('muted');
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           Sidebar
+           ═══════════════════════════════════════════ */
+        function toggleMenu() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.style.left = sidebar.style.left === '0px' ? '-250px' : '0px';
+        }
+
+        /* ═══════════════════════════════════════════
+           Dice Selection
+           ═══════════════════════════════════════════ */
+        function selectDice(sides) {
+            selectedDice = sides;
+            document.querySelectorAll('.dice-type-btn').forEach(btn => {
+                btn.classList.toggle('active', parseInt(btn.dataset.sides) === sides);
+            });
+            updateAdvButtons();
+        }
+
+        /* ═══════════════════════════════════════════
+           Dice Count
+           ═══════════════════════════════════════════ */
+        function changeCount(delta) {
+            diceCount = Math.max(1, Math.min(10, diceCount + delta));
+            document.getElementById('diceCount').textContent = diceCount;
+            updateDiceVisual();
+        }
+
+        function updateDiceVisual() {
+            const container = document.getElementById('diceVisual');
+            container.innerHTML = '';
+            for (let i = 0; i < diceCount; i++) {
+                const dot = document.createElement('div');
+                dot.className = 'dice-visual-dot';
+                dot.style.animationDelay = (i * 50) + 'ms';
+                container.appendChild(dot);
+            }
+        }
+
+        /* ═══════════════════════════════════════════
+           Advantage / Disadvantage
+           ═══════════════════════════════════════════ */
+        function setAdvMode(mode) {
+            advMode = mode;
+            updateAdvButtons();
+        }
+
+        function updateAdvButtons() {
+            const d20 = selectedDice === 20;
+            ['advNoneBtn', 'advAdvBtn', 'advDisBtn'].forEach(id => {
+                const btn = document.getElementById(id);
+                const m = btn.dataset.mode;
+                btn.classList.toggle('active', m === advMode && d20);
+                btn.style.opacity = d20 ? '1' : '0.35';
+                btn.style.pointerEvents = d20 ? 'auto' : 'none';
+            });
+            if (!d20) advMode = 'none';
+        }
+
+        /* ═══════════════════════════════════════════
+           Roll
+           ═══════════════════════════════════════════ */
+        function rollDice() {
+            if (isRolling) return;
+            initAudio();
+            isRolling = true;
+
+            const btn = document.getElementById('rollBtn');
+            btn.disabled = true;
+
+            const grid = document.getElementById('resultsGrid');
+            grid.innerHTML = '';
+
+            const totalDisplay = document.getElementById('totalDisplay');
+            totalDisplay.style.display = 'none';
+
+            // Determine actual dice count for advantage/disadvantage (2d20)
+            const isAdvDis = advMode !== 'none' && selectedDice === 20;
+            const actualCount = isAdvDis ? 2 : diceCount;
+
+            // Create die cards
+            const cards = [];
+            for (let i = 0; i < actualCount; i++) {
+                const card = document.createElement('div');
+                card.className = 'die-card';
+                card.innerHTML = `
+                    <div class="die-card-inner">
+                        <div class="die-card-front">
+                            <span class="cycling-value">-</span>
+                        </div>
+                        <div class="die-card-back">
+                            <span class="die-value">?</span>
+                            <span class="die-label">d${selectedDice}</span>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+                cards.push(card);
+            }
+
+            // Generate final values
+            const finalValues = [];
+            for (let i = 0; i < actualCount; i++) {
+                finalValues.push(Math.floor(Math.random() * selectedDice) + 1);
+            }
+
+            // Cycling animation
+            const cycleDuration = 800;
+            const cycleInterval = 50;
+            const startTime = Date.now();
+
+            const cycleTimer = setInterval(() => {
+                const elapsed = Date.now() - startTime;
+                cards.forEach(card => {
+                    const cycling = card.querySelector('.cycling-value');
+                    if (cycling) {
+                        cycling.textContent = Math.floor(Math.random() * selectedDice) + 1;
+                    }
+                });
+                if (soundEnabled) playTick();
+
+                if (elapsed >= cycleDuration) {
+                    clearInterval(cycleTimer);
+                    revealResults(cards, finalValues, isAdvDis);
+                }
+            }, cycleInterval);
+        }
+
+        function revealResults(cards, finalValues, isAdvDis) {
+            // Determine min/max
+            const min = Math.min(...finalValues);
+            const max = Math.max(...finalValues);
+
+            // For advantage/disadvantage, determine kept value
+            let keptIndex = -1;
+            let discardedIndex = -1;
+            if (isAdvDis && finalValues.length === 2) {
+                if (advMode === 'advantage') {
+                    keptIndex = finalValues[0] >= finalValues[1] ? 0 : 1;
+                } else {
+                    keptIndex = finalValues[0] <= finalValues[1] ? 0 : 1;
+                }
+                discardedIndex = keptIndex === 0 ? 1 : 0;
+            }
+
+            // Reveal each card with stagger
+            cards.forEach((card, i) => {
+                setTimeout(() => {
+                    const inner = card.querySelector('.die-card-inner');
+                    const backValue = card.querySelector('.die-value');
+
+                    backValue.textContent = finalValues[i];
+
+                    // Mark min/max for non-adv/dis mode with multiple dice
+                    if (!isAdvDis && finalValues.length > 1) {
+                        if (finalValues[i] === min) card.classList.add('is-min');
+                        if (finalValues[i] === max) card.classList.add('is-max');
+                    }
+
+                    // Mark discarded for adv/dis
+                    if (isAdvDis && i === discardedIndex) {
+                        card.classList.add('discarded-result');
+                    }
+
+                    inner.classList.add('flipped');
+                    setTimeout(() => {
+                        inner.classList.add('bounce');
+                    }, 300);
+
+                    playReveal();
+
+                    // After all revealed
+                    if (i === cards.length - 1) {
+                        setTimeout(() => {
+                            showTotal(finalValues, isAdvDis, keptIndex, discardedIndex);
+                            addToHistory(finalValues, isAdvDis, keptIndex);
+                            isRolling = false;
+                            document.getElementById('rollBtn').disabled = false;
+                        }, 400);
+                    }
+                }, i * 200);
+            });
+        }
+
+        function showTotal(finalValues, isAdvDis, keptIndex, discardedIndex) {
+            const totalDisplay = document.getElementById('totalDisplay');
+            const totalValue = document.getElementById('totalValue');
+            const totalBreakdown = document.getElementById('totalBreakdown');
+            const modifierResult = document.getElementById('modifierResult');
+
+            const mod = parseInt(document.getElementById('modInput').value) || 0;
+
+            let sum, displayValues;
+            if (isAdvDis && finalValues.length === 2) {
+                const kept = finalValues[keptIndex];
+                sum = kept;
+                displayValues = `[${finalValues[0]}, ${finalValues[1]}] → ${kept}`;
+            } else {
+                sum = finalValues.reduce((a, b) => a + b, 0);
+                displayValues = finalValues.join(' + ');
+            }
+
+            const total = sum + mod;
+            totalDisplay.style.display = 'block';
+            totalValue.textContent = total;
+
+            if (isAdvDis) {
+                const modeLabel = advMode === 'advantage' ? 'Ventaja' : 'Desventaja';
+                totalBreakdown.innerHTML = `${displayValues} <span class="adv-badge ${advMode}">${modeLabel}</span>`;
+            } else if (finalValues.length > 1) {
+                totalBreakdown.innerHTML = `<span>${displayValues}</span> = ${sum}`;
+            } else {
+                totalBreakdown.innerHTML = '';
+            }
+
+            if (mod !== 0) {
+                modifierResult.textContent = `${sum} ${mod > 0 ? '+' : ''} ${mod} = ${total}`;
+            } else {
+                modifierResult.textContent = '';
+            }
+
+            // Animate total
+            totalValue.style.transform = 'scale(1.2)';
+            setTimeout(() => {
+                totalValue.style.transition = 'transform 0.3s ease';
+                totalValue.style.transform = 'scale(1)';
+            }, 100);
+        }
+
+        /* ═══════════════════════════════════════════
+           History
+           ═══════════════════════════════════════════ */
+        function addToHistory(finalValues, isAdvDis, keptIndex) {
+            const mod = parseInt(document.getElementById('modInput').value) || 0;
+            let sum;
+            if (isAdvDis && finalValues.length === 2) {
+                sum = finalValues[keptIndex];
+            } else {
+                sum = finalValues.reduce((a, b) => a + b, 0);
+            }
+            const total = sum + mod;
+
+            const entry = {
+                timestamp: new Date(),
+                diceType: selectedDice,
+                count: diceCount,
+                values: [...finalValues],
+                mod: mod,
+                total: total,
+                advMode: advMode,
+                isAdvDis: isAdvDis,
+                keptIndex: keptIndex
+            };
+
+            history.unshift(entry);
+            if (history.length > 10) history.pop();
+
+            renderHistory();
+        }
+
+        function renderHistory() {
+            const list = document.getElementById('historyList');
+            const empty = document.getElementById('historyEmpty');
+
+            if (history.length === 0) {
+                list.innerHTML = '<div class="empty-state" id="historyEmpty"><i class="fas fa-scroll"></i>Sin tiradas aún</div>';
+                return;
+            }
+
+            list.innerHTML = '';
+            history.forEach(entry => {
+                const item = document.createElement('div');
+                item.className = 'history-item';
+
+                const time = entry.timestamp.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+
+                let diceLabel = `${entry.count}d${entry.diceType}`;
+                if (entry.isAdvDis) {
+                    diceLabel = `2d${entry.diceType}`;
+                }
+
+                let valuesStr = entry.values.join(', ');
+                let advStr = '';
+                if (entry.isAdvDis) {
+                    const modeText = entry.advMode === 'advantage' ? 'Ventaja' : 'Desventaja';
+                    advStr = ` <span class="adv-badge ${entry.advMode}" style="font-size:0.6rem;margin-left:4px;">${modeText}</span>`;
+                }
+
+                item.innerHTML = `
+                    <div class="history-left">
+                        <div class="history-dice">${diceLabel}${advStr}</div>
+                        <div class="history-results">[${valuesStr}]</div>
+                        <div class="history-time">${time}</div>
+                    </div>
+                    <div class="history-right">
+                        <div class="history-total">${entry.total}</div>
+                        ${entry.mod !== 0 ? `<div class="history-mod">${entry.mod > 0 ? '+' : ''}${entry.mod} mod</div>` : ''}
+                    </div>
+                `;
+
+                list.appendChild(item);
+            });
+        }
+
+        function clearHistory() {
+            history = [];
+            renderHistory();
+        }
+
+        /* ═══════════════════════════════════════════
+           Keyboard Shortcut
+           ═══════════════════════════════════════════ */
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' && !isRolling && document.activeElement.tagName !== 'INPUT') {
+                e.preventDefault();
+                rollDice();
+            }
+        });
+
+        /* ═══════════════════════════════════════════
+           Init
+           ═══════════════════════════════════════════ */
+        updateDiceVisual();
+        updateAdvButtons();
+    </script>
+
+    <script>
+        particlesJS("particles-js", {
+            particles: {
+                number: { value: 80, density: { enable: true, value_area: 800 } },
+                color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
+                shape: { type: "circle" },
+                opacity: { value: 0.5 },
+                size: { value: 3, random: true },
+                line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+                move: { enable: true, speed: 6, out_mode: "bounce" }
+            },
+            interactivity: {
+                detect_on: "canvas",
+                events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+                modes: { repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 } }
+            },
+            retina_detect: true
+        });
+    </script>
+
+    <script>const CW_PROTECTED = true;</script>
+    <script src="session.js"></script>
+</body>
+</html>

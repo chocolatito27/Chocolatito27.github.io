@@ -8,7 +8,14 @@ const PROTECTED = [
   "chocolatitoAI.html",
   "juegos.html",
   "entretenimiento.html",
-  
+  "pizarra.html",
+  "piano.html",
+  "dados.html",
+  "notas.html",
+  "memorama.html",
+  "voxel.html",
+  "derribalos.html",
+  "Minion.html"
 ];
 
 const AUTH_CACHE = "cw-auth-v1";

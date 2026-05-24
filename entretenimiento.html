@@ -3,38 +3,184 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juegos - ChocolatitoWeb</title>
+    <title>Entretenimiento — ChocolatitoWeb</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="/favicon.png">
-</body>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        .hero-section {
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 80px 24px 20px; text-align: center;
+        }
+        .hero-section h1 {
+            font-family: 'Inter', sans-serif; font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900; color: #33FFFF; margin: 0;
+            text-shadow: 0 0 30px rgba(51,255,255,0.3);
+        }
+        .hero-section p {
+            color: rgba(255,255,255,0.6); font-size: 1rem;
+            margin-top: 8px; max-width: 500px;
+        }
+
+        .tools-container {
+            position: relative; z-index: 1;
+            max-width: 900px; margin: 0 auto;
+            padding: 20px 24px 60px;
+        }
+
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 18px;
+        }
+
+        .tool-card {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid rgba(51,255,255,0.12);
+            border-radius: 16px;
+            padding: 28px 22px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .tool-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, #33FFFF, transparent);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .tool-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(51,255,255,0.3);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(51,255,255,0.08);
+        }
+        .tool-card:hover::before { opacity: 1; }
+
+        .tool-icon {
+            width: 52px; height: 52px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 26px; margin-bottom: 16px;
+        }
+
+        .tool-card h2 {
+            color: #fff; font-size: 18px; font-weight: 700;
+            margin: 0 0 8px; font-family: 'Inter', sans-serif;
+        }
+        .tool-card p {
+            color: rgba(255,255,255,0.5); font-size: 13px;
+            line-height: 1.5; margin: 0;
+        }
+        .tool-tag {
+            display: inline-block; margin-top: 12px; padding: 3px 10px;
+            border-radius: 20px; font-size: 11px; font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+
+        /* Card color variants */
+        .tool-card.cyan .tool-icon { background: rgba(51,255,255,0.12); }
+        .tool-card.cyan .tool-tag { background: rgba(51,255,255,0.1); color: #33FFFF; }
+
+        .tool-card.pink .tool-icon { background: rgba(255,84,112,0.12); }
+        .tool-card.pink .tool-tag { background: rgba(255,84,112,0.1); color: #ff5470; }
+
+        .tool-card.green .tool-icon { background: rgba(74,222,128,0.12); }
+        .tool-card.green .tool-tag { background: rgba(74,222,128,0.1); color: #4ade80; }
+
+        .tool-card.yellow .tool-icon { background: rgba(250,204,21,0.12); }
+        .tool-card.yellow .tool-tag { background: rgba(250,204,21,0.1); color: #facc15; }
+
+        .tool-card.purple .tool-icon { background: rgba(168,150,240,0.12); }
+        .tool-card.purple .tool-tag { background: rgba(168,150,240,0.1); color: #a896f0; }
+
+        .tool-card.orange .tool-icon { background: rgba(249,115,22,0.12); }
+        .tool-card.orange .tool-tag { background: rgba(249,115,22,0.1); color: #f97316; }
+
+        @media (max-width: 600px) {
+            .tools-grid { grid-template-columns: 1fr; }
+        }
+    </style>
 </head>
-<body>
+<body class="home-page">
     <div id="particles-js"></div>
+
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
         </div>
         <ul>
             <li><a href="index.html">Inicio</a></li>
             <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
-            <li><a href="entretenimiento.html">Entretenimiento</a></li>
+            <li><a href="entretenimiento.html" class="active">Entretenimiento</a></li>
             <li><a href="juegos.html">Juegos</a></li>
         </ul>
     </div>
-    <div class="main-content">
-        <h1>algunas cositas...</h1>
-        <div class="tool-grid">
-            <div class="tool-card" onclick="window.location.href='pizarra.html'">
+
+    <div class="hero-section">
+        <h1>Entretenimiento</h1>
+        <p>Herramientas creativas y divertidas para pasar el rato</p>
+    </div>
+
+    <div class="tools-container">
+        <div class="tools-grid">
+
+            <!-- Pizarra -->
+            <div class="tool-card cyan" onclick="window.location.href='pizarra.html'">
+                <div class="tool-icon">✏️</div>
                 <h2>Pizarra</h2>
-                <p>Una pizarra para dejes volar tu imaginación.</p>
+                <p>Dibuja, escribe y crea formas geométricas en un plano interactivo con zoom y cuadrícula.</p>
+                <span class="tool-tag">Creatividad</span>
             </div>
-            <!-- Agrega más juegos aquí -->
+
+            <!-- Piano -->
+            <div class="tool-card pink" onclick="window.location.href='piano.html'">
+                <div class="tool-icon">🎹</div>
+                <h2>Piano</h2>
+                <p>Toca melodías con un teclado interactivo. Elige tipo de onda, graba y reproduce tu música.</p>
+                <span class="tool-tag">Música</span>
+            </div>
+
+            <!-- Dados -->
+            <div class="tool-card green" onclick="window.location.href='dados.html'">
+                <div class="tool-icon">🎲</div>
+                <h2>Dados</h2>
+                <p>Tira dados de cualquier tipo (d4, d6, d8, d10, d12, d20) con animaciones y modificadores.</p>
+                <span class="tool-tag">Suerte</span>
+            </div>
+
+            <!-- Notas -->
+            <div class="tool-card yellow" onclick="window.location.href='notas.html'">
+                <div class="tool-icon">📝</div>
+                <h2>Notas</h2>
+                <p>Bloc de notas rápido con colores, búsqueda y almacenamiento local. Nunca pierdas una idea.</p>
+                <span class="tool-tag">Productividad</span>
+            </div>
+
+            <!-- Memorama -->
+            <div class="tool-card purple" onclick="window.location.href='memorama.html'">
+                <div class="tool-icon">🃏</div>
+                <h2>Memorama</h2>
+                <p>Encuentra las parejas de cartas en este juego de memoria. Varios niveles de dificultad.</p>
+                <span class="tool-tag">Desafío</span>
+            </div>
+
+            <!-- Minion -->
+            <div class="tool-card orange" onclick="window.location.href='Minion.html'">
+                <div class="tool-icon">💛</div>
+                <h2>Minion</h2>
+                <p>Una pequeñita diversión interactiva. ¿Te atreves a decir que no?</p>
+                <span class="tool-tag">Humor</span>
+            </div>
+
         </div>
     </div>
+
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
+    <script>const CW_PROTECTED = true;</script>
     <script src="session.js"></script>
-</body>
 </body>
 </html>

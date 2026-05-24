@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notas - ChocolatitoWeb</title>
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* ═══════════════════════════════════════════════
+           RESET & BASE
+           ═══════════════════════════════════════════════ */
+        *, *::before, *::after {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #000;
+            color: #fff;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* ═══════════════════════════════════════════════
+           PARTICLES
+           ═══════════════════════════════════════════════ */
+        #particles-js {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ═══════════════════════════════════════════════
+           SIDEBAR (matches site style)
+           ═══════════════════════════════════════════════ */
+        .menu-icon {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 30px;
+            color: white;
+            cursor: pointer;
+            z-index: 1000;
+            transition: color 0.2s;
+        }
+
+        .menu-icon:hover {
+            color: #33FFFF;
+        }
+
+        .sidebar {
+            position: fixed;
+            top: 0;
+            left: -250px;
+            width: 250px;
+            height: 100%;
+            background-color: rgba(51, 51, 51, 0.95);
+            backdrop-filter: blur(12px);
+            transition: left 0.3s ease;
+            z-index: 999;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 20px;
+            background-color: rgba(34, 34, 34, 0.9);
+            color: white;
+            text-align: right;
+        }
+
+        .back-arrow {
+            cursor: pointer;
+            font-size: 24px;
+            transition: color 0.2s;
+        }
+
+        .back-arrow:hover {
+            color: #33FFFF;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex: 1;
+        }
+
+        .sidebar ul li {
+            padding: 15px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .sidebar ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .sidebar ul li a:hover,
+        .sidebar ul li a.active {
+            color: #33FFFF;
+        }
+
+        /* ═══════════════════════════════════════════════
+           MAIN LAYOUT
+           ═══════════════════════════════════════════════ */
+        .app-container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 24px 20px 60px;
+            min-height: 100vh;
+        }
+
+        /* ═══════════════════════════════════════════════
+           HEADER
+           ═══════════════════════════════════════════════ */
+        .app-header {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 28px;
+        }
+
+        .header-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+
+        .app-title {
+            font-size: clamp(1.8rem, 5vw, 2.5rem);
+            font-weight: 800;
+            color: #33FFFF;
+            text-shadow: 0 0 20px rgba(51, 255, 255, 0.4), 0 0 40px rgba(51, 255, 255, 0.15);
+            letter-spacing: -0.02em;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.06);
+            color: #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s;
+        }
+
+        .btn-icon:hover {
+            background: rgba(51, 255, 255, 0.15);
+            color: #33FFFF;
+            border-color: rgba(51, 255, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .btn-new-note {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #33FFFF, #00cccc);
+            color: #000;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.25s;
+            font-family: inherit;
+            box-shadow: 0 0 20px rgba(51, 255, 255, 0.25);
+        }
+
+        .btn-new-note:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(51, 255, 255, 0.45);
+        }
+
+        .btn-new-note:active {
+            transform: translateY(0);
+        }
+
+        /* ═══════════════════════════════════════════════
+           SEARCH & FILTER BAR
+           ═══════════════════════════════════════════════ */
+        .search-filter-bar {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .search-wrapper {
+            flex: 1;
+            min-width: 200px;
+            position: relative;
+        }
+
+        .search-wrapper i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #666;
+            font-size: 14px;
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 14px 10px 40px;
+            border-radius: 10px;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input::placeholder {
+            color: #555;
+        }
+
+        .search-input:focus {
+            border-color: #33FFFF;
+            box-shadow: 0 0 12px rgba(51, 255, 255, 0.2);
+        }
+
+        .filter-dots {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .filter-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .filter-dot:hover {
+            transform: scale(1.2);
+        }
+
+        .filter-dot.active {
+            border-color: #fff;
+            transform: scale(1.15);
+            box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+        }
+
+        .filter-dot[data-color="all"] {
+            background: conic-gradient(#33FFFF, #ff5470, #4ade80, #facc15, #a896f0, #33FFFF);
+        }
+
+        .filter-dot[data-color="cyan"] {
+            background: #33FFFF;
+        }
+
+        .filter-dot[data-color="pink"] {
+            background: #ff5470;
+        }
+
+        .filter-dot[data-color="green"] {
+            background: #4ade80;
+        }
+
+        .filter-dot[data-color="yellow"] {
+            background: #facc15;
+        }
+
+        .filter-dot[data-color="purple"] {
+            background: #a896f0;
+        }
+
+        .notes-count {
+            color: #888;
+            font-size: 0.85rem;
+            white-space: nowrap;
+        }
+
+        /* ═══════════════════════════════════════════════
+           NOTES GRID
+           ═══════════════════════════════════════════════ */
+        .notes-grid {
+            column-count: 3;
+            column-gap: 18px;
+        }
+
+        @media (max-width: 1024px) {
+            .notes-grid { column-count: 2; }
+        }
+
+        @media (max-width: 600px) {
+            .notes-grid { column-count: 1; }
+        }
+
+        /* ═══════════════════════════════════════════════
+           NOTE CARD
+           ═══════════════════════════════════════════════ */
+        .note-card {
+            break-inside: avoid;
+            margin-bottom: 18px;
+            border-radius: 14px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            overflow: hidden;
+            transition: transform 0.25s, box-shadow 0.25s;
+            position: relative;
+            animation: slideIn 0.35s ease-out both;
+        }
+
+        .note-card.pinned {
+            border-color: rgba(51, 255, 255, 0.25);
+        }
+
+        .note-card:hover {
+            transform: scale(1.02);
+        }
+
+        .note-card.color-cyan:hover { box-shadow: 0 4px 24px rgba(51, 255, 255, 0.15); }
+        .note-card.color-pink:hover { box-shadow: 0 4px 24px rgba(255, 84, 112, 0.15); }
+        .note-card.color-green:hover { box-shadow: 0 4px 24px rgba(74, 222, 128, 0.15); }
+        .note-card.color-yellow:hover { box-shadow: 0 4px 24px rgba(250, 204, 21, 0.15); }
+        .note-card.color-purple:hover { box-shadow: 0 4px 24px rgba(168, 150, 240, 0.15); }
+
+        .note-color-bar {
+            height: 4px;
+            width: 100%;
+        }
+
+        .color-cyan .note-color-bar { background: #33FFFF; }
+        .color-pink .note-color-bar { background: #ff5470; }
+        .color-green .note-color-bar { background: #4ade80; }
+        .color-yellow .note-color-bar { background: #facc15; }
+        .color-purple .note-color-bar { background: #a896f0; }
+
+        .note-body {
+            padding: 16px;
+        }
+
+        .note-pin-indicator {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            color: #33FFFF;
+            font-size: 12px;
+            opacity: 0.7;
+        }
+
+        .note-title {
+            font-size: 1.05rem;
+            font-weight: 700;
+            color: #fff;
+            border: none;
+            background: transparent;
+            width: 100%;
+            outline: none;
+            font-family: inherit;
+            resize: none;
+            overflow: hidden;
+            padding-right: 20px;
+        }
+
+        .note-title::placeholder {
+            color: #555;
+        }
+
+        .note-title:focus {
+            color: #33FFFF;
+        }
+
+        .note-content {
+            width: 100%;
+            min-height: 60px;
+            border: none;
+            background: transparent;
+            color: rgba(255, 255, 255, 0.78);
+            font-size: 0.9rem;
+            font-family: inherit;
+            resize: vertical;
+            outline: none;
+            line-height: 1.55;
+            margin-top: 8px;
+        }
+
+        .note-content::placeholder {
+            color: #444;
+        }
+
+        .note-content:focus {
+            color: rgba(255, 255, 255, 0.95);
+        }
+
+        .note-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 12px;
+            padding-top: 10px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .note-timestamp {
+            font-size: 0.75rem;
+            color: #555;
+        }
+
+        .note-actions {
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .note-card:hover .note-actions {
+            opacity: 1;
+        }
+
+        /* On touch devices, always show actions */
+        @media (hover: none) {
+            .note-actions {
+                opacity: 1;
+            }
+        }
+
+        .note-action-btn {
+            width: 30px;
+            height: 30px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255, 255, 255, 0.06);
+            color: #888;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.15s;
+        }
+
+        .note-action-btn:hover {
+            background: rgba(255, 255, 255, 0.12);
+            color: #fff;
+        }
+
+        .note-action-btn.pin-btn.is-pinned {
+            color: #33FFFF;
+            background: rgba(51, 255, 255, 0.15);
+        }
+
+        .note-action-btn.delete-btn:hover {
+            color: #ff5470;
+            background: rgba(255, 84, 112, 0.15);
+        }
+
+        .note-color-picker {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .color-pick-dot {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.15s;
+        }
+
+        .color-pick-dot:hover {
+            transform: scale(1.15);
+        }
+
+        .color-pick-dot.selected {
+            border-color: #fff;
+            box-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
+        }
+
+        .color-pick-dot[data-pick="cyan"]   { background: #33FFFF; }
+        .color-pick-dot[data-pick="pink"]   { background: #ff5470; }
+        .color-pick-dot[data-pick="green"]  { background: #4ade80; }
+        .color-pick-dot[data-pick="yellow"] { background: #facc15; }
+        .color-pick-dot[data-pick="purple"] { background: #a896f0; }
+
+        /* ═══════════════════════════════════════════════
+           EMPTY STATE
+           ═══════════════════════════════════════════════ */
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px 20px;
+            text-align: center;
+            animation: fadeInUp 0.5s ease-out;
+        }
+
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .empty-title {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: #33FFFF;
+            margin-bottom: 8px;
+        }
+
+        .empty-desc {
+            color: #666;
+            font-size: 0.95rem;
+            max-width: 320px;
+        }
+
+        /* ═══════════════════════════════════════════════
+           DELETE CONFIRMATION OVERLAY
+           ═══════════════════════════════════════════════ */
+        .delete-confirm {
+            position: absolute;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(4px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+            z-index: 5;
+            border-radius: 14px;
+            animation: fadeIn 0.15s ease-out;
+        }
+
+        .delete-confirm p {
+            font-size: 0.95rem;
+            color: #fff;
+            font-weight: 600;
+        }
+
+        .delete-confirm-btns {
+            display: flex;
+            gap: 10px;
+        }
+
+        .confirm-btn {
+            padding: 8px 18px;
+            border-radius: 8px;
+            border: none;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .confirm-btn.yes {
+            background: rgba(255, 84, 112, 0.2);
+            color: #ff5470;
+            border: 1px solid rgba(255, 84, 112, 0.3);
+        }
+
+        .confirm-btn.yes:hover {
+            background: rgba(255, 84, 112, 0.35);
+        }
+
+        .confirm-btn.no {
+            background: rgba(255, 255, 255, 0.08);
+            color: #ccc;
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+
+        .confirm-btn.no:hover {
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        /* ═══════════════════════════════════════════════
+           ANIMATIONS
+           ═══════════════════════════════════════════════ */
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px) scale(0.97);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        @keyframes slideOut {
+            to {
+                opacity: 0;
+                transform: translateY(-10px) scale(0.95);
+            }
+        }
+
+        .note-card.removing {
+            animation: slideOut 0.25s ease-in forwards;
+        }
+
+        /* ═══════════════════════════════════════════════
+           HIDDEN FILE INPUT
+           ═══════════════════════════════════════════════ */
+        .import-input {
+            display: none;
+        }
+
+        /* ═══════════════════════════════════════════════
+           SCROLLBAR STYLING
+           ═══════════════════════════════════════════════ */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(51, 255, 255, 0.2);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(51, 255, 255, 0.4);
+        }
+
+        /* ═══════════════════════════════════════════════
+           RESPONSIVE TWEAKS
+           ═══════════════════════════════════════════════ */
+        @media (max-width: 600px) {
+            .app-container {
+                padding: 18px 12px 40px;
+            }
+
+            .header-top {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .search-filter-bar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .filter-dots {
+                justify-content: center;
+            }
+
+            .header-actions {
+                width: 100%;
+                justify-content: space-between;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Particles Background -->
+    <div id="particles-js"></div>
+
+    <!-- Sidebar -->
+    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
+        </div>
+        <ul>
+            <li><a href="index.html">Inicio</a></li>
+            <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
+            <li><a href="entretenimiento.html" class="active">Entretenimiento</a></li>
+            <li><a href="juegos.html">Juegos</a></li>
+        </ul>
+    </div>
+
+    <!-- App Container -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-top">
+                <h1 class="app-title">📝 Notas</h1>
+                <div class="header-actions">
+                    <button class="btn-icon" onclick="exportNotes()" title="Exportar notas">
+                        <i class="fas fa-download"></i>
+                    </button>
+                    <button class="btn-icon" onclick="document.getElementById('importInput').click()" title="Importar notas">
+                        <i class="fas fa-upload"></i>
+                    </button>
+                    <input type="file" id="importInput" class="import-input" accept=".json" onchange="importNotes(event)">
+                    <button class="btn-new-note" onclick="createNote()">
+                        <i class="fas fa-plus"></i>
+                        <span>Nueva nota</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="search-filter-bar">
+                <div class="search-wrapper">
+                    <i class="fas fa-search"></i>
+                    <input type="text" class="search-input" id="searchInput" placeholder="Buscar notas..." oninput="renderNotes()">
+                </div>
+                <div class="filter-dots" id="filterDots">
+                    <div class="filter-dot active" data-color="all" onclick="setFilter('all', this)" title="Todas"></div>
+                    <div class="filter-dot" data-color="cyan" onclick="setFilter('cyan', this)" title="Cyan"></div>
+                    <div class="filter-dot" data-color="pink" onclick="setFilter('pink', this)" title="Rosa"></div>
+                    <div class="filter-dot" data-color="green" onclick="setFilter('green', this)" title="Verde"></div>
+                    <div class="filter-dot" data-color="yellow" onclick="setFilter('yellow', this)" title="Amarillo"></div>
+                    <div class="filter-dot" data-color="purple" onclick="setFilter('purple', this)" title="Morado"></div>
+                </div>
+                <span class="notes-count" id="notesCount"></span>
+            </div>
+        </header>
+
+        <!-- Notes Grid -->
+        <main class="notes-grid" id="notesGrid"></main>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="emptyState" style="display:none;">
+            <div class="empty-icon">📝</div>
+            <div class="empty-title">No tienes notas aún</div>
+            <div class="empty-desc">¡Crea una! Presiona el botón "Nueva nota" para empezar a escribir.</div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script>
+    /* ═══════════════════════════════════════════════
+       PARTICLES CONFIG
+       ═══════════════════════════════════════════════ */
+    particlesJS("particles-js", {
+        particles: {
+            number: { value: 80, density: { enable: true, value_area: 800 } },
+            color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
+            shape: { type: "circle" },
+            opacity: { value: 0.5 },
+            size: { value: 3, random: true },
+            line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.4, width: 1 },
+            move: { enable: true, speed: 6, out_mode: "bounce" }
+        },
+        interactivity: {
+            detect_on: "canvas",
+            events: { onhover: { enable: true, mode: "repulse" }, onclick: { enable: true, mode: "push" }, resize: true },
+            modes: { repulse: { distance: 200, duration: 0.4 }, push: { particles_nb: 4 } }
+        },
+        retina_detect: true
+    });
+
+    /* ═══════════════════════════════════════════════
+       SIDEBAR TOGGLE
+       ═══════════════════════════════════════════════ */
+    function toggleMenu() {
+        const sidebar = document.getElementById('sidebar');
+        sidebar.style.left = sidebar.style.left === '0px' ? '-250px' : '0px';
+    }
+
+    /* ═══════════════════════════════════════════════
+       NOTES APP
+       ═══════════════════════════════════════════════ */
+    const STORAGE_KEY = 'cw_notas';
+    let currentFilter = 'all';
+    let deleteConfirmId = null;
+
+    // Color map
+    const COLOR_MAP = {
+        cyan:   { bg: 'rgba(51, 255, 255, 0.15)',  border: '#33FFFF' },
+        pink:   { bg: 'rgba(255, 84, 112, 0.15)',   border: '#ff5470' },
+        green:  { bg: 'rgba(74, 222, 128, 0.15)',   border: '#4ade80' },
+        yellow: { bg: 'rgba(250, 204, 21, 0.15)',   border: '#facc15' },
+        purple: { bg: 'rgba(168, 150, 240, 0.15)',  border: '#a896f0' }
+    };
+
+    const COLOR_NAMES = ['cyan', 'pink', 'green', 'yellow', 'purple'];
+
+    // Load notes from localStorage
+    function loadNotes() {
+        try {
+            return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+        } catch {
+            return [];
+        }
+    }
+
+    // Save notes to localStorage
+    function saveNotes(notes) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+    }
+
+    // Debounce utility
+    function debounce(fn, ms) {
+        let timer;
+        return function(...args) {
+            clearTimeout(timer);
+            timer = setTimeout(() => fn.apply(this, args), ms);
+        };
+    }
+
+    // Auto-save debounced
+    const debouncedSave = debounce((notes) => saveNotes(notes), 500);
+
+    // Generate unique ID
+    function generateId() {
+        return Date.now().toString(36) + Math.random().toString(36).substr(2, 5);
+    }
+
+    // Format timestamp
+    function formatTime(ts) {
+        const d = new Date(ts);
+        const day = d.getDate().toString().padStart(2, '0');
+        const month = (d.getMonth() + 1).toString().padStart(2, '0');
+        const year = d.getFullYear();
+        const hours = d.getHours().toString().padStart(2, '0');
+        const mins = d.getMinutes().toString().padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${mins}`;
+    }
+
+    // Create a new note
+    function createNote() {
+        const notes = loadNotes();
+        const randomColor = COLOR_NAMES[Math.floor(Math.random() * COLOR_NAMES.length)];
+        const newNote = {
+            id: generateId(),
+            title: '',
+            content: '',
+            color: randomColor,
+            pinned: false,
+            createdAt: Date.now(),
+            updatedAt: Date.now()
+        };
+        notes.unshift(newNote);
+        saveNotes(notes);
+        renderNotes();
+        // Focus the new note's title
+        setTimeout(() => {
+            const titleEl = document.querySelector(`[data-note-id="${newNote.id}"] .note-title`);
+            if (titleEl) titleEl.focus();
+        }, 100);
+    }
+
+    // Update a note field
+    function updateNote(id, field, value) {
+        const notes = loadNotes();
+        const note = notes.find(n => n.id === id);
+        if (note) {
+            note[field] = value;
+            note.updatedAt = Date.now();
+            debouncedSave(notes);
+        }
+    }
+
+    // Delete a note
+    function deleteNote(id) {
+        deleteConfirmId = id;
+        renderNotes();
+    }
+
+    function confirmDelete(id, yes) {
+        deleteConfirmId = null;
+        if (yes) {
+            const card = document.querySelector(`[data-note-id="${id}"]`);
+            if (card) {
+                card.classList.add('removing');
+                setTimeout(() => {
+                    const notes = loadNotes().filter(n => n.id !== id);
+                    saveNotes(notes);
+                    renderNotes();
+                }, 250);
+            } else {
+                const notes = loadNotes().filter(n => n.id !== id);
+                saveNotes(notes);
+                renderNotes();
+            }
+        } else {
+            renderNotes();
+        }
+    }
+
+    // Pin/unpin a note
+    function togglePin(id) {
+        const notes = loadNotes();
+        const note = notes.find(n => n.id === id);
+        if (note) {
+            note.pinned = !note.pinned;
+            note.updatedAt = Date.now();
+            saveNotes(notes);
+            renderNotes();
+        }
+    }
+
+    // Duplicate a note
+    function duplicateNote(id) {
+        const notes = loadNotes();
+        const original = notes.find(n => n.id === id);
+        if (original) {
+            const clone = {
+                ...original,
+                id: generateId(),
+                title: original.title ? original.title + ' (copia)' : '',
+                pinned: false,
+                createdAt: Date.now(),
+                updatedAt: Date.now()
+            };
+            const idx = notes.findIndex(n => n.id === id);
+            notes.splice(idx + 1, 0, clone);
+            saveNotes(notes);
+            renderNotes();
+        }
+    }
+
+    // Change note color
+    function changeColor(id, color) {
+        const notes = loadNotes();
+        const note = notes.find(n => n.id === id);
+        if (note) {
+            note.color = color;
+            note.updatedAt = Date.now();
+            saveNotes(notes);
+            renderNotes();
+        }
+    }
+
+    // Filter
+    function setFilter(color, el) {
+        currentFilter = color;
+        document.querySelectorAll('.filter-dot').forEach(d => d.classList.remove('active'));
+        el.classList.add('active');
+        renderNotes();
+    }
+
+    // Export notes as JSON
+    function exportNotes() {
+        const notes = loadNotes();
+        if (notes.length === 0) {
+            alert('No hay notas para exportar.');
+            return;
+        }
+        const blob = new Blob([JSON.stringify(notes, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `chocolatito-notas-${new Date().toISOString().slice(0,10)}.json`;
+        a.click();
+        URL.revokeObjectURL(url);
+    }
+
+    // Import notes from JSON file
+    function importNotes(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const imported = JSON.parse(e.target.result);
+                if (!Array.isArray(imported)) throw new Error('Formato inválido');
+                const existing = loadNotes();
+                // Merge: add imported notes that don't have matching IDs
+                const existingIds = new Set(existing.map(n => n.id));
+                let added = 0;
+                imported.forEach(n => {
+                    if (n.id && n.title !== undefined && n.content !== undefined) {
+                        if (!existingIds.has(n.id)) {
+                            existing.push(n);
+                            added++;
+                        } else {
+                            // Generate new ID for duplicate
+                            n.id = generateId();
+                            existing.push(n);
+                            added++;
+                        }
+                    }
+                });
+                saveNotes(existing);
+                renderNotes();
+                alert(`Se importaron ${added} notas.`);
+            } catch {
+                alert('Error al importar. Asegúrate de que el archivo es un JSON válido de notas.');
+            }
+        };
+        reader.readAsText(file);
+        event.target.value = '';
+    }
+
+    // Render all notes
+    function renderNotes() {
+        const notes = loadNotes();
+        const grid = document.getElementById('notesGrid');
+        const empty = document.getElementById('emptyState');
+        const countEl = document.getElementById('notesCount');
+        const search = document.getElementById('searchInput').value.toLowerCase().trim();
+
+        // Filter notes
+        let filtered = notes;
+
+        if (currentFilter !== 'all') {
+            filtered = filtered.filter(n => n.color === currentFilter);
+        }
+
+        if (search) {
+            filtered = filtered.filter(n =>
+                (n.title || '').toLowerCase().includes(search) ||
+                (n.content || '').toLowerCase().includes(search)
+            );
+        }
+
+        // Sort: pinned first, then by updatedAt desc
+        filtered.sort((a, b) => {
+            if (a.pinned && !b.pinned) return -1;
+            if (!a.pinned && b.pinned) return 1;
+            return b.updatedAt - a.updatedAt;
+        });
+
+        // Update count
+        const totalShown = filtered.length;
+        const totalAll = notes.length;
+        countEl.textContent = currentFilter === 'all' && !search
+            ? `${totalAll} nota${totalAll !== 1 ? 's' : ''}`
+            : `${totalShown} de ${totalAll} nota${totalAll !== 1 ? 's' : ''}`;
+
+        // Empty state
+        if (filtered.length === 0) {
+            grid.style.display = 'none';
+            empty.style.display = 'flex';
+            if (notes.length === 0) {
+                empty.querySelector('.empty-title').textContent = 'No tienes notas aún';
+                empty.querySelector('.empty-desc').textContent = '¡Crea una! Presiona el botón "Nueva nota" para empezar a escribir.';
+            } else {
+                empty.querySelector('.empty-title').textContent = 'Sin resultados';
+                empty.querySelector('.empty-desc').textContent = 'No se encontraron notas con ese filtro o búsqueda.';
+            }
+            return;
+        }
+
+        grid.style.display = '';
+        empty.style.display = 'none';
+
+        // Build HTML
+        grid.innerHTML = filtered.map((note, i) => {
+            const isDeleting = deleteConfirmId === note.id;
+            const colorDots = COLOR_NAMES.map(c =>
+                `<div class="color-pick-dot ${note.color === c ? 'selected' : ''}" data-pick="${c}" onclick="changeColor('${note.id}', '${c}')"></div>`
+            ).join('');
+
+            return `
+                <div class="note-card color-${note.color} ${note.pinned ? 'pinned' : ''}" data-note-id="${note.id}" style="animation-delay: ${Math.min(i * 0.05, 0.5)}s">
+                    <div class="note-color-bar"></div>
+                    ${note.pinned ? '<div class="note-pin-indicator"><i class="fas fa-thumbtack"></i></div>' : ''}
+                    <div class="note-body">
+                        <input
+                            class="note-title"
+                            type="text"
+                            placeholder="Título de la nota..."
+                            value="${escapeAttr(note.title || '')}"
+                            oninput="updateNote('${note.id}', 'title', this.value)"
+                        />
+                        <textarea
+                            class="note-content"
+                            placeholder="Escribe algo..."
+                            oninput="updateNote('${note.id}', 'content', this.value); autoResize(this)"
+                            onfocus="autoResize(this)"
+                        >${escapeHtml(note.content || '')}</textarea>
+                        <div class="note-color-picker">
+                            ${colorDots}
+                        </div>
+                        <div class="note-footer">
+                            <span class="note-timestamp">${formatTime(note.updatedAt)}</span>
+                            <div class="note-actions">
+                                <button class="note-action-btn pin-btn ${note.pinned ? 'is-pinned' : ''}" onclick="togglePin('${note.id}')" title="${note.pinned ? 'Desfijar' : 'Fijar'}">
+                                    <i class="fas fa-thumbtack"></i>
+                                </button>
+                                <button class="note-action-btn" onclick="duplicateNote('${note.id}')" title="Duplicar">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                                <button class="note-action-btn delete-btn" onclick="deleteNote('${note.id}')" title="Eliminar">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    ${isDeleting ? `
+                        <div class="delete-confirm">
+                            <p>¿Eliminar esta nota?</p>
+                            <div class="delete-confirm-btns">
+                                <button class="confirm-btn yes" onclick="event.stopPropagation(); confirmDelete('${note.id}', true)">Eliminar</button>
+                                <button class="confirm-btn no" onclick="event.stopPropagation(); confirmDelete('${note.id}', false)">Cancelar</button>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }).join('');
+
+        // Auto-resize all textareas
+        grid.querySelectorAll('.note-content').forEach(autoResize);
+    }
+
+    // Auto-resize textarea
+    function autoResize(el) {
+        el.style.height = 'auto';
+        el.style.height = el.scrollHeight + 'px';
+    }
+
+    // Escape HTML for content
+    function escapeHtml(str) {
+        return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    // Escape for HTML attributes
+    function escapeAttr(str) {
+        return String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    // Close sidebar when clicking outside
+    document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        const menuIcon = document.querySelector('.menu-icon');
+        if (sidebar.style.left === '0px' && !sidebar.contains(e.target) && !menuIcon.contains(e.target)) {
+            sidebar.style.left = '-250px';
+        }
+    });
+
+    // Close sidebar on Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            const sidebar = document.getElementById('sidebar');
+            if (sidebar.style.left === '0px') {
+                sidebar.style.left = '-250px';
+            }
+            // Also cancel delete confirmation
+            if (deleteConfirmId !== null) {
+                confirmDelete(deleteConfirmId, false);
+            }
+        }
+    });
+
+    // Initial render
+    renderNotes();
+    </script>
+
+    <!-- Session Protection -->
+    <script>const CW_PROTECTED = true;</script>
+    <script src="session.js"></script>
+</body>
+</html>
