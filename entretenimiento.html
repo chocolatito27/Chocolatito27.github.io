@@ -27,21 +27,21 @@
 
         .tools-container {
             position: relative; z-index: 1;
-            max-width: 900px; margin: 0 auto;
+            max-width: 1000px; margin: 0 auto;
             padding: 20px 24px 60px;
         }
 
         .tools-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 18px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
         }
 
         .tool-card {
             background: rgba(0,0,0,0.7);
             border: 1px solid rgba(51,255,255,0.12);
             border-radius: 16px;
-            padding: 28px 22px;
+            padding: 24px 20px;
             cursor: pointer;
             transition: all 0.25s ease;
             position: relative;
@@ -60,22 +60,22 @@
         .tool-card:hover::before { opacity: 1; }
 
         .tool-icon {
-            width: 52px; height: 52px; border-radius: 14px;
+            width: 48px; height: 48px; border-radius: 12px;
             display: flex; align-items: center; justify-content: center;
-            font-size: 26px; margin-bottom: 16px;
+            font-size: 24px; margin-bottom: 14px;
         }
 
         .tool-card h2 {
-            color: #fff; font-size: 18px; font-weight: 700;
-            margin: 0 0 8px; font-family: 'Inter', sans-serif;
+            color: #fff; font-size: 16px; font-weight: 700;
+            margin: 0 0 6px; font-family: 'Inter', sans-serif;
         }
         .tool-card p {
-            color: rgba(255,255,255,0.5); font-size: 13px;
+            color: rgba(255,255,255,0.45); font-size: 12px;
             line-height: 1.5; margin: 0;
         }
         .tool-tag {
-            display: inline-block; margin-top: 12px; padding: 3px 10px;
-            border-radius: 20px; font-size: 11px; font-weight: 600;
+            display: inline-block; margin-top: 10px; padding: 3px 10px;
+            border-radius: 20px; font-size: 10px; font-weight: 600;
             letter-spacing: 0.3px;
         }
 
@@ -98,8 +98,41 @@
         .tool-card.orange .tool-icon { background: rgba(249,115,22,0.12); }
         .tool-card.orange .tool-tag { background: rgba(249,115,22,0.1); color: #f97316; }
 
+        .tool-card.blue .tool-icon { background: rgba(96,165,250,0.12); }
+        .tool-card.blue .tool-tag { background: rgba(96,165,250,0.1); color: #60a5fa; }
+
+        .tool-card.red .tool-icon { background: rgba(239,68,68,0.12); }
+        .tool-card.red .tool-tag { background: rgba(239,68,68,0.1); color: #ef4444; }
+
+        .tool-card.teal .tool-icon { background: rgba(20,184,166,0.12); }
+        .tool-card.teal .tool-tag { background: rgba(20,184,166,0.1); color: #14b8a6; }
+
+        .tool-card.indigo .tool-icon { background: rgba(99,102,241,0.12); }
+        .tool-card.indigo .tool-tag { background: rgba(99,102,241,0.1); color: #6366f1; }
+
+        .tool-card.emerald .tool-icon { background: rgba(52,211,153,0.12); }
+        .tool-card.emerald .tool-tag { background: rgba(52,211,153,0.1); color: #34d399; }
+
+        /* Section headers */
+        .section-header {
+            position: relative; z-index: 1;
+            max-width: 1000px; margin: 0 auto;
+            padding: 20px 24px 0;
+        }
+        .section-header h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 4px;
+        }
+
         @media (max-width: 600px) {
-            .tools-grid { grid-template-columns: 1fr; }
+            .tools-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .tool-card { padding: 18px 14px; }
+            .tool-icon { width: 40px; height: 40px; font-size: 20px; margin-bottom: 10px; }
+            .tool-card h2 { font-size: 14px; }
+            .tool-card p { font-size: 11px; }
         }
     </style>
 </head>
@@ -121,60 +154,118 @@
 
     <div class="hero-section">
         <h1>Entretenimiento</h1>
-        <p>Herramientas creativas y divertidas para pasar el rato</p>
+        <p>Herramientas creativas, juegos y utilidades para pasar el rato</p>
     </div>
 
+    <!-- Creatividad -->
+    <div class="section-header">
+        <h2>Creatividad</h2>
+    </div>
     <div class="tools-container">
         <div class="tools-grid">
-
             <!-- Pizarra -->
             <div class="tool-card cyan" onclick="window.location.href='pizarra.html'">
                 <div class="tool-icon">✏️</div>
                 <h2>Pizarra</h2>
-                <p>Dibuja, escribe y crea formas geométricas en un plano interactivo con zoom y cuadrícula.</p>
+                <p>Dibuja con trazos suaves, formas geometricas, cuentagotas y mas. Con cuadricula y zoom.</p>
                 <span class="tool-tag">Creatividad</span>
             </div>
 
-            <!-- Piano -->
-            <div class="tool-card pink" onclick="window.location.href='piano.html'">
-                <div class="tool-icon">🎹</div>
-                <h2>Piano</h2>
-                <p>Toca melodías con un teclado interactivo. Elige tipo de onda, graba y reproduce tu música.</p>
-                <span class="tool-tag">Música</span>
-            </div>
-
-            <!-- Dados -->
-            <div class="tool-card green" onclick="window.location.href='dados.html'">
-                <div class="tool-icon">🎲</div>
-                <h2>Dados</h2>
-                <p>Tira dados de cualquier tipo (d4, d6, d8, d10, d12, d20) con animaciones y modificadores.</p>
-                <span class="tool-tag">Suerte</span>
+            <!-- Pixel Art -->
+            <div class="tool-card purple" onclick="window.location.href='pixelart.html'">
+                <div class="tool-icon">🎨</div>
+                <h2>Pixel Art</h2>
+                <p>Crea arte pixel a pixel con cuadricula ajustable, espejo y exportacion PNG.</p>
+                <span class="tool-tag">Dibujo</span>
             </div>
 
             <!-- Notas -->
             <div class="tool-card yellow" onclick="window.location.href='notas.html'">
                 <div class="tool-icon">📝</div>
                 <h2>Notas</h2>
-                <p>Bloc de notas rápido con colores, búsqueda y almacenamiento local. Nunca pierdas una idea.</p>
+                <p>Bloc de notas rapido con colores, busqueda y almacenamiento local.</p>
                 <span class="tool-tag">Productividad</span>
             </div>
 
+            <!-- Piano -->
+            <div class="tool-card pink" onclick="window.location.href='piano.html'">
+                <div class="tool-icon">🎹</div>
+                <h2>Piano</h2>
+                <p>Toca melodias con un teclado interactivo. Elige tipo de onda, graba y reproduce.</p>
+                <span class="tool-tag">Musica</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Juegos -->
+    <div class="section-header">
+        <h2>Juegos</h2>
+    </div>
+    <div class="tools-container">
+        <div class="tools-grid">
             <!-- Memorama -->
-            <div class="tool-card purple" onclick="window.location.href='memorama.html'">
+            <div class="tool-card green" onclick="window.location.href='memorama.html'">
                 <div class="tool-icon">🃏</div>
                 <h2>Memorama</h2>
-                <p>Encuentra las parejas de cartas en este juego de memoria. Varios niveles de dificultad.</p>
-                <span class="tool-tag">Desafío</span>
+                <p>Encuentra las parejas de cartas en este juego de memoria con varios niveles.</p>
+                <span class="tool-tag">Desafio</span>
+            </div>
+
+            <!-- Trivia -->
+            <div class="tool-card blue" onclick="window.location.href='trivia.html'">
+                <div class="tool-icon">🧠</div>
+                <h2>Trivia</h2>
+                <p>Pon a prueba tus conocimientos en ciencia, historia, geografia y mas categorias.</p>
+                <span class="tool-tag">Conocimiento</span>
+            </div>
+
+            <!-- Ahorcado -->
+            <div class="tool-card red" onclick="window.location.href='ahorcado.html'">
+                <div class="tool-icon">💀</div>
+                <h2>Ahorcado</h2>
+                <p>Adivina la palabra letra por letra antes de que se complete el dibujo.</p>
+                <span class="tool-tag">Palabras</span>
+            </div>
+
+            <!-- Dados -->
+            <div class="tool-card orange" onclick="window.location.href='dados.html'">
+                <div class="tool-icon">🎲</div>
+                <h2>Dados</h2>
+                <p>Tira dados de cualquier tipo (d4, d6, d8, d10, d12, d20) con animaciones.</p>
+                <span class="tool-tag">Suerte</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Utilidades -->
+    <div class="section-header">
+        <h2>Utilidades</h2>
+    </div>
+    <div class="tools-container">
+        <div class="tools-grid">
+            <!-- Calculadora -->
+            <div class="tool-card indigo" onclick="window.location.href='calculadora.html'">
+                <div class="tool-icon">🔢</div>
+                <h2>Calculadora</h2>
+                <p>Calculadora cientifica con historial, funciones trigonometricas y soporte de teclado.</p>
+                <span class="tool-tag">Matematicas</span>
+            </div>
+
+            <!-- Cronometro -->
+            <div class="tool-card teal" onclick="window.location.href='cronometro.html'">
+                <div class="tool-icon">⏱️</div>
+                <h2>Cronometro</h2>
+                <p>Cronometro con vueltas y temporizador con presets. Ideal para estudio o deporte.</p>
+                <span class="tool-tag">Tiempo</span>
             </div>
 
             <!-- Minion -->
-            <div class="tool-card orange" onclick="window.location.href='Minion.html'">
+            <div class="tool-card emerald" onclick="window.location.href='Minion.html'">
                 <div class="tool-icon">💛</div>
                 <h2>Minion</h2>
-                <p>Una pequeñita diversión interactiva. ¿Te atreves a decir que no?</p>
+                <p>Una pequenita diversion interactiva. Te atreves a decir que no?</p>
                 <span class="tool-tag">Humor</span>
             </div>
-
         </div>
     </div>
 

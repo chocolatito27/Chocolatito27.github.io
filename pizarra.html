@@ -12,11 +12,9 @@
       margin: 0; overflow: hidden;
       background: #000; font-family: 'Segoe UI', Arial, sans-serif; color: #fff;
     }
-
-    /* ═══ Partículas ═══ */
     #particles-js { position: fixed; inset: 0; z-index: 0; }
 
-    /* ═══ Sidebar ═══ */
+    /* Sidebar */
     .menu-icon {
       position: fixed; top: 20px; left: 20px; font-size: 30px;
       color: #fff; cursor: pointer; z-index: 1100;
@@ -42,7 +40,7 @@
     }
     .sidebar ul li a:hover, .sidebar ul li a.active { color: #33FFFF; background: rgba(51,255,255,0.06); }
 
-    /* ═══ Toolbar ═══ */
+    /* Toolbar */
     .toolbar {
       position: fixed; top: 50%; left: 14px;
       transform: translateY(-50%);
@@ -83,9 +81,6 @@
     .tool-btn.danger { color: #ff5470; }
     .tool-btn.danger:hover { background: rgba(255,84,112,0.1); }
 
-    .tool-btn.success { color: #4ade80; }
-    .tool-btn.success:hover { background: rgba(74,222,128,0.1); }
-
     /* Sliders */
     .slider-row {
       display: flex; align-items: center; gap: 6px;
@@ -121,7 +116,7 @@
     }
     .color-picker-row span { font-size: 11px; color: #aaa; }
 
-    /* Fill toggle */
+    /* Toggle */
     .toggle-row {
       display: flex; align-items: center; justify-content: space-between;
       padding: 6px 10px; font-size: 12px; color: #aaa;
@@ -138,6 +133,21 @@
       transition: transform 0.2s;
     }
     .toggle-switch.on::after { transform: translateX(16px); background: #33FFFF; }
+
+    /* Line style selector */
+    .linestyle-row {
+      display: flex; gap: 4px; padding: 4px 6px;
+    }
+    .linestyle-btn {
+      flex: 1; padding: 5px 0; border-radius: 6px;
+      background: rgba(255,255,255,0.04); border: 1px solid transparent;
+      color: #aaa; font-size: 10px; cursor: pointer; transition: all 0.15s;
+      text-align: center;
+    }
+    .linestyle-btn.active {
+      background: rgba(51,255,255,0.12); color: #33FFFF;
+      border-color: rgba(51,255,255,0.3);
+    }
 
     /* Canvas */
     canvas {
@@ -156,29 +166,28 @@
     /* Top bar */
     .top-bar {
       position: fixed; top: 12px; left: 50%; transform: translateX(-50%);
-      display: flex; align-items: center; gap: 10px;
+      display: flex; align-items: center; gap: 8px;
       background: rgba(10,10,10,0.9); backdrop-filter: blur(10px);
-      padding: 8px 16px; border-radius: 12px; z-index: 20;
+      padding: 8px 14px; border-radius: 12px; z-index: 20;
       border: 1px solid rgba(51,255,255,0.15);
       box-shadow: 0 4px 20px rgba(0,0,0,0.4);
     }
     .top-bar .title {
-      font-size: 16px; font-weight: 800; color: #33FFFF;
+      font-size: 15px; font-weight: 800; color: #33FFFF;
       text-shadow: 0 0 10px rgba(51,255,255,0.3);
     }
     .top-bar .sep {
       width: 1px; height: 20px; background: rgba(255,255,255,0.15);
     }
     .top-bar button {
-      padding: 6px 12px; background: rgba(255,255,255,0.06);
+      padding: 6px 10px; background: rgba(255,255,255,0.06);
       border: 1px solid rgba(255,255,255,0.1); border-radius: 8px;
       color: #ccc; font-size: 12px; cursor: pointer; transition: all 0.15s;
       display: flex; align-items: center; gap: 5px;
     }
     .top-bar button:hover { background: rgba(51,255,255,0.1); color: #33FFFF; border-color: rgba(51,255,255,0.3); }
-    .top-bar button i { font-size: 12px; }
 
-    /* Grid toggle indicator */
+    /* Grid badge */
     .grid-badge {
       position: fixed; bottom: 14px; right: 14px;
       background: rgba(10,10,10,0.85); backdrop-filter: blur(6px);
@@ -187,13 +196,24 @@
       border: 1px solid rgba(255,255,255,0.08);
     }
 
+    /* Toast notification */
+    .toast {
+      position: fixed; bottom: 50px; left: 50%; transform: translateX(-50%);
+      background: rgba(51,255,255,0.15); backdrop-filter: blur(8px);
+      border: 1px solid rgba(51,255,255,0.3); color: #33FFFF;
+      padding: 10px 20px; border-radius: 10px; z-index: 100;
+      font-size: 13px; font-weight: 600;
+      opacity: 0; transition: opacity 0.3s; pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+
     /* Responsive */
     @media (max-width: 768px) {
       .toolbar {
         top: auto; bottom: 0; left: 0; right: 0;
         transform: none; flex-direction: row;
         border-radius: 16px 16px 0 0;
-        max-height: 60px; overflow-x: auto; overflow-y: hidden;
+        max-height: 56px; overflow-x: auto; overflow-y: hidden;
         padding: 8px 12px;
       }
       .tool-section {
@@ -204,17 +224,16 @@
       .tool-label { display: none; }
       .tool-btn span { display: none; }
       .tool-btn { padding: 8px; }
-      .slider-row, .color-presets, .color-picker-row, .toggle-row { display: none; }
-      .top-bar { font-size: 12px; padding: 6px 10px; }
+      .slider-row, .color-presets, .color-picker-row, .toggle-row, .linestyle-row { display: none; }
+      .top-bar { font-size: 11px; padding: 6px 10px; }
+      .top-bar button span { display: none; }
     }
   </style>
 </head>
 <body>
 
-<!-- Particles -->
 <div id="particles-js"></div>
 
-<!-- Sidebar -->
 <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
 <div class="sidebar" id="sidebar">
   <div class="sidebar-header">
@@ -230,13 +249,16 @@
 
 <!-- Top bar -->
 <div class="top-bar">
-  <span class="title">✏️ Pizarra</span>
+  <span class="title">Pizarra</span>
   <div class="sep"></div>
   <button onclick="undo()" title="Deshacer (Ctrl+Z)"><i class="fas fa-undo"></i> <span>Deshacer</span></button>
   <button onclick="redo()" title="Rehacer (Ctrl+Y)"><i class="fas fa-redo"></i> <span>Rehacer</span></button>
   <div class="sep"></div>
-  <button onclick="savePNG()" title="Guardar como PNG"><i class="fas fa-download"></i> <span>Guardar</span></button>
-  <button onclick="clearCanvas()" class="danger" style="color:#ff5470" title="Limpiar todo"><i class="fas fa-trash"></i> <span>Limpiar</span></button>
+  <button onclick="saveDrawing()" title="Guardar dibujo"><i class="fas fa-save"></i> <span>Guardar</span></button>
+  <button onclick="loadDrawing()" title="Cargar dibujo"><i class="fas fa-folder-open"></i> <span>Cargar</span></button>
+  <div class="sep"></div>
+  <button onclick="savePNG()" title="Exportar PNG"><i class="fas fa-download"></i> <span>PNG</span></button>
+  <button onclick="clearCanvas()" style="color:#ff5470" title="Limpiar"><i class="fas fa-trash"></i></button>
 </div>
 
 <!-- Toolbar -->
@@ -246,25 +268,35 @@
     <div class="tool-label">Herramientas</div>
     <button class="tool-btn active" data-mode="draw" onclick="setMode('draw')"><i class="fas fa-pen"></i> <span>Pincel</span></button>
     <button class="tool-btn" data-mode="erase" onclick="setMode('erase')"><i class="fas fa-eraser"></i> <span>Borrador</span></button>
+    <button class="tool-btn" data-mode="select" onclick="setMode('select')"><i class="fas fa-arrows-alt"></i> <span>Mover</span></button>
     <button class="tool-btn" data-mode="text" onclick="setMode('text')"><i class="fas fa-font"></i> <span>Texto</span></button>
     <button class="tool-btn" data-mode="fill" onclick="setMode('fill')"><i class="fas fa-fill-drip"></i> <span>Relleno</span></button>
+    <button class="tool-btn" data-mode="picker" onclick="setMode('picker')"><i class="fas fa-eye-dropper"></i> <span>Cuentagotas</span></button>
   </div>
 
   <!-- Shapes -->
   <div class="tool-section">
     <div class="tool-label">Formas</div>
-    <button class="tool-btn" data-mode="line" onclick="setMode('line')"><i class="fas fa-minus"></i> <span>Línea</span></button>
-    <button class="tool-btn" data-mode="rect" onclick="setMode('rect')"><i class="far fa-square"></i> <span>Rectángulo</span></button>
-    <button class="tool-btn" data-mode="circle" onclick="setMode('circle')"><i class="far fa-circle"></i> <span>Círculo</span></button>
-    <button class="tool-btn" data-mode="triangle" onclick="setMode('triangle')"><i class="fas fa-play fa-rotate-270"></i> <span>Triángulo</span></button>
+    <button class="tool-btn" data-mode="line" onclick="setMode('line')"><i class="fas fa-minus"></i> <span>Linea</span></button>
+    <button class="tool-btn" data-mode="rect" onclick="setMode('rect')"><i class="far fa-square"></i> <span>Rectangulo</span></button>
+    <button class="tool-btn" data-mode="circle" onclick="setMode('circle')"><i class="far fa-circle"></i> <span>Circulo</span></button>
+    <button class="tool-btn" data-mode="triangle" onclick="setMode('triangle')"><i class="fas fa-play fa-rotate-270"></i> <span>Triangulo</span></button>
     <button class="tool-btn" data-mode="arrow" onclick="setMode('arrow')"><i class="fas fa-arrow-right"></i> <span>Flecha</span></button>
+    <button class="tool-btn" data-mode="star" onclick="setMode('star')"><i class="fas fa-star"></i> <span>Estrella</span></button>
+    <button class="tool-btn" data-mode="diamond" onclick="setMode('diamond')"><i class="fas fa-diamond"></i> <span>Diamante</span></button>
   </div>
 
-  <!-- Fill toggle for shapes -->
+  <!-- Fill & Line Style -->
   <div class="tool-section">
     <div class="toggle-row">
-      Rellenar formas
+      Rellenar
       <div class="toggle-switch" id="fillToggle" onclick="toggleFill()"></div>
+    </div>
+    <div class="tool-label">Estilo linea</div>
+    <div class="linestyle-row">
+      <button class="linestyle-btn active" data-style="solid" onclick="setLineStyle('solid')">---</button>
+      <button class="linestyle-btn" data-style="dashed" onclick="setLineStyle('dashed')">- - -</button>
+      <button class="linestyle-btn" data-style="dotted" onclick="setLineStyle('dotted')">. . .</button>
     </div>
   </div>
 
@@ -280,10 +312,10 @@
 
   <!-- Size -->
   <div class="tool-section">
-    <div class="tool-label">Tamaño</div>
+    <div class="tool-label">Tamano</div>
     <div class="slider-row">
       <i class="fas fa-pen" style="font-size:10px"></i>
-      <input type="range" id="brushSize" min="1" max="20" value="2">
+      <input type="range" id="brushSize" min="1" max="30" value="2">
       <span class="slider-val" id="brushVal">2</span>
     </div>
     <div class="slider-row">
@@ -303,36 +335,39 @@
     </div>
   </div>
 
-  <!-- Grid -->
+  <!-- Grid & Snap -->
   <div class="tool-section">
     <div class="toggle-row">
-      Cuadrícula
+      Cuadricula
       <div class="toggle-switch on" id="gridToggle" onclick="toggleGrid()"></div>
+    </div>
+    <div class="toggle-row">
+      Ajustar al grid
+      <div class="toggle-switch" id="snapToggle" onclick="toggleSnap()"></div>
     </div>
   </div>
 </div>
 
-<!-- Grid badge -->
-<div class="grid-badge" id="gridBadge">Cuadrícula: ON · Zoom: 100%</div>
+<div class="grid-badge" id="gridBadge">Cuadricula: ON · Zoom: 100%</div>
+<div class="toast" id="toast"></div>
 
 <canvas id="canvas"></canvas>
 
-<!-- Session protection -->
 <script>const CW_PROTECTED = true;</script>
 <script src="session.js"></script>
 
 <script>
 /* ═══════════════════════════════════════════════════════════════
-   Partículas
+   Particulas
 ═══════════════════════════════════════════════════════════════ */
 particlesJS("particles-js", {
   particles: {
-    number: { value: 60, density: { enable: true, value_area: 800 } },
+    number: { value: 50, density: { enable: true, value_area: 800 } },
     color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
     shape: { type: "circle" },
-    opacity: { value: 0.3 },
+    opacity: { value: 0.25 },
     size: { value: 2, random: true },
-    line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.2, width: 1 },
+    line_linked: { enable: true, distance: 150, color: "#ffffff", opacity: 0.15, width: 1 },
     move: { enable: true, speed: 3, out_mode: "bounce" }
   },
   interactivity: {
@@ -343,11 +378,16 @@ particlesJS("particles-js", {
   retina_detect: true
 });
 
+function toggleMenu() { document.getElementById('sidebar').classList.toggle('open'); }
+
 /* ═══════════════════════════════════════════════════════════════
-   Sidebar
+   Toast
 ═══════════════════════════════════════════════════════════════ */
-function toggleMenu() {
-  document.getElementById('sidebar').classList.toggle('open');
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2000);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -365,6 +405,8 @@ let originX = width / 2;
 let originY = height / 2;
 let showGrid = true;
 let fillShapes = false;
+let snapToGrid = false;
+let lineStyle = "solid"; // solid, dashed, dotted
 
 let isDrawing = false;
 let mode = "draw";
@@ -381,13 +423,18 @@ const elements = [];
 let undoStack = [];
 let tempShape = null;
 
+// Select/move state
+let selectedElement = null;
+let selectOffset = { x: 0, y: 0 };
+
 /* ═══════════════════════════════════════════════════════════════
    Color Presets
 ═══════════════════════════════════════════════════════════════ */
 const presetColors = [
   "#ffffff","#33FFFF","#ff5470","#4ade80","#facc15",
   "#a896f0","#f97316","#6c8df5","#ec4899","#8b5cf6",
-  "#14b8a6","#ef4444","#84cc16","#f59e0b","#6366f1"
+  "#14b8a6","#ef4444","#84cc16","#f59e0b","#6366f1",
+  "#000000"
 ];
 
 const presetsContainer = document.getElementById("colorPresets");
@@ -395,6 +442,7 @@ presetColors.forEach(c => {
   const swatch = document.createElement("div");
   swatch.className = "color-swatch" + (c === "#ffffff" ? " active" : "");
   swatch.style.background = c;
+  if (c === "#000000") swatch.style.border = "1px solid rgba(255,255,255,0.2)";
   swatch.dataset.color = c;
   swatch.onclick = () => {
     colorPicker.value = c;
@@ -424,7 +472,13 @@ function setMode(newMode) {
   document.querySelectorAll(".tool-btn[data-mode]").forEach(b => {
     b.classList.toggle("active", b.dataset.mode === newMode);
   });
-  canvas.style.cursor = mode === "erase" ? "cell" : mode === "text" ? "text" : mode === "fill" ? "crosshair" : "crosshair";
+  const cursors = {
+    draw: "crosshair", erase: "cell", text: "text", fill: "crosshair",
+    picker: "copy", select: "move",
+    line: "crosshair", rect: "crosshair", circle: "crosshair",
+    triangle: "crosshair", arrow: "crosshair", star: "crosshair", diamond: "crosshair"
+  };
+  canvas.style.cursor = cursors[mode] || "crosshair";
 }
 
 function toggleFill() {
@@ -436,6 +490,39 @@ function toggleGrid() {
   showGrid = !showGrid;
   document.getElementById("gridToggle").classList.toggle("on", showGrid);
   draw();
+}
+
+function toggleSnap() {
+  snapToGrid = !snapToGrid;
+  document.getElementById("snapToggle").classList.toggle("on", snapToGrid);
+}
+
+function setLineStyle(style) {
+  lineStyle = style;
+  document.querySelectorAll('.linestyle-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.style === style);
+  });
+}
+
+/* ═══════════════════════════════════════════════════════════════
+   Coordinates & Snap
+═══════════════════════════════════════════════════════════════ */
+function getScreenX(wx) { return wx * scale + originX; }
+function getScreenY(wy) { return wy * scale + originY; }
+function getWorldX(sx) { return (sx - originX) / scale; }
+function getWorldY(sy) { return (sy - originY) / scale; }
+
+function snapWorld(wx, wy) {
+  if (!snapToGrid) return { x: wx, y: wy };
+  return { x: Math.round(wx), y: Math.round(wy) };
+}
+
+function getOpacity() { return parseInt(opacitySlider.value) / 100; }
+
+function applyLineStyle(c) {
+  if (lineStyle === "dashed") c.setLineDash([12, 6]);
+  else if (lineStyle === "dotted") c.setLineDash([3, 5]);
+  else c.setLineDash([]);
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -454,35 +541,55 @@ function redo() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Save as PNG
+   Save / Load / Export
 ═══════════════════════════════════════════════════════════════ */
+function saveDrawing() {
+  try {
+    const data = { elements, scale, originX, originY, showGrid };
+    localStorage.setItem('pizarra_data', JSON.stringify(data));
+    showToast('Dibujo guardado');
+  } catch { showToast('Error al guardar'); }
+}
+
+function loadDrawing() {
+  try {
+    const raw = localStorage.getItem('pizarra_data');
+    if (!raw) { showToast('No hay dibujo guardado'); return; }
+    const data = JSON.parse(raw);
+    elements.length = 0;
+    undoStack.length = 0;
+    data.elements.forEach(e => elements.push(e));
+    if (data.scale) scale = data.scale;
+    if (data.originX) originX = data.originX;
+    if (data.originY) originY = data.originY;
+    if (data.showGrid !== undefined) {
+      showGrid = data.showGrid;
+      document.getElementById("gridToggle").classList.toggle("on", showGrid);
+    }
+    draw();
+    showToast('Dibujo cargado');
+  } catch { showToast('Error al cargar'); }
+}
+
 function savePNG() {
   const tmpCanvas = document.createElement("canvas");
   tmpCanvas.width = width;
   tmpCanvas.height = height;
   const tmpCtx = tmpCanvas.getContext("2d");
-
-  // Black background
   tmpCtx.fillStyle = "#000";
   tmpCtx.fillRect(0, 0, width, height);
-
-  // Draw grid if visible
   if (showGrid) drawGridOn(tmpCtx);
-
-  // Draw all elements
   for (const elem of elements) drawElementOn(tmpCtx, elem);
 
   const link = document.createElement("a");
   link.download = "pizarra-chocolatito.png";
   link.href = tmpCanvas.toDataURL("image/png");
   link.click();
+  showToast('PNG exportado');
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   Clear
-═══════════════════════════════════════════════════════════════ */
 function clearCanvas() {
-  if (!confirm("¿Limpiar toda la pizarra?")) return;
+  if (!confirm("Limpiar toda la pizarra?")) return;
   elements.length = 0;
   undoStack.length = 0;
   document.querySelectorAll(".text-box").forEach(el => el.remove());
@@ -490,17 +597,8 @@ function clearCanvas() {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   Drawing Logic
+   Mouse Events
 ═══════════════════════════════════════════════════════════════ */
-function getOpacity() {
-  return parseInt(opacitySlider.value) / 100;
-}
-
-function getScreenX(wx) { return wx * scale + originX; }
-function getScreenY(wy) { return wy * scale + originY; }
-function getWorldX(sx) { return (sx - originX) / scale; }
-function getWorldY(sy) { return (sy - originY) / scale; }
-
 canvas.addEventListener("mousedown", (e) => {
   if (e.button === 1) {
     isPanning = true;
@@ -509,26 +607,49 @@ canvas.addEventListener("mousedown", (e) => {
     return;
   }
 
-  const wx = getWorldX(e.offsetX);
-  const wy = getWorldY(e.offsetY);
+  let wx = getWorldX(e.offsetX);
+  let wy = getWorldY(e.offsetY);
+  const snapped = snapWorld(wx, wy);
+  wx = snapped.x; wy = snapped.y;
 
-  if (["line","rect","circle","triangle","arrow"].includes(mode)) {
+  // Eyedropper
+  if (mode === "picker") {
+    const pixel = ctx.getImageData(e.offsetX, e.offsetY, 1, 1).data;
+    const hex = "#" + [pixel[0], pixel[1], pixel[2]].map(v => v.toString(16).padStart(2, '0')).join('');
+    colorPicker.value = hex;
+    document.querySelectorAll(".color-swatch").forEach(s => s.classList.remove("active"));
+    showToast('Color: ' + hex);
+    return;
+  }
+
+  // Select/move
+  if (mode === "select") {
+    selectedElement = findElementAt(wx, wy);
+    if (selectedElement) {
+      selectOffset = { x: wx, y: wy };
+    }
+    return;
+  }
+
+  // Shape modes
+  if (["line","rect","circle","triangle","arrow","star","diamond"].includes(mode)) {
     tempShape = {
       type: mode, color: colorPicker.value,
       size: parseInt(brushSize.value), opacity: getOpacity(),
-      fill: fillShapes,
+      fill: fillShapes, lineStyle: lineStyle,
       x1: wx, y1: wy, x2: wx, y2: wy
     };
     isDrawing = true;
     return;
   }
 
+  // Flood fill
   if (mode === "fill") {
-    // Flood fill at this point with current color
     floodFill(e.offsetX, e.offsetY, colorPicker.value);
     return;
   }
 
+  // Text
   if (mode === "text") {
     const textBox = document.createElement("div");
     textBox.contentEditable = true;
@@ -538,11 +659,10 @@ canvas.addEventListener("mousedown", (e) => {
     textBox.style.color = colorPicker.value;
     textBox.style.fontSize = `${fontSize.value}px`;
     textBox.style.opacity = getOpacity();
-    textBox.innerText = "Escribe aquí";
+    textBox.innerText = "Escribe aqui";
     document.body.appendChild(textBox);
     textBox.focus();
 
-    // Select all text
     const range = document.createRange();
     range.selectNodeContents(textBox);
     const sel = window.getSelection();
@@ -551,7 +671,7 @@ canvas.addEventListener("mousedown", (e) => {
 
     let offsetX, offsetY, isDragging = false;
     textBox.addEventListener("mousedown", (ev) => {
-      if (ev.detail >= 2) return; // double click = edit
+      if (ev.detail >= 2) return;
       isDragging = true;
       offsetX = ev.offsetX;
       offsetY = ev.offsetY;
@@ -578,6 +698,7 @@ canvas.addEventListener("mousedown", (e) => {
     return;
   }
 
+  // Draw / Erase with smooth curves
   if (mode === "draw" || mode === "erase") {
     isDrawing = true;
     const line = {
@@ -591,10 +712,9 @@ canvas.addEventListener("mousedown", (e) => {
 });
 
 canvas.addEventListener("mousemove", (e) => {
-  // Update grid badge
   const zoomPercent = Math.round(scale / 50 * 100);
   document.getElementById("gridBadge").textContent =
-    `Cuadrícula: ${showGrid ? 'ON' : 'OFF'} · Zoom: ${zoomPercent}%`;
+    `Cuadricula: ${showGrid ? 'ON' : 'OFF'} · Zoom: ${zoomPercent}%`;
 
   if (isPanning) {
     const dx = e.clientX - startPan.x;
@@ -606,26 +726,43 @@ canvas.addEventListener("mousemove", (e) => {
     return;
   }
 
+  // Move selected element
+  if (mode === "select" && selectedElement && e.buttons === 1) {
+    let wx = getWorldX(e.offsetX);
+    let wy = getWorldY(e.offsetY);
+    const dx = wx - selectOffset.x;
+    const dy = wy - selectOffset.y;
+    moveElement(selectedElement, dx, dy);
+    selectOffset = { x: wx, y: wy };
+    draw();
+    return;
+  }
+
   if (tempShape && isDrawing) {
-    tempShape.x2 = getWorldX(e.offsetX);
-    tempShape.y2 = getWorldY(e.offsetY);
+    let wx = getWorldX(e.offsetX);
+    let wy = getWorldY(e.offsetY);
+    const snapped = snapWorld(wx, wy);
+    tempShape.x2 = snapped.x;
+    tempShape.y2 = snapped.y;
     draw();
     drawTempShape();
     return;
   }
 
-  if (!isDrawing || mode === "text" || mode === "fill") return;
-  const wx = getWorldX(e.offsetX);
-  const wy = getWorldY(e.offsetY);
+  if (!isDrawing || mode === "text" || mode === "fill" || mode === "picker" || mode === "select") return;
+
+  let wx = getWorldX(e.offsetX);
+  let wy = getWorldY(e.offsetY);
+  const snapped = snapWorld(wx, wy);
   const current = elements[elements.length - 1];
-  current.points.push({ x: wx, y: wy });
+  current.points.push({ x: snapped.x, y: snapped.y });
   draw();
 });
 
 canvas.addEventListener("mouseup", (e) => {
   if (e.button === 1) {
     isPanning = false;
-    canvas.style.cursor = "crosshair";
+    canvas.style.cursor = "move";
   }
 
   if (tempShape && isDrawing) {
@@ -637,6 +774,7 @@ canvas.addEventListener("mouseup", (e) => {
   }
 
   isDrawing = false;
+  selectedElement = null;
 });
 
 // Zoom with scroll
@@ -664,8 +802,6 @@ canvas.addEventListener("touchstart", (e) => {
     const rect = canvas.getBoundingClientRect();
     const offsetX = touch.clientX - rect.left;
     const offsetY = touch.clientY - rect.top;
-
-    // Simulate mousedown
     const mouseEvent = new MouseEvent("mousedown", {
       clientX: touch.clientX, clientY: touch.clientY,
       offsetX, offsetY, button: 0
@@ -688,10 +824,9 @@ canvas.addEventListener("touchmove", (e) => {
     const rect = canvas.getBoundingClientRect();
     const offsetX = touch.clientX - rect.left;
     const offsetY = touch.clientY - rect.top;
-
     const mouseEvent = new MouseEvent("mousemove", {
       clientX: touch.clientX, clientY: touch.clientY,
-      offsetX, offsetY
+      offsetX, offsetY, buttons: 1
     });
     canvas.dispatchEvent(mouseEvent);
   } else if (e.touches.length === 2 || (e.touches.length === 1 && isPanning)) {
@@ -718,7 +853,7 @@ canvas.addEventListener("touchend", (e) => {
 document.addEventListener("keydown", (e) => {
   if (e.ctrlKey && e.key === "z") { e.preventDefault(); undo(); }
   if (e.ctrlKey && e.key === "y") { e.preventDefault(); redo(); }
-  if (e.ctrlKey && e.key === "s") { e.preventDefault(); savePNG(); }
+  if (e.ctrlKey && e.key === "s") { e.preventDefault(); saveDrawing(); }
 });
 
 window.addEventListener("resize", () => {
@@ -730,16 +865,59 @@ window.addEventListener("resize", () => {
 });
 
 /* ═══════════════════════════════════════════════════════════════
+   Find & Move Element
+═══════════════════════════════════════════════════════════════ */
+function findElementAt(wx, wy) {
+  // Search from top (last drawn) to bottom
+  for (let i = elements.length - 1; i >= 0; i--) {
+    const elem = elements[i];
+    if (elem.type === "floodfill") continue;
+
+    if (elem.type === "draw" || elem.type === "erase") {
+      for (const p of elem.points) {
+        const dist = Math.sqrt((p.x - wx) ** 2 + (p.y - wy) ** 2);
+        if (dist < (elem.size / scale) + 0.5) return elem;
+      }
+    } else if (elem.x1 !== undefined) {
+      const minX = Math.min(elem.x1, elem.x2 || elem.x1);
+      const maxX = Math.max(elem.x1, elem.x2 || elem.x1);
+      const minY = Math.min(elem.y1, elem.y2 || elem.y1);
+      const maxY = Math.max(elem.y1, elem.y2 || elem.y1);
+      const margin = (elem.size / scale) + 0.5;
+      if (wx >= minX - margin && wx <= maxX + margin && wy >= minY - margin && wy <= maxY + margin) {
+        return elem;
+      }
+    } else if (elem.type === "text") {
+      const approxW = (elem.text.length * elem.size / 2) / scale;
+      const approxH = elem.size / scale;
+      if (wx >= elem.x - 0.5 && wx <= elem.x + approxW + 0.5 && wy >= elem.y - approxH - 0.5 && wy <= elem.y + 0.5) {
+        return elem;
+      }
+    }
+  }
+  return null;
+}
+
+function moveElement(elem, dx, dy) {
+  if (elem.type === "draw" || elem.type === "erase") {
+    elem.points.forEach(p => { p.x += dx; p.y += dy; });
+  } else if (elem.x1 !== undefined) {
+    elem.x1 += dx; elem.y1 += dy;
+    if (elem.x2 !== undefined) { elem.x2 += dx; elem.y2 += dy; }
+  } else if (elem.type === "text") {
+    elem.x += dx; elem.y += dy;
+  }
+}
+
+/* ═══════════════════════════════════════════════════════════════
    Flood Fill
 ═══════════════════════════════════════════════════════════════ */
 function floodFill(startX, startY, fillColor) {
-  // Simple flood fill on the canvas
   const imageData = ctx.getImageData(0, 0, width, height);
   const data = imageData.data;
   const startIdx = (startY * width + startX) * 4;
   const startR = data[startIdx], startG = data[startIdx+1], startB = data[startIdx+2], startA = data[startIdx+3];
 
-  // Parse fill color
   const tmp = document.createElement("canvas");
   tmp.width = tmp.height = 1;
   const tmpCtx = tmp.getContext("2d");
@@ -775,7 +953,6 @@ function floodFill(startX, startY, fillColor) {
   }
 
   ctx.putImageData(imageData, 0, 0);
-  // Save this as an element for undo
   elements.push({ type: "floodfill", imageData: ctx.getImageData(0, 0, width, height) });
 }
 
@@ -791,6 +968,7 @@ function drawGridOn(c) {
 
   c.lineWidth = 0.5;
   c.strokeStyle = "rgba(255,255,255,0.08)";
+  c.setLineDash([]);
   for (let x = Math.floor(left); x <= right; x++) {
     c.beginPath();
     c.moveTo(x * scale + originX, 0);
@@ -817,12 +995,14 @@ function drawGridOn(c) {
   // Axes
   c.strokeStyle = "rgba(255,255,255,0.35)";
   c.lineWidth = 1.5;
+  c.setLineDash([]);
   c.beginPath(); c.moveTo(0, originY); c.lineTo(width, originY); c.stroke();
   c.beginPath(); c.moveTo(originX, 0); c.lineTo(originX, height); c.stroke();
 }
 
 function drawElementOn(c, elem) {
   c.globalAlpha = elem.opacity || 1;
+  c.setLineDash([]);
 
   if (elem.type === "floodfill") {
     c.putImageData(elem.imageData, 0, 0);
@@ -842,6 +1022,11 @@ function drawElementOn(c, elem) {
   c.fillStyle = elem.color;
   c.lineWidth = elem.size;
 
+  // Line style
+  if (elem.lineStyle === "dashed") c.setLineDash([12, 6]);
+  else if (elem.lineStyle === "dotted") c.setLineDash([3, 5]);
+  else c.setLineDash([]);
+
   const X1 = elem.x1 * scale + originX;
   const Y1 = elem.y1 * scale + originY;
   const X2 = elem.x2 !== undefined ? elem.x2 * scale + originX : X1;
@@ -849,20 +1034,20 @@ function drawElementOn(c, elem) {
 
   if (elem.type === "line") {
     c.beginPath(); c.moveTo(X1, Y1); c.lineTo(X2, Y2); c.stroke();
-    c.globalAlpha = 1; return;
+    c.setLineDash([]); c.globalAlpha = 1; return;
   }
 
   if (elem.type === "rect") {
     if (elem.fill) c.fillRect(X1, Y1, X2-X1, Y2-Y1);
     else c.strokeRect(X1, Y1, X2-X1, Y2-Y1);
-    c.globalAlpha = 1; return;
+    c.setLineDash([]); c.globalAlpha = 1; return;
   }
 
   if (elem.type === "circle") {
     const r = Math.sqrt((X2-X1)**2 + (Y2-Y1)**2);
     c.beginPath(); c.arc(X1, Y1, Math.max(1, r), 0, Math.PI*2);
     elem.fill ? c.fill() : c.stroke();
-    c.globalAlpha = 1; return;
+    c.setLineDash([]); c.globalAlpha = 1; return;
   }
 
   if (elem.type === "triangle") {
@@ -872,13 +1057,14 @@ function drawElementOn(c, elem) {
     c.lineTo(X1 - (X2-X1), Y2);
     c.closePath();
     elem.fill ? c.fill() : c.stroke();
-    c.globalAlpha = 1; return;
+    c.setLineDash([]); c.globalAlpha = 1; return;
   }
 
   if (elem.type === "arrow") {
     const angle = Math.atan2(Y2-Y1, X2-X1);
     const headLen = Math.max(12, elem.size * 5);
     c.beginPath(); c.moveTo(X1, Y1); c.lineTo(X2, Y2); c.stroke();
+    c.setLineDash([]);
     c.beginPath();
     c.moveTo(X2, Y2);
     c.lineTo(X2 - headLen * Math.cos(angle - 0.4), Y2 - headLen * Math.sin(angle - 0.4));
@@ -888,22 +1074,88 @@ function drawElementOn(c, elem) {
     c.globalAlpha = 1; return;
   }
 
+  if (elem.type === "star") {
+    const cx = (X1 + X2) / 2;
+    const cy = (Y1 + Y2) / 2;
+    const outerR = Math.sqrt((X2-X1)**2 + (Y2-Y1)**2) / 2;
+    const innerR = outerR * 0.4;
+    drawStarPath(c, cx, cy, 5, outerR, innerR);
+    elem.fill ? c.fill() : c.stroke();
+    c.setLineDash([]); c.globalAlpha = 1; return;
+  }
+
+  if (elem.type === "diamond") {
+    const cx = (X1 + X2) / 2;
+    const cy = (Y1 + Y2) / 2;
+    const hw = Math.abs(X2 - X1) / 2;
+    const hh = Math.abs(Y2 - Y1) / 2;
+    c.beginPath();
+    c.moveTo(cx, cy - hh);
+    c.lineTo(cx + hw, cy);
+    c.lineTo(cx, cy + hh);
+    c.lineTo(cx - hw, cy);
+    c.closePath();
+    elem.fill ? c.fill() : c.stroke();
+    c.setLineDash([]); c.globalAlpha = 1; return;
+  }
+
   if (elem.type === "draw" || elem.type === "erase") {
     if (elem.type === "erase") {
       c.save();
       c.globalCompositeOperation = "destination-out";
       c.globalAlpha = 1;
+      c.setLineDash([]);
     }
-    c.beginPath();
-    elem.points.forEach((p, i) => {
-      const x = p.x * scale + originX;
-      const y = p.y * scale + originY;
-      i === 0 ? c.moveTo(x, y) : c.lineTo(x, y);
-    });
-    c.stroke();
+
+    // Smooth drawing with quadratic curves
+    if (elem.points.length >= 3) {
+      c.beginPath();
+      c.moveTo(elem.points[0].x * scale + originX, elem.points[0].y * scale + originY);
+      for (let i = 1; i < elem.points.length - 1; i++) {
+        const curr = elem.points[i];
+        const next = elem.points[i + 1];
+        const midX = (curr.x + next.x) / 2 * scale + originX;
+        const midY = (curr.y + next.y) / 2 * scale + originY;
+        c.quadraticCurveTo(
+          curr.x * scale + originX, curr.y * scale + originY,
+          midX, midY
+        );
+      }
+      const last = elem.points[elem.points.length - 1];
+      c.lineTo(last.x * scale + originX, last.y * scale + originY);
+      c.stroke();
+    } else {
+      c.beginPath();
+      elem.points.forEach((p, i) => {
+        const x = p.x * scale + originX;
+        const y = p.y * scale + originY;
+        i === 0 ? c.moveTo(x, y) : c.lineTo(x, y);
+      });
+      c.stroke();
+    }
+
     if (elem.type === "erase") c.restore();
+    c.setLineDash([]);
     c.globalAlpha = 1;
   }
+}
+
+function drawStarPath(c, cx, cy, spikes, outerR, innerR) {
+  let rot = Math.PI / 2 * 3;
+  const step = Math.PI / spikes;
+  c.beginPath();
+  c.moveTo(cx, cy - outerR);
+  for (let i = 0; i < spikes; i++) {
+    let x = cx + Math.cos(rot) * outerR;
+    let y = cy + Math.sin(rot) * outerR;
+    c.lineTo(x, y);
+    rot += step;
+    x = cx + Math.cos(rot) * innerR;
+    y = cy + Math.sin(rot) * innerR;
+    c.lineTo(x, y);
+    rot += step;
+  }
+  c.closePath();
 }
 
 function drawTempShape() {
@@ -912,7 +1164,10 @@ function drawTempShape() {
   ctx.strokeStyle = tempShape.color;
   ctx.fillStyle = tempShape.color;
   ctx.lineWidth = tempShape.size;
-  ctx.setLineDash([6, 4]);
+
+  if (tempShape.lineStyle === "dashed") ctx.setLineDash([12, 6]);
+  else if (tempShape.lineStyle === "dotted") ctx.setLineDash([3, 5]);
+  else ctx.setLineDash([6, 4]);
 
   const X1 = getScreenX(tempShape.x1);
   const Y1 = getScreenY(tempShape.y1);
@@ -939,10 +1194,32 @@ function drawTempShape() {
     const angle = Math.atan2(Y2-Y1,X2-X1);
     const headLen = Math.max(12, tempShape.size * 5);
     ctx.beginPath(); ctx.moveTo(X1,Y1); ctx.lineTo(X2,Y2); ctx.stroke();
+    ctx.setLineDash([]);
     ctx.beginPath(); ctx.moveTo(X2,Y2);
     ctx.lineTo(X2-headLen*Math.cos(angle-0.4),Y2-headLen*Math.sin(angle-0.4));
     ctx.lineTo(X2-headLen*Math.cos(angle+0.4),Y2-headLen*Math.sin(angle+0.4));
     ctx.closePath(); ctx.fill();
+  }
+  if (tempShape.type === "star") {
+    const cx = (X1 + X2) / 2;
+    const cy = (Y1 + Y2) / 2;
+    const outerR = Math.sqrt((X2-X1)**2 + (Y2-Y1)**2) / 2;
+    const innerR = outerR * 0.4;
+    drawStarPath(ctx, cx, cy, 5, outerR, innerR);
+    tempShape.fill ? ctx.fill() : ctx.stroke();
+  }
+  if (tempShape.type === "diamond") {
+    const cx = (X1 + X2) / 2;
+    const cy = (Y1 + Y2) / 2;
+    const hw = Math.abs(X2 - X1) / 2;
+    const hh = Math.abs(Y2 - Y1) / 2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - hh);
+    ctx.lineTo(cx + hw, cy);
+    ctx.lineTo(cx, cy + hh);
+    ctx.lineTo(cx - hw, cy);
+    ctx.closePath();
+    tempShape.fill ? ctx.fill() : ctx.stroke();
   }
 
   ctx.setLineDash([]);
@@ -954,6 +1231,22 @@ function draw() {
   if (showGrid) drawGridOn(ctx);
   for (const elem of elements) drawElementOn(ctx, elem);
 }
+
+// Auto-load saved drawing
+(function autoLoad() {
+  try {
+    const raw = localStorage.getItem('pizarra_data');
+    if (raw) {
+      const data = JSON.parse(raw);
+      if (data.elements && data.elements.length > 0) {
+        data.elements.forEach(e => elements.push(e));
+        if (data.scale) scale = data.scale;
+        if (data.originX) originX = data.originX;
+        if (data.originY) originY = data.originY;
+      }
+    }
+  } catch {}
+})();
 
 draw();
 </script>
