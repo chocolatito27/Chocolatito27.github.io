@@ -2,6 +2,10 @@ body, html {
     margin: 0;
     padding: 0;
     font-family: Arial, sans-serif;
+}
+
+/* Solo la home-page (landing) oculta el scroll; las páginas con contenido largo deben poder scrollear */
+.home-page {
     overflow: hidden;
 }
 

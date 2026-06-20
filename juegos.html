@@ -3,42 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Juegos - ChocolatitoWeb</title>
+    <title>Juegos — ChocolatitoWeb</title>
     <link rel="icon" type="image/png" href="/favicon.png">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-</body>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        body { overflow-y: auto; }
+        .hero-section {
+            position: relative; z-index: 1;
+            display: flex; flex-direction: column; align-items: center;
+            justify-content: center; padding: 80px 24px 20px; text-align: center;
+        }
+        .hero-section h1 {
+            font-family: 'Inter', sans-serif; font-size: clamp(2rem, 5vw, 3rem);
+            font-weight: 900; color: #33FFFF; margin: 0;
+            text-shadow: 0 0 30px rgba(51,255,255,0.3);
+        }
+        .hero-section p {
+            color: rgba(255,255,255,0.6); font-size: 1rem;
+            margin-top: 8px; max-width: 500px;
+        }
+        .games-container {
+            position: relative; z-index: 1;
+            max-width: 1000px; margin: 0 auto;
+            padding: 20px 24px 60px;
+        }
+        .games-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .game-card {
+            background: rgba(0,0,0,0.7);
+            border: 1px solid rgba(51,255,255,0.12);
+            border-radius: 16px;
+            padding: 24px 20px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+            text-align: left;
+        }
+        .game-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, transparent, #33FFFF, transparent);
+            opacity: 0; transition: opacity 0.3s;
+        }
+        .game-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(51,255,255,0.3);
+            box-shadow: 0 12px 40px rgba(0,0,0,0.4), 0 0 20px rgba(51,255,255,0.08);
+        }
+        .game-card:hover::before { opacity: 1; }
+        .game-icon {
+            width: 48px; height: 48px; border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 24px; margin-bottom: 14px;
+        }
+        .game-card h2 {
+            color: #fff; font-size: 16px; font-weight: 700;
+            margin: 0 0 6px; font-family: 'Inter', sans-serif;
+        }
+        .game-card p {
+            color: rgba(255,255,255,0.45); font-size: 12px;
+            line-height: 1.5; margin: 0;
+        }
+        .game-tag {
+            display: inline-block; margin-top: 10px; padding: 3px 10px;
+            border-radius: 20px; font-size: 10px; font-weight: 600;
+            letter-spacing: 0.3px;
+        }
+        .game-card.cyan .game-icon    { background: rgba(51,255,255,0.12); }
+        .game-card.cyan .game-tag      { background: rgba(51,255,255,0.1); color: #33FFFF; }
+        .game-card.pink .game-icon    { background: rgba(255,84,112,0.12); }
+        .game-card.pink .game-tag      { background: rgba(255,84,112,0.1); color: #ff5470; }
+        .game-card.green .game-icon   { background: rgba(74,222,128,0.12); }
+        .game-card.green .game-tag     { background: rgba(74,222,128,0.1); color: #4ade80; }
+        .game-card.blue .game-icon    { background: rgba(96,165,250,0.12); }
+        .game-card.blue .game-tag      { background: rgba(96,165,250,0.1); color: #60a5fa; }
+        .game-card.red .game-icon     { background: rgba(239,68,68,0.12); }
+        .game-card.red .game-tag       { background: rgba(239,68,68,0.1); color: #ef4444; }
+        .game-card.orange .game-icon  { background: rgba(249,115,22,0.12); }
+        .game-card.orange .game-tag    { background: rgba(249,115,22,0.1); color: #f97316; }
+        .game-card.purple .game-icon  { background: rgba(168,150,240,0.12); }
+        .game-card.purple .game-tag    { background: rgba(168,150,240,0.1); color: #a896f0; }
+        .game-card.emerald .game-icon { background: rgba(52,211,153,0.12); }
+        .game-card.emerald .game-tag   { background: rgba(52,211,153,0.1); color: #34d399; }
+        .section-header {
+            position: relative; z-index: 1;
+            max-width: 1000px; margin: 0 auto;
+            padding: 20px 24px 0;
+        }
+        .section-header h2 {
+            font-family: 'Inter', sans-serif;
+            font-size: 14px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1.5px;
+            color: rgba(255,255,255,0.3);
+            margin-bottom: 4px;
+        }
+        @media (max-width: 600px) {
+            .games-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+            .game-card { padding: 18px 14px; }
+            .game-icon { width: 40px; height: 40px; font-size: 20px; margin-bottom: 10px; }
+            .game-card h2 { font-size: 14px; }
+            .game-card p { font-size: 11px; }
+        }
+    </style>
 </head>
-<body>
+<body class="home-page">
     <div id="particles-js"></div>
-    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+
+    <div class="menu-icon" onclick="toggleMenu()" aria-label="Abrir menú">&#9776;</div>
     <div class="sidebar">
         <div class="sidebar-header">
-            <span class="back-arrow" onclick="toggleMenu()">&#10094;</span>
+            <span class="back-arrow" onclick="toggleMenu()" aria-label="Cerrar menú">&#10094;</span>
         </div>
         <ul>
             <li><a href="index.html">Inicio</a></li>
             <li><a href="chocolatitoAI.html">ChocolatitoAI</a></li>
-            <li><a href="entretenimiento.html">Entretenimiento</a></li>       
-            <li><a href="juegos.html">Juegos</a></li>
+            <li><a href="entretenimiento.html">Entretenimiento</a></li>
+            <li><a href="juegos.html" class="active">Juegos</a></li>
         </ul>
     </div>
-    <div class="main-content">
+
+    <div class="hero-section">
         <h1>Juegos</h1>
-        <div class="games-grid">
-            <div class="game-card" onclick="window.location.href='derribalos.html'">
-                <h2>Derribalos</h2>
-                <p>Un emocionante juego de naves espaciales.</p>
-            </div>
-            <div class="game-card" onclick="window.location.href='voxel.html'">
-        <h2>VoxelWorld</h2>
-        <p>Mundo de bloques 3D multijugador. Construye y explora con amigos en tiempo real.</p>
+        <p>Sal a la batalla, reta a tu mente o simplemente pasa el rato</p>
     </div>
-           
+
+    <!-- Acción -->
+    <div class="section-header">
+        <h2>Acción</h2>
+    </div>
+    <div class="games-container">
+        <div class="games-grid">
+            <div class="game-card cyan" onclick="window.location.href='derribalos.html'">
+                <div class="game-icon">🚀</div>
+                <h2>Derribalos</h2>
+                <p>Un emocionante juego de naves espaciales. Derriba a todos los enemigos.</p>
+                <span class="game-tag">Arcade</span>
+            </div>
+            <div class="game-card purple" onclick="window.location.href='voxel.html'">
+                <div class="game-icon">🟦</div>
+                <h2>VoxelWorld</h2>
+                <p>Mundo de bloques 3D multijugador. Construye y explora con amigos en tiempo real.</p>
+                <span class="game-tag">Mundo 3D</span>
+            </div>
         </div>
     </div>
+
+    <!-- Desafío mental -->
+    <div class="section-header">
+        <h2>Desafío Mental</h2>
+    </div>
+    <div class="games-container">
+        <div class="games-grid">
+            <div class="game-card green" onclick="window.location.href='memorama.html'">
+                <div class="game-icon">🃏</div>
+                <h2>Memorama</h2>
+                <p>Encuentra las parejas de cartas en este juego de memoria con varios niveles.</p>
+                <span class="game-tag">Memoria</span>
+            </div>
+            <div class="game-card blue" onclick="window.location.href='trivia.html'">
+                <div class="game-icon">🧠</div>
+                <h2>Trivia</h2>
+                <p>Pon a prueba tus conocimientos en ciencia, historia, geografía y más categorías.</p>
+                <span class="game-tag">Conocimiento</span>
+            </div>
+            <div class="game-card red" onclick="window.location.href='ahorcado.html'">
+                <div class="game-icon">💀</div>
+                <h2>Ahorcado</h2>
+                <p>Adivina la palabra letra por letra antes de que se complete el dibujo.</p>
+                <span class="game-tag">Palabras</span>
+            </div>
+            <div class="game-card orange" onclick="window.location.href='dados.html'">
+                <div class="game-icon">🎲</div>
+                <h2>Dados</h2>
+                <p>Tira dados de cualquier tipo (d4, d6, d8, d10, d12, d20) con animaciones.</p>
+                <span class="game-tag">Suerte</span>
+            </div>
+            <div class="game-card emerald" onclick="window.location.href='Minion.html'">
+                <div class="game-icon">💛</div>
+                <h2>Minion</h2>
+                <p>Una pequeñita diversión interactiva. ¿Te atreves a decir que no?</p>
+                <span class="game-tag">Humor</span>
+            </div>
+        </div>
+    </div>
+
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
+    <script>const CW_PROTECTED = true;</script>
     <script src="session.js"></script>
-</body>
 </body>
 </html>
