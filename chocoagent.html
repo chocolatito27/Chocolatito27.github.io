@@ -190,7 +190,11 @@
     const overlay = document.getElementById('sidebarOverlay');
     const isOpen = sidebar.style.left === '0px';
     sidebar.style.left = isOpen ? '-250px' : '0px';
-    overlay.style.display = isOpen ? 'none' : 'block';
+    if (isOpen) {
+      overlay.classList.remove('open');
+    } else {
+      overlay.classList.add('open');
+    }
   }
 </script>
 
