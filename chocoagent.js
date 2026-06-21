@@ -27,11 +27,15 @@ const historyBtn   = document.getElementById("ca-history-btn");
 const videosModal  = document.getElementById("ca-videos-modal");
 const modalClose   = document.getElementById("ca-modal-close");
 const modalVideos  = document.getElementById("ca-modal-videos");
+const attachBtn    = document.getElementById("ca-attach-btn");
+const fileInput    = document.getElementById("ca-file-input");
+const attachmentsPreview = document.getElementById("ca-attachments-preview");
 
 let currentTaskId = null;
 let pendingPlan = null;
 let ws = null;
 let pollInterval = null;
+let attachedFiles = []; // { file, previewUrl, uploadedFileId }
 
 /* ───────────────────────────────────────────────────────────────────
    Particles background
@@ -117,7 +121,47 @@ function removeBubble(row) {
 async function sendMessage(text) {
   if (!text || sendBtn.disabled) return;
 
-  addBubble("user", text);
+  // Si hay archivos adjuntos, subirlos primero
+  let fileIds = [];
+  if (attachedFiles.length > 0) {
+    sendBtn.disabled = true;
+    inputEl.disabled = true;
+    const uploadingRow = addBubble("assistant", `📎 Subiendo ${attachedFiles.length} archivo(s)...`);
+
+    try {
+      for (const af of attachedFiles) {
+        if (af.uploadedFileId) {
+          fileIds.push(af.uploadedFileId);
+          continue;
+        }
+        const formData = new FormData();
+        formData.append("file", af.file);
+        const upRes = await fetch(`${API_BASE}/agent/upload`, {
+          method: "POST",
+          headers: { Authorization: "Bearer " + getToken() },
+          body: formData,
+        });
+        const upData = await upRes.json();
+        if (!upRes.ok) {
+          throw new Error(upData.error || "Error subiendo archivo");
+        }
+        af.uploadedFileId = upData.files[0].id;
+        fileIds.push(af.uploadedFileId);
+      }
+      removeBubble(uploadingRow);
+    } catch (err) {
+      removeBubble(uploadingRow);
+      addBubble("assistant", `❌ Error subiendo archivos: ${err.message}`);
+      sendBtn.disabled = false;
+      inputEl.disabled = false;
+      return;
+    }
+  }
+
+  // Limpiar archivos adjuntos del UI
+  clearAttachments();
+
+  addBubble("user", text + (fileIds.length > 0 ? `\n\n📎 ${fileIds.length} archivo(s) adjunto(s)` : ""));
   inputEl.value = "";
   inputEl.style.height = "auto";
   sendBtn.disabled = true;
@@ -132,7 +176,7 @@ async function sendMessage(text) {
         "Content-Type": "application/json",
         Authorization: "Bearer " + getToken(),
       },
-      body: JSON.stringify({ content: text }),
+      body: JSON.stringify({ content: text, fileIds: fileIds.length > 0 ? fileIds : undefined }),
     });
 
     const data = await res.json();
@@ -442,6 +486,11 @@ function createVideoCard(v) {
           </button>
         </div>
       ` : ""}
+      <div class="ca-video-actions" style="margin-top: 8px;">
+        <button class="ca-video-btn delete" data-video-id="${v.id}" title="Eliminar video">
+          <i class="fas fa-trash"></i> Eliminar
+        </button>
+      </div>
     </div>
   `;
 
@@ -451,7 +500,110 @@ function createVideoCard(v) {
     copyBtn.addEventListener("click", () => copyVideoText(v));
   }
 
+  // Bind delete button
+  const deleteBtn = card.querySelector(".ca-video-btn.delete");
+  if (deleteBtn) {
+    deleteBtn.addEventListener("click", () => deleteVideo(v.id, card));
+  }
+
   return card;
+}
+
+async function deleteVideo(videoId, cardEl) {
+  if (!confirm("¿Eliminar este video? Esta acción no se puede deshacer.")) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/agent/videos/${videoId}`, {
+      method: "DELETE",
+      headers: { Authorization: "Bearer " + getToken() },
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      alert(`Error: ${data.error || "No se pudo eliminar"}`);
+      return;
+    }
+
+    // Animar y remover la card
+    cardEl.style.transition = "opacity 0.3s, transform 0.3s";
+    cardEl.style.opacity = "0";
+    cardEl.style.transform = "translateX(20px)";
+    setTimeout(() => {
+      cardEl.remove();
+      // Si no quedan videos, mostrar empty state
+      const allCards = document.querySelectorAll(".ca-video-card");
+      if (allCards.length === 0 && videosListEl) {
+        videosListEl.innerHTML = "";
+        // Mostrar mensaje de que no hay videos
+        const emptyMsg = document.createElement("div");
+        emptyMsg.style.cssText = "text-align: center; padding: 30px 20px; color: rgba(255,255,255,0.4); font-size: 0.85rem;";
+        emptyMsg.textContent = "No hay videos. Pídele al agente que cree uno. 🎬";
+        videosListEl.appendChild(emptyMsg);
+      }
+    }, 300);
+  } catch (err) {
+    alert(`Error de conexión: ${err.message}`);
+  }
+}
+
+/* ───────────────────────────────────────────────────────────────────
+   Adjuntar archivos
+─────────────────────────────────────────────────────────────────── */
+function handleFileSelect(files) {
+  for (const file of files) {
+    if (file.size > 50 * 1024 * 1024) {
+      alert(`Archivo "${file.name}" es muy grande (máx 50MB)`);
+      continue;
+    }
+    const previewUrl = URL.createObjectURL(file);
+    attachedFiles.push({ file, previewUrl, uploadedFileId: null });
+  }
+  renderAttachments();
+}
+
+function renderAttachments() {
+  if (attachedFiles.length === 0) {
+    attachmentsPreview.style.display = "none";
+    attachmentsPreview.innerHTML = "";
+    return;
+  }
+  attachmentsPreview.style.display = "flex";
+  attachmentsPreview.innerHTML = "";
+
+  attachedFiles.forEach((af, idx) => {
+    const item = document.createElement("div");
+    item.className = "ca-attachment-item";
+
+    const isImage = af.file.type.startsWith("image/");
+    const isVideo = af.file.type.startsWith("video/");
+
+    if (isImage) {
+      item.innerHTML = `<img src="${af.previewUrl}" alt=""><div class="filename">${escapeHtml(af.file.name)}</div>`;
+    } else if (isVideo) {
+      item.innerHTML = `<video src="${af.previewUrl}"></video><div class="filename">${escapeHtml(af.file.name)}</div>`;
+    } else {
+      item.innerHTML = `<div class="file-icon">🎵</div><div class="filename">${escapeHtml(af.file.name)}</div>`;
+    }
+
+    const removeBtn = document.createElement("button");
+    removeBtn.className = "remove-btn";
+    removeBtn.innerHTML = "×";
+    removeBtn.title = "Quitar archivo";
+    removeBtn.onclick = () => {
+      URL.revokeObjectURL(af.previewUrl);
+      attachedFiles.splice(idx, 1);
+      renderAttachments();
+    };
+    item.appendChild(removeBtn);
+
+    attachmentsPreview.appendChild(item);
+  });
+}
+
+function clearAttachments() {
+  attachedFiles.forEach(af => URL.revokeObjectURL(af.previewUrl));
+  attachedFiles = [];
+  renderAttachments();
 }
 
 async function copyVideoText(v) {
@@ -569,6 +721,30 @@ historyBtn.addEventListener("click", openVideosModal);
 modalClose.addEventListener("click", closeVideosModal);
 videosModal.addEventListener("click", (e) => {
   if (e.target === videosModal) closeVideosModal();
+});
+
+// Adjuntar archivos
+attachBtn.addEventListener("click", () => fileInput.click());
+fileInput.addEventListener("change", (e) => {
+  handleFileSelect(Array.from(e.target.files));
+  fileInput.value = ""; // reset para poder seleccionar el mismo archivo
+});
+
+// Drag & drop en el área de input
+const chatPanel = document.querySelector(".ca-chat-panel");
+chatPanel.addEventListener("dragover", (e) => {
+  e.preventDefault();
+  chatPanel.style.background = "rgba(51,255,255,0.05)";
+});
+chatPanel.addEventListener("dragleave", () => {
+  chatPanel.style.background = "";
+});
+chatPanel.addEventListener("drop", (e) => {
+  e.preventDefault();
+  chatPanel.style.background = "";
+  if (e.dataTransfer.files.length > 0) {
+    handleFileSelect(Array.from(e.dataTransfer.files));
+  }
 });
 
 document.addEventListener("keydown", (e) => {

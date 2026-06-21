@@ -22,80 +22,10 @@ body.chocoagent-page {
   background: #000;
 }
 
-/* ── Botón hamburguesa ─────────────────────────────────────────────
-   Override del .menu-icon global de styles.css
-   FIX: el botón global estaba en top:20px;left:20px;z-index:1000
-   lo cual lo superponía sobre el header de ChocoAgent.
-   Ahora lo posicionamos DENTRO del header (no fixed, sino absolute
-   relativo al header) con z-index menor que el sidebar. */
-body.chocoagent-page .menu-icon {
-  position: fixed;
-  top: 14px;
-  left: 14px;
-  z-index: 1060; /* mayor que sidebar-overlay (1040) pero menor que sidebar (999) */
-  font-size: 24px;
-  color: #33FFFF;
-  background: rgba(0,0,0,0.6);
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid rgba(51,255,255,0.2);
-  text-shadow: 0 0 8px rgba(51,255,255,0.5);
-  cursor: pointer;
-}
-
-/* ── Sidebar overlay ───────────────────────────────────────────────
-   FIX: quitar backdrop-filter:blur() que hacía ver "borroso" todo */
-.sidebar-overlay {
-  display: none;
-  position: fixed;
-  inset: 0;
-  z-index: 1040;
-  background: rgba(0,0,0,0.65);
-  /* SIN backdrop-filter para que el fondo se vea nítido */
-}
-
-.sidebar-overlay.open { display: block; }
-
-/* ── Sidebar ──────────────────────────────────────────────────────
-   FIX: asegurar que el sidebar esté encima del overlay y sea nítido */
-body.chocoagent-page .sidebar {
-  position: fixed;
-  top: 0;
-  left: -250px;
-  width: 250px;
-  height: 100%;
-  background: rgba(20, 20, 20, 0.98);
-  border-right: 1px solid rgba(51,255,255,0.2);
-  transition: left 0.3s ease;
-  z-index: 1050; /* encima del overlay (1040) */
-  display: flex;
-  flex-direction: column;
-  /* SIN backdrop-filter para que se vea nítido */
-}
-
-body.chocoagent-page .sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  flex: 1;
-  overflow-y: auto;
-}
-
-body.chocoagent-page .sidebar ul li a {
-  display: block;
-  padding: 14px 20px;
-  color: #fff;
-  text-decoration: none;
-  font-size: 16px;
-  border-bottom: 1px solid rgba(255,255,255,0.05);
-  transition: background 0.2s, color 0.2s;
-}
-
-body.chocoagent-page .sidebar ul li a:hover,
-body.chocoagent-page .sidebar ul li a.active {
-  color: #33FFFF;
-  background: rgba(51,255,255,0.08);
-}
+/* ── Botón hamburguesa y sidebar ────────────────────────────────────
+   ChocoAgent usa el sidebar UNIFICADO de styles.css + sidebar.js
+   Solo sobreescribimos lo mínimo necesario: el header tiene padding-left
+   para dejar espacio al botón hamburguesa fijo. */
 
 /* ══ HEADER ══════════════════════════════════════════════════════
    FIX: agregar padding-left para dejar espacio al botón hamburguesa */
@@ -108,7 +38,6 @@ body.chocoagent-page .sidebar ul li a.active {
   padding: 14px 20px 14px 64px; /* padding-left mayor para el botón */
   background: rgba(0,0,0,0.85);
   border-bottom: 1px solid rgba(51,255,255,0.15);
-  /* Sin backdrop-filter para que se vea nítido */
 }
 
 .ca-header-left {
@@ -308,6 +237,104 @@ body.chocoagent-page .sidebar ul li a.active {
   padding: 16px 20px;
   background: rgba(0,0,0,0.5);
   border-top: 1px solid rgba(255,255,255,0.08);
+}
+
+/* Botón de adjuntar archivos */
+.ca-attach-btn {
+  width: 44px;
+  height: 44px;
+  background: rgba(51,255,255,0.08);
+  border: 1px solid rgba(51,255,255,0.2);
+  border-radius: 12px;
+  color: #33FFFF;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+.ca-attach-btn:hover {
+  background: rgba(51,255,255,0.15);
+  border-color: rgba(51,255,255,0.4);
+}
+.ca-attach-btn:active {
+  transform: scale(0.95);
+}
+
+/* Preview de archivos adjuntos */
+.ca-attachments-preview {
+  padding: 10px 20px;
+  background: rgba(0,0,0,0.4);
+  border-top: 1px solid rgba(255,255,255,0.05);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.ca-attachment-item {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.05);
+  border: 1px solid rgba(51,255,255,0.2);
+}
+
+.ca-attachment-item img,
+.ca-attachment-item video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ca-attachment-item .file-icon {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  color: #33FFFF;
+}
+
+.ca-attachment-item .remove-btn {
+  position: absolute;
+  top: 3px;
+  right: 3px;
+  width: 20px;
+  height: 20px;
+  background: rgba(0,0,0,0.8);
+  border: none;
+  border-radius: 50%;
+  color: #ff5470;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+}
+.ca-attachment-item .remove-btn:hover {
+  background: rgba(255,84,112,0.9);
+  color: #fff;
+}
+
+.ca-attachment-item .filename {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2px 4px;
+  background: rgba(0,0,0,0.8);
+  color: #fff;
+  font-size: 9px;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .ca-input {
@@ -702,8 +729,26 @@ body.chocoagent-page .sidebar ul li a.active {
   color: #fff;
 }
 
-.ca-video-card.processing .ca-video-actions { display: none; }
-.ca-video-card.failed .ca-video-actions { display: none; }
+.ca-video-btn.delete {
+  background: rgba(239,68,68,0.1);
+  color: #ef4444;
+  border: 1px solid rgba(239,68,68,0.2);
+  max-width: 120px;
+  margin-left: auto;
+  font-size: 0.72rem;
+  padding: 5px 10px;
+}
+.ca-video-btn.delete:hover {
+  background: rgba(239,68,68,0.2);
+  border-color: rgba(239,68,68,0.4);
+}
+
+/* En cards processing/failed, ocultar solo los botones download/copy
+   pero permitir el botón delete */
+.ca-video-card.processing .ca-video-btn.download,
+.ca-video-card.processing .ca-video-btn.copy { display: none; }
+.ca-video-card.failed .ca-video-btn.download,
+.ca-video-card.failed .ca-video-btn.copy { display: none; }
 
 .ca-video-error {
   padding: 8px 12px;

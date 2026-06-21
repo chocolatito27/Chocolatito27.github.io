@@ -30,6 +30,7 @@
       }
     })();
   </script>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -106,19 +107,12 @@
 
 <!-- Función toggleMenu (esta página no carga script.js) -->
 <script>
-  function toggleMenu() {
-    const sidebar = document.querySelector('.sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    if (!sidebar) return;
-    const isOpen = sidebar.style.left === '0px';
-    sidebar.style.left = isOpen ? '-250px' : '0px';
-    if (overlay) {
-      overlay.style.display = isOpen ? 'none' : 'block';
-    }
-  }
+}
 </script>
 
 <!-- Lógica del chat -->
 <script src="chocolatitoAI.js"></script>
+<script src="sidebar.js"></script>
+
 </body>
 </html>

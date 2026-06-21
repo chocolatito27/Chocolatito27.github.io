@@ -17,46 +17,78 @@ body, html {
     z-index: -1;
 }
 
+/* ══════════════════════════════════════════════════════════════════
+   SIDEBAR UNIFICADO — mismo estilo en TODAS las páginas
+   Estilo cyber neón con background oscuro y acentos cyan
+════════════════════════════════════════════════════════════════ */
+
 .menu-icon {
     position: fixed;
-    top: 20px;
-    left: 20px;
-    font-size: 30px;
-    color: white;
+    top: 16px;
+    left: 16px;
+    font-size: 24px;
+    color: #33FFFF;
     cursor: pointer;
-    z-index: 1000;
+    z-index: 1100;
+    background: rgba(0, 0, 0, 0.7);
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(51, 255, 255, 0.2);
+    text-shadow: 0 0 8px rgba(51, 255, 255, 0.5);
+    transition: background 0.2s, transform 0.1s;
+    user-select: none;
+}
+.menu-icon:hover {
+    background: rgba(51, 255, 255, 0.15);
+}
+.menu-icon:active {
+    transform: scale(0.95);
 }
 
 .sidebar {
     position: fixed;
     top: 0;
-    left: -250px;
-    width: 250px;
+    left: -260px;
+    width: 260px;
     height: 100%;
-    background-color: rgba(51, 51, 51, 0.9);
+    background: rgba(15, 15, 15, 0.98);
     transition: left 0.3s ease;
-    z-index: 999;
+    z-index: 1050;
     display: flex;
     flex-direction: column;
+    border-right: 1px solid rgba(51, 255, 255, 0.2);
+    box-shadow: 4px 0 24px rgba(0, 0, 0, 0.6);
+}
+
+.sidebar.open {
+    left: 0;
 }
 
 .sidebar-header {
-    padding: 20px;
-    background-color: rgba(34, 34, 34, 0.9);
-    color: white;
+    padding: 18px 20px;
+    background: rgba(0, 0, 0, 0.6);
+    color: #33FFFF;
     text-align: right;
+    border-bottom: 1px solid rgba(51, 255, 255, 0.15);
 }
 
 .back-arrow {
     cursor: pointer;
     font-size: 24px;
+    color: #fff;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+}
+.back-arrow:hover {
+    opacity: 1;
+    color: #33FFFF;
 }
 
-/* Tarjeta de usuario */
+/* Tarjeta de usuario (inyectada por session.js) */
 .user-info {
     padding: 14px 20px;
-    background: rgba(108, 141, 245, 0.15);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(51, 255, 255, 0.08);
+    border-bottom: 1px solid rgba(51, 255, 255, 0.15);
     display: flex;
     flex-direction: column;
     gap: 3px;
@@ -82,31 +114,59 @@ body, html {
     padding: 0;
     margin: 0;
     flex: 1;
+    overflow-y: auto;
 }
 
 .sidebar ul li {
-    padding: 15px 20px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
 }
 
 .sidebar ul li a {
-    color: white;
+    display: block;
+    padding: 14px 22px;
+    color: rgba(255, 255, 255, 0.85);
     text-decoration: none;
-    font-size: 18px;
+    font-size: 16px;
     cursor: pointer;
+    transition: background 0.2s, color 0.2s, padding-left 0.2s;
+    border-left: 3px solid transparent;
 }
 
 .sidebar ul li a:hover {
     color: #33FFFF;
+    background: rgba(51, 255, 255, 0.06);
+    padding-left: 26px;
 }
 
-/* Botón cerrar sesión */
-.logout-link {
+.sidebar ul li a.active {
+    color: #33FFFF;
+    background: rgba(51, 255, 255, 0.1);
+    border-left-color: #33FFFF;
+    font-weight: 600;
+}
+
+/* Overlay que cubre el contenido cuando el sidebar está abierto */
+.sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1040;
+}
+.sidebar-overlay.open {
+    display: block;
+}
+
+/* Botón cerrar sesión (inyectado por session.js) */
+.logout-link,
+#cw-sidebar-logout {
     color: #ff6b6b !important;
 }
 
-.logout-link:hover {
+.logout-link:hover,
+#cw-sidebar-logout:hover {
     color: #ff4444 !important;
+    background: rgba(255, 107, 107, 0.08) !important;
 }
 
 .main-content {

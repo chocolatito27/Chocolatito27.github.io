@@ -93,6 +93,12 @@
     </div>
 
     <form class="ca-input-area" id="ca-input-form" autocomplete="off">
+      <button type="button" class="ca-attach-btn" id="ca-attach-btn" title="Adjuntar archivos (imágenes/videos)" aria-label="Adjuntar archivos">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/>
+        </svg>
+      </button>
+      <input type="file" id="ca-file-input" multiple accept="image/*,video/*,audio/*" style="display:none">
       <textarea
         id="ca-input"
         class="ca-input"
@@ -107,6 +113,9 @@
         </svg>
       </button>
     </form>
+
+    <!-- Preview de archivos adjuntos -->
+    <div class="ca-attachments-preview" id="ca-attachments-preview" style="display:none"></div>
   </section>
 
   <!-- Panel derecho: plan + progreso + videos -->
@@ -183,20 +192,8 @@
 <script>const CW_PROTECTED = true;</script>
 <script src="session.js"></script>
 
-<!-- Función toggleMenu (esta página no carga script.js) -->
-<script>
-  function toggleMenu() {
-    const sidebar = document.getElementById('sidebar');
-    const overlay = document.getElementById('sidebarOverlay');
-    const isOpen = sidebar.style.left === '0px';
-    sidebar.style.left = isOpen ? '-250px' : '0px';
-    if (isOpen) {
-      overlay.classList.remove('open');
-    } else {
-      overlay.classList.add('open');
-    }
-  }
-</script>
+<!-- Sidebar unificado (toggleMenu + overlay) -->
+<script src="sidebar.js"></script>
 
 <!-- Particles -->
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
