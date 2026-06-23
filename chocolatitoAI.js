@@ -76,16 +76,52 @@ function renderContent(rawText) {
     return id;
   });
 
-  // Extraer bloques plotly antes de marked
+  // Extraer bloques plotly — múltiples formatos
   const plotlyBlocks = [];
-  safe = safe.replace(/```plotly\n([\s\S]*?)```/g, (_, json) => {
-    const id = `PLOTLY${plotlyBlocks.length}PLOT`;
+  // Formato 1: ```plotly\n{...}\n``` (correcto)
+  safe = safe.replace(/```plotly\s*\n?([\s\S]*?)```/g, (_, json) => {
+    const id = `PLOTLYBLOCK${plotlyBlocks.length}END`;
+    try {
+      plotlyBlocks.push({ id, config: JSON.parse(json.trim()) });
+    } catch (e) {
+      plotlyBlocks.push({ id, config: null, error: "JSON inválido: " + e.message });
+    }
+    return id;
+  });
+  // Formato 2: ```plotly\n{...}``` sin newline final
+  safe = safe.replace(/```plotly\s*(\{[\s\S]*?\})\s*```/g, (_, json) => {
+    const id = `PLOTLYBLOCK${plotlyBlocks.length}END`;
     try {
       plotlyBlocks.push({ id, config: JSON.parse(json.trim()) });
     } catch (e) {
       plotlyBlocks.push({ id, config: null, error: "JSON inválido" });
     }
     return id;
+  });
+  // Formato 3: ```plotly {...} ``` en una línea
+  safe = safe.replace(/```plotly\s+(\{.*?\})\s*```/g, (_, json) => {
+    const id = `PLOTLYBLOCK${plotlyBlocks.length}END`;
+    try {
+      plotlyBlocks.push({ id, config: JSON.parse(json.trim()) });
+    } catch (e) {
+      plotlyBlocks.push({ id, config: null, error: "JSON inválido" });
+    }
+    return id;
+  });
+  // Formato 4: JSON suelto con "type":"line" o "type":"bar" o "type":"surface3d"
+  // (cuando DeepSeek no usa backticks pero envía el JSON)
+  safe = safe.replace(/\{"type":"(?:line|bar|surface3d)"[^}]*\}/g, (json) => {
+    // Solo si parece un JSON completo de plotly
+    if (json.includes('"functions"') || json.includes('"labels"') || json.includes('"function"')) {
+      const id = `PLOTLYBLOCK${plotlyBlocks.length}END`;
+      try {
+        plotlyBlocks.push({ id, config: JSON.parse(json) });
+      } catch (e) {
+        plotlyBlocks.push({ id, config: null, error: "JSON inválido" });
+      }
+      return id;
+    }
+    return json;
   });
 
   marked.setOptions({ breaks: true, gfm: true });
@@ -121,8 +157,20 @@ function renderContent(rawText) {
 
   // Renderizar gráficos Plotly
   plotlyBlocks.forEach((pb, idx) => {
-    const placeholder = container.querySelector(`#PLOTLY${idx}PLOT`);
+    // Buscar el placeholder en el HTML (puede ser texto plano si marked no lo procesó)
+    let placeholder = container.querySelector(`#PLOTLYBLOCK${idx}END`);
+    if (!placeholder) {
+      // Buscar como texto
+      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
+      while (walker.nextNode()) {
+        if (walker.currentNode.textContent.includes(`PLOTLYBLOCK${idx}END`)) {
+          placeholder = walker.currentNode.parentElement;
+          break;
+        }
+      }
+    }
     if (!placeholder) return;
+
     const chartDiv = document.createElement("div");
     chartDiv.className = "cai-chart-container";
     const innerDiv = document.createElement("div");
@@ -132,7 +180,7 @@ function renderContent(rawText) {
     if (pb.config) {
       setTimeout(() => renderPlotly(innerDiv.id, pb.config), 100);
     } else {
-      innerDiv.innerHTML = '<p style="color:#ef4444;font-size:0.8rem">Error: JSON del gráfico inválido</p>';
+      innerDiv.innerHTML = `<p style="color:#ef4444;font-size:0.8rem">Error: ${pb.error || "JSON inválido"}</p>`;
     }
   });
 
