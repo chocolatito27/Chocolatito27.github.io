@@ -80,46 +80,25 @@ function renderContent(rawText) {
   const plotlyBlocks = [];
   // Formato 1: ```plotly\n{...}\n``` (correcto)
   safe = safe.replace(/```plotly\s*\n?([\s\S]*?)```/g, (_, json) => {
-    const id = `PLOTLYBLOCK${plotlyBlocks.length}END`;
+    const idx = plotlyBlocks.length;
     try {
-      plotlyBlocks.push({ id, config: JSON.parse(json.trim()) });
+      plotlyBlocks.push({ idx, config: JSON.parse(json.trim()) });
     } catch (e) {
-      plotlyBlocks.push({ id, config: null, error: "JSON inválido: " + e.message });
+      plotlyBlocks.push({ idx, config: null, error: e.message });
     }
-    return id;
+    // Usar un div con data-attribute para que marked no lo convierta en texto
+    return `\n<div data-plotly="${idx}"></div>\n`;
   });
-  // Formato 2: ```plotly\n{...}``` sin newline final
-  safe = safe.replace(/```plotly\s*(\{[\s\S]*?\})\s*```/g, (_, json) => {
-    const id = `PLOTLYBLOCK${plotlyBlocks.length}END`;
-    try {
-      plotlyBlocks.push({ id, config: JSON.parse(json.trim()) });
-    } catch (e) {
-      plotlyBlocks.push({ id, config: null, error: "JSON inválido" });
-    }
-    return id;
-  });
-  // Formato 3: ```plotly {...} ``` en una línea
-  safe = safe.replace(/```plotly\s+(\{.*?\})\s*```/g, (_, json) => {
-    const id = `PLOTLYBLOCK${plotlyBlocks.length}END`;
-    try {
-      plotlyBlocks.push({ id, config: JSON.parse(json.trim()) });
-    } catch (e) {
-      plotlyBlocks.push({ id, config: null, error: "JSON inválido" });
-    }
-    return id;
-  });
-  // Formato 4: JSON suelto con "type":"line" o "type":"bar" o "type":"surface3d"
-  // (cuando DeepSeek no usa backticks pero envía el JSON)
-  safe = safe.replace(/\{"type":"(?:line|bar|surface3d)"[^}]*\}/g, (json) => {
-    // Solo si parece un JSON completo de plotly
+  // Formato 2: JSON suelto con type:line/bar/surface3d (sin backticks)
+  safe = safe.replace(/\{"type":"(?:line|bar|surface3d)"[^]*?\}(?=\n|$)/g, (json) => {
     if (json.includes('"functions"') || json.includes('"labels"') || json.includes('"function"')) {
-      const id = `PLOTLYBLOCK${plotlyBlocks.length}END`;
+      const idx = plotlyBlocks.length;
       try {
-        plotlyBlocks.push({ id, config: JSON.parse(json) });
+        plotlyBlocks.push({ idx, config: JSON.parse(json) });
       } catch (e) {
-        plotlyBlocks.push({ id, config: null, error: "JSON inválido" });
+        plotlyBlocks.push({ idx, config: null, error: e.message });
       }
-      return id;
+      return `\n<div data-plotly="${idx}"></div>\n`;
     }
     return json;
   });
@@ -155,26 +134,15 @@ function renderContent(rawText) {
     pre.appendChild(btn);
   });
 
-  // Renderizar gráficos Plotly
-  plotlyBlocks.forEach((pb, idx) => {
-    // Buscar el placeholder en el HTML (puede ser texto plano si marked no lo procesó)
-    let placeholder = container.querySelector(`#PLOTLYBLOCK${idx}END`);
-    if (!placeholder) {
-      // Buscar como texto
-      const walker = document.createTreeWalker(container, NodeFilter.SHOW_TEXT, null);
-      while (walker.nextNode()) {
-        if (walker.currentNode.textContent.includes(`PLOTLYBLOCK${idx}END`)) {
-          placeholder = walker.currentNode.parentElement;
-          break;
-        }
-      }
-    }
+  // Renderizar gráficos Plotly — buscar divs con data-plotly
+  plotlyBlocks.forEach((pb) => {
+    const placeholder = container.querySelector(`div[data-plotly="${pb.idx}"]`);
     if (!placeholder) return;
 
     const chartDiv = document.createElement("div");
     chartDiv.className = "cai-chart-container";
     const innerDiv = document.createElement("div");
-    innerDiv.id = `plotly-chart-${Date.now()}-${idx}`;
+    innerDiv.id = `plotly-chart-${Date.now()}-${pb.idx}`;
     chartDiv.appendChild(innerDiv);
     placeholder.replaceWith(chartDiv);
     if (pb.config) {
