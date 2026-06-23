@@ -146,8 +146,24 @@ function renderPlotly(divId, config) {
 
   try {
     if (config.type === "line" && config.functions) {
-      // Gráfico de líneas 2D
+      // Gráfico de líneas 2D — soporta funciones y polígonos
       const traces = config.functions.map(fn => {
+        // Si tiene "points", es un polígono/figura geométrica
+        if (fn.points) {
+          const coords = fn.points.split(",").map(Number);
+          const xValues = [];
+          const yValues = [];
+          for (let i = 0; i < coords.length; i += 2) {
+            xValues.push(coords[i]);
+            yValues.push(coords[i + 1]);
+          }
+          return {
+            x: xValues, y: yValues, type: "scatter", mode: "lines+markers",
+            name: fn.name || "", line: { color: fn.color || "#33FFFF", width: 3 },
+            marker: { size: 8, color: fn.color || "#33FFFF" },
+          };
+        }
+        // Función normal
         const xValues = [];
         const yValues = [];
         const [xMin, xMax] = config.range?.x || [-10, 10];
@@ -156,7 +172,6 @@ function renderPlotly(divId, config) {
           const x = xMin + (xMax - xMin) * i / steps;
           xValues.push(x);
           try {
-            // Evaluar función de forma segura
             const y = Function("x", "return " + fn.expr)(x);
             if (isFinite(y)) yValues.push(y); else yValues.push(null);
           } catch { yValues.push(null); }
