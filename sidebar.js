@@ -69,10 +69,32 @@
     }
   });
 
+  // Accesibilidad: que el ícono de menú (☰) sea usable con teclado (Tab + Enter/Espacio)
+  function enhanceA11y() {
+    const icon = document.querySelector(".menu-icon");
+    if (icon && !icon.dataset.a11y) {
+      icon.dataset.a11y = "1";
+      icon.setAttribute("role", "button");
+      icon.setAttribute("tabindex", "0");
+      icon.setAttribute("aria-label", "Abrir menú");
+      icon.addEventListener("keydown", (e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          toggleMenu();
+        }
+      });
+    }
+  }
+
+  function init() {
+    ensureOverlay();
+    enhanceA11y();
+  }
+
   // Inicializar al cargar
   if (document.readyState === "loading") {
-    document.addEventListener("DOMContentLoaded", ensureOverlay);
+    document.addEventListener("DOMContentLoaded", init);
   } else {
-    ensureOverlay();
+    init();
   }
 })();

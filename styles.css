@@ -501,6 +501,25 @@ canvas {
     to   { opacity: 1; }
 }
 
+/* Subtítulo del hero: qué es la web (bajo el título) */
+.hero-subtitle {
+    position: fixed;
+    top: calc(50% + 128px);
+    left: 50%;
+    transform: translateX(-50%);
+    margin: 0;
+    width: max-content;
+    max-width: 90vw;
+    text-align: center;
+    font-family: 'Inter', Arial, sans-serif;
+    font-size: clamp(0.9rem, 3vw, 1.15rem);
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.78);
+    letter-spacing: 0.01em;
+    z-index: 2;
+    animation: heroTitleFade 1.2s ease-out both;
+}
+
 /* ── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 768px) {
     .hero-logo-wrap {
