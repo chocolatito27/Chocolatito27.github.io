@@ -3,19 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ChocolatitoWeb</title>
+    <title>ChocolatitoWeb — juegos, apps e IA hechos por Chocolatito</title>
+    <meta name="description" content="ChocolatitoWeb: un hub con mini-juegos, herramientas y ChocolatitoAI, creados desde cero con HTML, CSS y JavaScript.">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="icon" type="image/png" href="/favicon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 
-    <!-- Protección: si no hay sesión, va al login -->
-    <script>
-        if (!localStorage.getItem('cw_token')) {
-            window.location.replace('login.html');
-        }
-    </script>
+    <!-- Portada pública: cualquiera puede ver el inicio. Las secciones personales
+         (ChocolatitoAI, juegos, notas, admin) siguen protegidas por session.js / sw.js. -->
 </head>
 <body class="home-page">
     <div id="particles-js"></div>
