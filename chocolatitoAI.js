@@ -99,6 +99,38 @@ function addAssistantActions(bubble, content) {
   bubble.appendChild(actions);
 }
 
+/* ── Rastreador de pasos del agente ─────────────────────────────── */
+function addAgentStep(stepsEl, label) {
+  if (!stepsEl) return;
+  // marca el paso anterior como completado
+  const prev = stepsEl.querySelector(".cai-step.active");
+  if (prev) {
+    prev.classList.remove("active");
+    prev.classList.add("done");
+    const ic = prev.querySelector(".cai-step-ic");
+    if (ic) ic.innerHTML = '<i class="fas fa-check"></i>';
+  }
+  // evita duplicados exactos consecutivos
+  const last = stepsEl.lastElementChild;
+  if (last && last.dataset.label === label) return;
+
+  const step = document.createElement("div");
+  step.className = "cai-step active";
+  step.dataset.label = label;
+  step.innerHTML = '<span class="cai-step-ic"><span class="cai-step-spin"></span></span><span class="cai-step-txt"></span>';
+  step.querySelector(".cai-step-txt").textContent = label;
+  stepsEl.appendChild(step);
+}
+function finishAgentSteps(stepsEl) {
+  if (!stepsEl) return;
+  stepsEl.querySelectorAll(".cai-step.active").forEach(s => {
+    s.classList.remove("active");
+    s.classList.add("done");
+    const ic = s.querySelector(".cai-step-ic");
+    if (ic) ic.innerHTML = '<i class="fas fa-check"></i>';
+  });
+}
+
 /* ── Regenerar la última respuesta ──────────────────────────────── */
 function regenerateLast() {
   if (isGenerating) return;
@@ -369,6 +401,10 @@ function addBubble(role, content, isStreaming = false) {
     badge.className = "cai-progress-badge";
     badge.innerHTML = '<span class="spinner"></span> <span class="badge-text">Generando...</span>';
     bubble.appendChild(badge);
+    // Rastreador de pasos del agente
+    const steps = document.createElement("div");
+    steps.className = "cai-agent-steps";
+    bubble.appendChild(steps);
     // Contenedor donde se irá mostrando el texto
     const contentDiv = document.createElement("div");
     contentDiv.className = "streaming-content";
@@ -402,6 +438,7 @@ async function streamAssistant() {
 
   const { row, bubble } = addBubble("assistant", "", true);
   const contentDiv = bubble.querySelector(".streaming-content");
+  const stepsEl = bubble.querySelector(".cai-agent-steps");
   const badge = bubble.querySelector(".cai-progress-badge");
   const badgeText = badge.querySelector(".badge-text");
 
@@ -443,6 +480,7 @@ async function streamAssistant() {
 
           if (parsed.type === "status") {
             badgeText.textContent = parsed.content;
+            addAgentStep(stepsEl, parsed.content);
             setStatusThinking(parsed.content.replace(/[^a-zA-Záéíóú ]/g, "").trim() || "Procesando...");
           }
 
@@ -456,6 +494,7 @@ async function streamAssistant() {
 
           if (parsed.type === "done") {
             if (badge) badge.style.display = "none";
+            finishAgentSteps(stepsEl);
             bubble.classList.remove("streaming");
             accumulated = parsed.content;
             contentDiv.innerHTML = "";
@@ -486,6 +525,7 @@ async function streamAssistant() {
 
     if (err.name === "AbortError") {
       // Detenido por el usuario: conservamos lo que se alcanzó a generar
+      finishAgentSteps(stepsEl);
       if (accumulated) {
         chatHistory.push({ role: "assistant", content: accumulated });
         addAssistantActions(bubble, accumulated);
