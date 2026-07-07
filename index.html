@@ -44,69 +44,74 @@
         </ul>
     </div>
 
-    <!-- ══ HERO: Logo arrastrable + Nombre ══ -->
+    <!-- ══ HERO: Logo arrastrable + Nombre + accesos ══ -->
     <section class="hero" id="hero">
+      <div class="hero-inner">
         <div class="hero-logo-wrap" id="hero-logo-wrap">
             <img src="favicon.png" alt="Chocolatito" class="hero-logo" id="hero-logo" />
         </div>
         <h1 class="hero-title" id="hero-title">ChocolatitoWeb</h1>
+
+        <div class="hero-cards">
+            <a href="juegos.html" class="hero-card">
+                <span class="ico">🎮</span>
+                <span class="t">Juegos</span>
+                <span class="d">Mini-juegos hechos desde cero</span>
+            </a>
+            <a href="chocolatitoAI.html" class="hero-card">
+                <span class="ico">🤖</span>
+                <span class="t">ChocolatitoAI</span>
+                <span class="d">Chat con IA interactiva</span>
+            </a>
+            <a href="entretenimiento.html" class="hero-card">
+                <span class="ico">🛠️</span>
+                <span class="t">Apps & Tools</span>
+                <span class="d">Piano, pizarra, notas y más</span>
+            </a>
+        </div>
+      </div>
     </section>
 
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script src="script.js"></script>
     <script src="session.js"></script>
 
-    <!-- Logo arrastrable -->
+    <!-- Logo arrastrable (usa transform para no romper el layout en flujo) -->
     <script>
     (function() {
         const logo = document.getElementById('hero-logo-wrap');
-        let isDragging = false;
-        let startX, startY, startLeft, startTop;
+        if (!logo) return;
+        let dragging = false, sx = 0, sy = 0, ox = 0, oy = 0, cx = 0, cy = 0;
 
-        function init() {
-            // Calculate actual centered position and set it as explicit left/top
-            const rect = logo.getBoundingClientRect();
-            logo.style.transform = 'none';
-            logo.style.left = rect.left + 'px';
-            logo.style.top = rect.top + 'px';
-            logo.style.cursor = 'grab';
-        }
-
-        function onStart(e) {
-            isDragging = true;
-            const touch = e.touches ? e.touches[0] : e;
-            startX = touch.clientX;
-            startY = touch.clientY;
-            startLeft = parseInt(logo.style.left) || 0;
-            startTop = parseInt(logo.style.top) || 0;
+        function start(e) {
+            dragging = true;
+            const t = e.touches ? e.touches[0] : e;
+            sx = t.clientX; sy = t.clientY;
             logo.style.cursor = 'grabbing';
+            logo.classList.add('dragging');
             e.preventDefault();
         }
-
-        function onMove(e) {
-            if (!isDragging) return;
-            const touch = e.touches ? e.touches[0] : e;
-            logo.style.left = (startLeft + touch.clientX - startX) + 'px';
-            logo.style.top = (startTop + touch.clientY - startY) + 'px';
+        function move(e) {
+            if (!dragging) return;
+            const t = e.touches ? e.touches[0] : e;
+            cx = ox + (t.clientX - sx);
+            cy = oy + (t.clientY - sy);
+            logo.style.transform = 'translate(' + cx + 'px,' + cy + 'px)';
             e.preventDefault();
         }
-
-        function onEnd() {
-            if (!isDragging) return;
-            isDragging = false;
+        function end() {
+            if (!dragging) return;
+            dragging = false; ox = cx; oy = cy;
             logo.style.cursor = 'grab';
+            logo.classList.remove('dragging');
         }
 
-        // Wait for layout to settle, then init position
-        window.addEventListener('load', init);
-        window.addEventListener('resize', init);
-
-        logo.addEventListener('mousedown', onStart);
-        document.addEventListener('mousemove', onMove);
-        document.addEventListener('mouseup', onEnd);
-        logo.addEventListener('touchstart', onStart, { passive: false });
-        document.addEventListener('touchmove', onMove, { passive: false });
-        document.addEventListener('touchend', onEnd);
+        logo.addEventListener('mousedown', start);
+        document.addEventListener('mousemove', move);
+        document.addEventListener('mouseup', end);
+        logo.addEventListener('touchstart', start, { passive: false });
+        document.addEventListener('touchmove', move, { passive: false });
+        document.addEventListener('touchend', end);
     })();
     </script>
 <script src="sidebar.js"></script>
