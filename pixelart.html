@@ -24,12 +24,12 @@
             display: flex; align-items: center; gap: 10px;
             padding: 10px 16px;
             background: rgba(10,10,10,0.92); backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(51,255,255,0.1);
+            border-bottom: 1px solid rgba(238, 106, 40,0.1);
             z-index: 10; flex-shrink: 0;
         }
         .top-bar .title {
-            font-size: 16px; font-weight: 800; color: #33FFFF;
-            text-shadow: 0 0 10px rgba(51,255,255,0.3);
+            font-size: 16px; font-weight: 800; color: #EE6A28;
+            text-shadow: 0 0 10px rgba(238, 106, 40,0.3);
             margin-right: auto;
         }
         .top-bar .sep { width: 1px; height: 20px; background: rgba(255,255,255,0.12); }
@@ -40,7 +40,7 @@
             color: #ccc; font-size: 12px; cursor: pointer; transition: all 0.15s;
             display: flex; align-items: center; gap: 5px;
         }
-        .top-btn:hover { background: rgba(51,255,255,0.1); color: #33FFFF; border-color: rgba(51,255,255,0.3); }
+        .top-btn:hover { background: rgba(238, 106, 40,0.1); color: #EE6A28; border-color: rgba(238, 106, 40,0.3); }
         .top-btn.danger { color: #ff5470; }
         .top-btn.danger:hover { background: rgba(255,84,112,0.1); }
 
@@ -60,7 +60,7 @@
         .tool-panel {
             width: 56px; flex-shrink: 0;
             background: rgba(10,10,10,0.92); backdrop-filter: blur(10px);
-            border-right: 1px solid rgba(51,255,255,0.1);
+            border-right: 1px solid rgba(238, 106, 40,0.1);
             display: flex; flex-direction: column; align-items: center;
             padding: 8px 0; gap: 4px; overflow-y: auto;
             z-index: 5;
@@ -73,10 +73,10 @@
             display: flex; align-items: center; justify-content: center;
             transition: all 0.15s;
         }
-        .panel-btn:hover { background: rgba(51,255,255,0.1); color: #fff; }
+        .panel-btn:hover { background: rgba(238, 106, 40,0.1); color: #fff; }
         .panel-btn.active {
-            background: rgba(51,255,255,0.15); color: #33FFFF;
-            border-color: rgba(51,255,255,0.3);
+            background: rgba(238, 106, 40,0.15); color: #EE6A28;
+            border-color: rgba(238, 106, 40,0.3);
         }
 
         .panel-sep {
@@ -95,7 +95,7 @@
             transition: all 0.12s;
         }
         .color-dot:hover { transform: scale(1.15); }
-        .color-dot.active { border-color: #fff; box-shadow: 0 0 6px rgba(51,255,255,0.4); }
+        .color-dot.active { border-color: #fff; box-shadow: 0 0 6px rgba(238, 106, 40,0.4); }
 
         .custom-color {
             width: 40px; height: 28px; border-radius: 6px;
@@ -114,7 +114,7 @@
         }
 
         #pixelCanvas {
-            border: 2px solid rgba(51,255,255,0.2);
+            border: 2px solid rgba(238, 106, 40,0.2);
             border-radius: 4px; cursor: crosshair;
             image-rendering: pixelated;
         }
@@ -134,7 +134,7 @@
             .tool-panel {
                 width: 100%; flex-direction: row;
                 order: 2; border-right: none;
-                border-top: 1px solid rgba(51,255,255,0.1);
+                border-top: 1px solid rgba(238, 106, 40,0.1);
                 padding: 6px 10px; overflow-x: auto;
             }
             .panel-sep { width: 1px; height: 28px; margin: 0 4px; }
@@ -196,7 +196,7 @@
 
                 <!-- Colors -->
                 <div class="color-grid" id="colorGrid"></div>
-                <input type="color" class="custom-color" id="customColor" value="#33FFFF" title="Color personalizado">
+                <input type="color" class="custom-color" id="customColor" value="#EE6A28" title="Color personalizado">
 
                 <div class="panel-sep"></div>
 
@@ -228,7 +228,7 @@
     particlesJS("particles-js", {
         particles: {
             number: { value: 30, density: { enable: true, value_area: 900 } },
-            color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
+            color: { value: ["#EE6A28","#FF8A4C","#C4531A","#ffffff"] },
             shape: { type: "circle" },
             opacity: { value: 0.15 },
             size: { value: 2, random: true },
@@ -248,7 +248,7 @@
 
     let gridSize = 16;
     let cellSize = 24;
-    let currentColor = '#33FFFF';
+    let currentColor = '#EE6A28';
     let currentTool = 'pencil';
     let showGridLines = true;
     let mirrorMode = false;
@@ -259,7 +259,7 @@
     let lineStart = null; // for line tool
 
     const palette = [
-        '#000000','#ffffff','#33FFFF','#ff5470','#4ade80',
+        '#000000','#ffffff','#EE6A28','#ff5470','#4ade80',
         '#facc15','#a896f0','#f97316','#6c8df5','#ec4899',
         '#8b5cf6','#14b8a6','#ef4444','#84cc16','#f59e0b',
         '#6366f1','#7c3aed','#059669','#dc2626','#d97706',

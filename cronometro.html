@@ -31,8 +31,8 @@
             transition: all 0.2s; letter-spacing: 0.3px;
         }
         .mode-tab.active {
-            background: rgba(51,255,255,0.15); color: #33FFFF;
-            box-shadow: 0 0 12px rgba(51,255,255,0.1);
+            background: rgba(238, 106, 40,0.15); color: #EE6A28;
+            box-shadow: 0 0 12px rgba(238, 106, 40,0.1);
         }
 
         .timer-display {
@@ -47,18 +47,18 @@
         .timer-ring svg { width: 100%; height: 100%; transform: rotate(-90deg); }
         .timer-ring .bg { fill: none; stroke: rgba(255,255,255,0.06); stroke-width: 4; }
         .timer-ring .progress {
-            fill: none; stroke: #33FFFF; stroke-width: 4;
+            fill: none; stroke: #EE6A28; stroke-width: 4;
             stroke-linecap: round; transition: stroke-dashoffset 0.1s linear;
-            filter: drop-shadow(0 0 6px rgba(51,255,255,0.4));
+            filter: drop-shadow(0 0 6px rgba(238, 106, 40,0.4));
         }
 
         .timer-text {
             font-size: 56px; font-weight: 200; font-family: 'Courier New', monospace;
             color: #fff; letter-spacing: 2px; z-index: 1;
-            text-shadow: 0 0 20px rgba(51,255,255,0.15);
+            text-shadow: 0 0 20px rgba(238, 106, 40,0.15);
         }
         .timer-text .ms {
-            font-size: 28px; color: rgba(51,255,255,0.7);
+            font-size: 28px; color: rgba(238, 106, 40,0.7);
         }
 
         .controls {
@@ -74,10 +74,10 @@
         }
         .ctrl-btn:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.25); }
         .ctrl-btn.primary {
-            background: rgba(51,255,255,0.2); border-color: rgba(51,255,255,0.4);
-            color: #33FFFF; width: 80px; height: 80px; font-size: 26px;
+            background: rgba(238, 106, 40,0.2); border-color: rgba(238, 106, 40,0.4);
+            color: #EE6A28; width: 80px; height: 80px; font-size: 26px;
         }
-        .ctrl-btn.primary:hover { background: rgba(51,255,255,0.3); }
+        .ctrl-btn.primary:hover { background: rgba(238, 106, 40,0.3); }
         .ctrl-btn.danger { border-color: rgba(255,84,112,0.3); color: #ff5470; }
         .ctrl-btn.danger:hover { background: rgba(255,84,112,0.15); }
 
@@ -87,7 +87,7 @@
             overflow-y: auto;
         }
         .laps-container::-webkit-scrollbar { width: 4px; }
-        .laps-container::-webkit-scrollbar-thumb { background: rgba(51,255,255,0.3); border-radius: 4px; }
+        .laps-container::-webkit-scrollbar-thumb { background: rgba(238, 106, 40,0.3); border-radius: 4px; }
 
         .lap-item {
             display: flex; justify-content: space-between; align-items: center;
@@ -97,7 +97,7 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
         .lap-item .lap-num { color: rgba(255,255,255,0.4); font-size: 13px; }
-        .lap-item .lap-time { color: #33FFFF; font-size: 15px; font-weight: 600; }
+        .lap-item .lap-time { color: #EE6A28; font-size: 15px; font-weight: 600; }
         .lap-item .lap-diff { color: rgba(255,255,255,0.4); font-size: 12px; }
         .lap-item.best .lap-time { color: #4ade80; }
         .lap-item.worst .lap-time { color: #ff5470; }
@@ -120,13 +120,13 @@
         }
         .time-input-group input {
             width: 72px; padding: 12px 8px; text-align: center;
-            background: rgba(255,255,255,0.06); border: 1px solid rgba(51,255,255,0.15);
+            background: rgba(255,255,255,0.06); border: 1px solid rgba(238, 106, 40,0.15);
             border-radius: 12px; color: #fff; font-size: 28px; font-weight: 600;
             font-family: 'Courier New', monospace;
         }
         .time-input-group input:focus {
-            outline: none; border-color: rgba(51,255,255,0.4);
-            box-shadow: 0 0 12px rgba(51,255,255,0.15);
+            outline: none; border-color: rgba(238, 106, 40,0.4);
+            box-shadow: 0 0 12px rgba(238, 106, 40,0.15);
         }
         .time-sep { font-size: 28px; color: rgba(255,255,255,0.3); font-weight: 700; }
 
@@ -135,11 +135,11 @@
         }
         .preset-btn {
             padding: 8px 16px; border-radius: 10px;
-            background: rgba(51,255,255,0.08); border: 1px solid rgba(51,255,255,0.15);
-            color: #33FFFF; font-size: 13px; font-weight: 600; cursor: pointer;
+            background: rgba(238, 106, 40,0.08); border: 1px solid rgba(238, 106, 40,0.15);
+            color: #EE6A28; font-size: 13px; font-weight: 600; cursor: pointer;
             transition: all 0.15s;
         }
-        .preset-btn:hover { background: rgba(51,255,255,0.18); }
+        .preset-btn:hover { background: rgba(238, 106, 40,0.18); }
 
         .stopwatch-view, .timer-view { display: none; flex-direction: column; align-items: center; }
         .stopwatch-view.active, .timer-view.active { display: flex; }
@@ -275,7 +275,7 @@
     particlesJS("particles-js", {
         particles: {
             number: { value: 40, density: { enable: true, value_area: 900 } },
-            color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
+            color: { value: ["#EE6A28","#FF8A4C","#C4531A","#ffffff"] },
             shape: { type: "circle" },
             opacity: { value: 0.2 },
             size: { value: 2, random: true },
@@ -457,8 +457,8 @@
             ring.style.stroke = '#ff5470';
             ring.style.filter = 'drop-shadow(0 0 6px rgba(255,84,112,0.5))';
         } else {
-            ring.style.stroke = '#33FFFF';
-            ring.style.filter = 'drop-shadow(0 0 6px rgba(51,255,255,0.4))';
+            ring.style.stroke = '#EE6A28';
+            ring.style.filter = 'drop-shadow(0 0 6px rgba(238, 106, 40,0.4))';
         }
     }
 
@@ -490,7 +490,7 @@
         // Flash effect + sound
         let flashes = 0;
         const flashInterval = setInterval(() => {
-            document.body.style.background = flashes % 2 === 0 ? 'rgba(51,255,255,0.15)' : '#000';
+            document.body.style.background = flashes % 2 === 0 ? 'rgba(238, 106, 40,0.15)' : '#000';
             flashes++;
             if (flashes > 8) {
                 clearInterval(flashInterval);

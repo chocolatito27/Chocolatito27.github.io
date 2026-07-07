@@ -29,8 +29,8 @@
             height: 100%;
             z-index: 0;
         }
-.menu-icon:hover { color: #33FFFF; }
-.back-arrow:hover { color: #33FFFF; }
+.menu-icon:hover { color: #EE6A28; }
+.back-arrow:hover { color: #EE6A28; }
 /* ── Main Container ──────────────────────────── */
         .piano-page {
             position: relative;
@@ -44,8 +44,8 @@
 
         .piano-title {
             font-size: clamp(1.8rem, 5vw, 2.6rem);
-            color: #33FFFF;
-            text-shadow: 0 0 20px rgba(51,255,255,0.5), 0 0 40px rgba(51,255,255,0.25);
+            color: #EE6A28;
+            text-shadow: 0 0 20px rgba(238, 106, 40,0.5), 0 0 40px rgba(238, 106, 40,0.25);
             margin-bottom: 20px;
             margin-top: 10px;
             letter-spacing: 2px;
@@ -56,10 +56,10 @@
             max-width: 900px;
             width: 100%;
             background: rgba(0,0,0,0.8);
-            border: 1px solid rgba(51,255,255,0.25);
+            border: 1px solid rgba(238, 106, 40,0.25);
             border-radius: 16px;
             padding: 20px;
-            box-shadow: 0 0 30px rgba(51,255,255,0.08), inset 0 0 30px rgba(51,255,255,0.03);
+            box-shadow: 0 0 30px rgba(238, 106, 40,0.08), inset 0 0 30px rgba(238, 106, 40,0.03);
         }
 
         /* ── Visualizer ──────────────────────────────── */
@@ -70,7 +70,7 @@
             overflow: hidden;
             margin-bottom: 16px;
             background: rgba(0,0,0,0.5);
-            border: 1px solid rgba(51,255,255,0.15);
+            border: 1px solid rgba(238, 106, 40,0.15);
         }
         #visualizer {
             width: 100%;
@@ -89,7 +89,7 @@
             padding: 12px;
             background: rgba(0,0,0,0.4);
             border-radius: 10px;
-            border: 1px solid rgba(51,255,255,0.1);
+            border: 1px solid rgba(238, 106, 40,0.1);
         }
 
         .control-group {
@@ -113,7 +113,7 @@
         .wave-pill {
             padding: 5px 12px;
             font-size: 0.75rem;
-            border: 1px solid rgba(51,255,255,0.4);
+            border: 1px solid rgba(238, 106, 40,0.4);
             border-radius: 20px;
             background: transparent;
             color: #ccc;
@@ -124,15 +124,15 @@
             letter-spacing: 0.5px;
         }
         .wave-pill:hover {
-            background: rgba(51,255,255,0.15);
+            background: rgba(238, 106, 40,0.15);
             color: #fff;
         }
         .wave-pill.active {
-            background: #33FFFF;
+            background: #EE6A28;
             color: #000;
-            border-color: #33FFFF;
+            border-color: #EE6A28;
             font-weight: 700;
-            box-shadow: 0 0 10px rgba(51,255,255,0.4);
+            box-shadow: 0 0 10px rgba(238, 106, 40,0.4);
         }
 
         /* Volume slider */
@@ -142,7 +142,7 @@
             gap: 8px;
         }
         .volume-wrap i {
-            color: #33FFFF;
+            color: #EE6A28;
             font-size: 0.9rem;
         }
         .volume-slider {
@@ -150,7 +150,7 @@
             appearance: none;
             width: 90px;
             height: 4px;
-            background: rgba(51,255,255,0.2);
+            background: rgba(238, 106, 40,0.2);
             border-radius: 2px;
             outline: none;
         }
@@ -159,21 +159,21 @@
             width: 14px;
             height: 14px;
             border-radius: 50%;
-            background: #33FFFF;
+            background: #EE6A28;
             cursor: pointer;
-            box-shadow: 0 0 6px rgba(51,255,255,0.5);
+            box-shadow: 0 0 6px rgba(238, 106, 40,0.5);
         }
         .volume-slider::-moz-range-thumb {
             width: 14px;
             height: 14px;
             border-radius: 50%;
-            background: #33FFFF;
+            background: #EE6A28;
             cursor: pointer;
             border: none;
         }
         .volume-pct {
             font-size: 0.75rem;
-            color: #33FFFF;
+            color: #EE6A28;
             min-width: 32px;
             text-align: right;
         }
@@ -187,7 +187,7 @@
         .oct-btn {
             width: 28px;
             height: 28px;
-            border: 1px solid rgba(51,255,255,0.4);
+            border: 1px solid rgba(238, 106, 40,0.4);
             border-radius: 6px;
             background: transparent;
             color: #ccc;
@@ -200,12 +200,12 @@
             font-family: inherit;
         }
         .oct-btn:hover {
-            background: rgba(51,255,255,0.15);
+            background: rgba(238, 106, 40,0.15);
             color: #fff;
         }
         .oct-range {
             font-size: 0.8rem;
-            color: #33FFFF;
+            color: #EE6A28;
             min-width: 40px;
             text-align: center;
         }
@@ -224,11 +224,11 @@
             cursor: pointer;
             position: relative;
             transition: background 0.25s;
-            border: 1px solid rgba(51,255,255,0.2);
+            border: 1px solid rgba(238, 106, 40,0.2);
         }
         .sustain-toggle.on {
-            background: rgba(51,255,255,0.35);
-            border-color: #33FFFF;
+            background: rgba(238, 106, 40,0.35);
+            border-color: #EE6A28;
         }
         .sustain-toggle .knob {
             width: 16px;
@@ -242,15 +242,15 @@
         }
         .sustain-toggle.on .knob {
             left: 22px;
-            background: #33FFFF;
-            box-shadow: 0 0 8px rgba(51,255,255,0.6);
+            background: #EE6A28;
+            box-shadow: 0 0 8px rgba(238, 106, 40,0.6);
         }
 
         /* Shortcuts toggle */
         .shortcuts-btn {
             padding: 5px 10px;
             font-size: 0.72rem;
-            border: 1px solid rgba(51,255,255,0.4);
+            border: 1px solid rgba(238, 106, 40,0.4);
             border-radius: 6px;
             background: transparent;
             color: #ccc;
@@ -259,13 +259,13 @@
             font-family: inherit;
         }
         .shortcuts-btn:hover {
-            background: rgba(51,255,255,0.15);
+            background: rgba(238, 106, 40,0.15);
             color: #fff;
         }
         .shortcuts-btn.active {
-            background: rgba(51,255,255,0.2);
-            color: #33FFFF;
-            border-color: #33FFFF;
+            background: rgba(238, 106, 40,0.2);
+            color: #EE6A28;
+            border-color: #EE6A28;
         }
 
         /* ── Recording ───────────────────────────────── */
@@ -279,12 +279,12 @@
             padding: 10px;
             background: rgba(0,0,0,0.3);
             border-radius: 10px;
-            border: 1px solid rgba(51,255,255,0.08);
+            border: 1px solid rgba(238, 106, 40,0.08);
         }
         .rec-btn {
             padding: 6px 14px;
             font-size: 0.78rem;
-            border: 1px solid rgba(51,255,255,0.4);
+            border: 1px solid rgba(238, 106, 40,0.4);
             border-radius: 8px;
             background: transparent;
             color: #ccc;
@@ -296,7 +296,7 @@
             gap: 6px;
         }
         .rec-btn:hover {
-            background: rgba(51,255,255,0.15);
+            background: rgba(238, 106, 40,0.15);
             color: #fff;
         }
         .rec-btn.recording {
@@ -309,15 +309,15 @@
             50% { box-shadow: 0 0 0 6px rgba(255,68,68,0); }
         }
         .rec-btn.playing {
-            border-color: #33FFFF;
-            color: #33FFFF;
+            border-color: #EE6A28;
+            color: #EE6A28;
         }
         .rec-info {
             font-size: 0.75rem;
             color: #888;
         }
         .rec-info span {
-            color: #33FFFF;
+            color: #EE6A28;
         }
 
         /* ── Piano Keyboard ──────────────────────────── */
@@ -332,11 +332,11 @@
             height: 6px;
         }
         .keyboard-scroll::-webkit-scrollbar-track {
-            background: rgba(51,255,255,0.05);
+            background: rgba(238, 106, 40,0.05);
             border-radius: 3px;
         }
         .keyboard-scroll::-webkit-scrollbar-thumb {
-            background: rgba(51,255,255,0.25);
+            background: rgba(238, 106, 40,0.25);
             border-radius: 3px;
         }
 
@@ -374,8 +374,8 @@
         }
         .white-key.active {
             background: linear-gradient(180deg, #ccffff 0%, #99eeee 85%, #66dddd 100%);
-            box-shadow: 0 0 18px rgba(51,255,255,0.6), inset 0 0 10px rgba(51,255,255,0.2);
-            border-color: #33FFFF;
+            box-shadow: 0 0 18px rgba(238, 106, 40,0.6), inset 0 0 10px rgba(238, 106, 40,0.2);
+            border-color: #EE6A28;
         }
         .white-key .note-name {
             font-size: 0.65rem;
@@ -383,7 +383,7 @@
             font-weight: 600;
         }
         .white-key.active .note-name {
-            color: #006666;
+            color: #8a3d15;
         }
         .white-key .key-label {
             font-size: 0.6rem;
@@ -394,8 +394,8 @@
             border-radius: 3px;
         }
         .white-key.active .key-label {
-            color: #006666;
-            background: rgba(51,255,255,0.15);
+            color: #8a3d15;
+            background: rgba(238, 106, 40,0.15);
         }
 
         .black-key {
@@ -419,9 +419,9 @@
             background: linear-gradient(180deg, #444 0%, #222 60%, #111 100%);
         }
         .black-key.active {
-            background: linear-gradient(180deg, #226666 0%, #114444 60%, #003333 100%);
-            box-shadow: 0 0 16px rgba(51,255,255,0.5), 0 3px 6px rgba(0,0,0,0.6);
-            border-color: #33FFFF;
+            background: linear-gradient(180deg, #226666 0%, #114444 60%, #3a1e0e 100%);
+            box-shadow: 0 0 16px rgba(238, 106, 40,0.5), 0 3px 6px rgba(0,0,0,0.6);
+            border-color: #EE6A28;
         }
         .black-key .note-name {
             font-size: 0.5rem;
@@ -429,7 +429,7 @@
             font-weight: 600;
         }
         .black-key.active .note-name {
-            color: #33FFFF;
+            color: #EE6A28;
         }
         .black-key .key-label {
             font-size: 0.5rem;
@@ -437,14 +437,14 @@
             margin-top: 2px;
         }
         .black-key.active .key-label {
-            color: #33FFFF;
+            color: #EE6A28;
         }
 
         /* Ripple effect */
         .key-ripple {
             position: absolute;
             border-radius: 50%;
-            background: radial-gradient(circle, rgba(51,255,255,0.4) 0%, rgba(51,255,255,0) 70%);
+            background: radial-gradient(circle, rgba(238, 106, 40,0.4) 0%, rgba(238, 106, 40,0) 70%);
             pointer-events: none;
             animation: ripple-out 0.6s ease-out forwards;
             z-index: 10;
@@ -462,8 +462,8 @@
             color: #666;
         }
         .instructions kbd {
-            background: rgba(51,255,255,0.1);
-            border: 1px solid rgba(51,255,255,0.2);
+            background: rgba(238, 106, 40,0.1);
+            border: 1px solid rgba(238, 106, 40,0.2);
             border-radius: 3px;
             padding: 1px 5px;
             color: #aaa;
@@ -627,7 +627,7 @@
     particlesJS("particles-js", {
         particles: {
             number: { value: 80, density: { enable: true, value_area: 800 } },
-            color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
+            color: { value: ["#EE6A28","#FF8A4C","#C4531A","#ffffff"] },
             shape: { type: "circle" },
             opacity: { value: 0.5 },
             size: { value: 3, random: true },
@@ -1092,7 +1092,7 @@
         ctx.fillRect(0, 0, w, h);
 
         if (!analyserNode) {
-            ctx.strokeStyle = 'rgba(51,255,255,0.3)';
+            ctx.strokeStyle = 'rgba(238, 106, 40,0.3)';
             ctx.lineWidth = 1;
             ctx.beginPath();
             ctx.moveTo(0, h / 2);
@@ -1106,8 +1106,8 @@
         analyserNode.getByteTimeDomainData(data);
 
         ctx.lineWidth = 2;
-        ctx.strokeStyle = '#33FFFF';
-        ctx.shadowColor = 'rgba(51,255,255,0.5)';
+        ctx.strokeStyle = '#EE6A28';
+        ctx.shadowColor = 'rgba(238, 106, 40,0.5)';
         ctx.shadowBlur = 4;
         ctx.beginPath();
 

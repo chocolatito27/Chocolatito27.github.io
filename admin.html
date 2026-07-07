@@ -25,9 +25,9 @@
     }
 
     h1 {
-      color: #33FFFF;
+      color: #EE6A28;
       font-family: 'Arial Black', sans-serif;
-      text-shadow: 0 0 14px rgba(51,255,255,0.6);
+      text-shadow: 0 0 14px rgba(238, 106, 40,0.6);
       text-align: center;
       margin-bottom: 6px;
       font-size: 1.8rem;
@@ -43,43 +43,43 @@
     .admin-login-card {
       max-width: 380px; margin: 80px auto 0;
       background: rgba(0,0,0,0.75);
-      border: 1px solid rgba(51,255,255,0.3);
+      border: 1px solid rgba(238, 106, 40,0.3);
       border-radius: 14px;
       padding: 32px 28px;
       backdrop-filter: blur(6px);
     }
     .admin-login-card h2 {
-      color: #33FFFF; margin-bottom: 18px; text-align: center; font-size: 1.3rem;
+      color: #EE6A28; margin-bottom: 18px; text-align: center; font-size: 1.3rem;
     }
     .admin-login-card input {
       width: 100%; padding: 11px 14px;
       background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(51,255,255,0.3);
+      border: 1px solid rgba(238, 106, 40,0.3);
       border-radius: 8px;
       color: #fff; font-size: 0.95rem;
       outline: none; margin-bottom: 14px;
     }
-    .admin-login-card input:focus { border-color: #33FFFF; box-shadow: 0 0 8px rgba(51,255,255,0.3); }
+    .admin-login-card input:focus { border-color: #EE6A28; box-shadow: 0 0 8px rgba(238, 106, 40,0.3); }
 
     /* ─── Botones ─── */
     .btn {
       padding: 9px 18px;
-      border: 1px solid #33FFFF;
+      border: 1px solid #EE6A28;
       background: transparent;
-      color: #33FFFF;
+      color: #EE6A28;
       border-radius: 8px;
       cursor: pointer;
       font-size: 0.9rem;
       font-weight: 600;
       transition: background 0.2s, color 0.2s;
     }
-    .btn:hover:not(:disabled) { background: #33FFFF; color: #000; }
+    .btn:hover:not(:disabled) { background: #EE6A28; color: #000; }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
 
     .btn-primary {
-      background: #33FFFF; color: #000; border: none;
+      background: #EE6A28; color: #000; border: none;
     }
-    .btn-primary:hover:not(:disabled) { background: #00d6d6; }
+    .btn-primary:hover:not(:disabled) { background: #C4531A; }
 
     .btn-danger {
       border-color: #ff5470; color: #ff5470;
@@ -97,18 +97,18 @@
     .top-bar .stats {
       color: rgba(255,255,255,0.8); font-size: 0.9rem;
     }
-    .top-bar .stats strong { color: #33FFFF; }
+    .top-bar .stats strong { color: #EE6A28; }
 
     /* ─── Tarjeta crear usuario ─── */
     .create-card {
       background: rgba(0,0,0,0.7);
-      border: 1px solid rgba(51,255,255,0.25);
+      border: 1px solid rgba(238, 106, 40,0.25);
       border-radius: 12px;
       padding: 20px;
       margin-bottom: 22px;
     }
     .create-card h3 {
-      color: #33FFFF; margin-bottom: 14px; font-size: 1.05rem;
+      color: #EE6A28; margin-bottom: 14px; font-size: 1.05rem;
     }
     .create-grid {
       display: grid;
@@ -123,12 +123,12 @@
       color: #fff; font-size: 0.88rem;
       outline: none;
     }
-    .create-grid input:focus { border-color: #33FFFF; }
+    .create-grid input:focus { border-color: #EE6A28; }
 
     /* ─── Tabla ─── */
     .table-wrap {
       background: rgba(0,0,0,0.7);
-      border: 1px solid rgba(51,255,255,0.25);
+      border: 1px solid rgba(238, 106, 40,0.25);
       border-radius: 12px;
       overflow: hidden;
     }
@@ -142,8 +142,8 @@
       font-size: 0.88rem;
     }
     th {
-      background: rgba(51,255,255,0.08);
-      color: #33FFFF;
+      background: rgba(238, 106, 40,0.08);
+      color: #EE6A28;
       font-weight: 700;
       font-size: 0.78rem;
       text-transform: uppercase;
@@ -152,7 +152,7 @@
     tbody tr:hover { background: rgba(255,255,255,0.03); }
     td.id-col {
       font-family: 'Courier New', monospace;
-      color: #33FFFF; font-weight: 700;
+      color: #EE6A28; font-weight: 700;
       letter-spacing: 1px;
     }
     td.actions {
@@ -258,7 +258,7 @@ const API_BASE = "https://chocolatito-api-production.up.railway.app/api";
 particlesJS("particles-js", {
   particles: {
     number: { value: 60, density: { enable: true, value_area: 800 } },
-    color: { value: ["#FF0000","#00FF00","#0000FF","#FFFF00","#00FFFF","#FF00FF"] },
+    color: { value: ["#EE6A28","#FF8A4C","#C4531A","#ffffff"] },
     shape: { type: "circle" },
     opacity: { value: 0.4 },
     size: { value: 3, random: true },

@@ -75,8 +75,8 @@ body, html {
   transition: color 0.2s;
 }
 
-.sidebar ul li a:hover  { color: #33FFFF; }
-.sidebar ul li a.active { color: #33FFFF; font-weight: 700; }
+.sidebar ul li a:hover  { color: #EE6A28; }
+.sidebar ul li a.active { color: #EE6A28; font-weight: 700; }
 
 .sidebar-social {
   display: flex;
@@ -121,21 +121,21 @@ body, html {
   justify-content: center;
   padding: 14px 24px 14px 70px;
   background: rgba(0,0,0,0.85);
-  border-bottom: 1px solid rgba(0,255,255,0.2);
+  border-bottom: 1px solid rgba(255, 138, 76,0.2);
   flex-shrink: 0;
 }
 .cai-logo {
   font-family: 'Arial Black', Arial, sans-serif;
   font-size: 1.2rem;
-  color: #33FFFF;
-  text-shadow: 0 0 14px rgba(51,255,255,0.7);
+  color: #EE6A28;
+  text-shadow: 0 0 14px rgba(238, 106, 40,0.7);
   letter-spacing: 0.04em;
 }
 .cai-dot {
   width: 9px; height: 9px;
   border-radius: 50%;
-  background: #33FFFF;
-  box-shadow: 0 0 8px #33FFFF;
+  background: #EE6A28;
+  box-shadow: 0 0 8px #EE6A28;
   margin-left: 10px;
   flex-shrink: 0;
 }
@@ -149,11 +149,11 @@ body, html {
   flex-direction: column;
   gap: 14px;
   scrollbar-width: thin;
-  scrollbar-color: rgba(0,255,255,0.2) transparent;
+  scrollbar-color: rgba(255, 138, 76,0.2) transparent;
 }
 .cai-messages::-webkit-scrollbar       { width: 5px; }
 .cai-messages::-webkit-scrollbar-track { background: transparent; }
-.cai-messages::-webkit-scrollbar-thumb { background: rgba(0,255,255,0.2); border-radius: 10px; }
+.cai-messages::-webkit-scrollbar-thumb { background: rgba(255, 138, 76,0.2); border-radius: 10px; }
 
 /* ── Burbujas ─────────────────────────────────────────────────────── */
 .bubble-row           { display: flex; }
@@ -170,8 +170,8 @@ body, html {
   animation: cai-pop 0.18s ease;
 }
 .bubble.user {
-  background: rgba(0,255,255,0.15);
-  border: 1px solid rgba(0,255,255,0.4);
+  background: rgba(255, 138, 76,0.15);
+  border: 1px solid rgba(255, 138, 76,0.4);
   color: #fff;
   border-bottom-right-radius: 4px;
 }
@@ -185,29 +185,29 @@ body, html {
 /* ── Markdown ─────────────────────────────────────────────────────── */
 .bubble p               { margin: 0 0 8px; }
 .bubble p:last-child    { margin-bottom: 0; }
-.bubble h1              { font-size: 1.25em; font-weight: 700; margin: 12px 0 6px; color: #33FFFF; }
-.bubble h2              { font-size: 1.1em;  font-weight: 700; margin: 10px 0 5px; color: #33FFFF; }
+.bubble h1              { font-size: 1.25em; font-weight: 700; margin: 12px 0 6px; color: #EE6A28; }
+.bubble h2              { font-size: 1.1em;  font-weight: 700; margin: 10px 0 5px; color: #EE6A28; }
 .bubble h3, .bubble h4  { font-size: 1em;   font-weight: 700; margin: 8px 0 4px; }
 .bubble ul, .bubble ol  { padding-left: 22px; margin: 6px 0; }
 .bubble li              { margin: 3px 0; }
 .bubble strong          { font-weight: 700; color: #fff; }
 .bubble em              { font-style: italic; opacity: 0.9; }
-.bubble blockquote      { border-left: 3px solid #33FFFF; padding-left: 12px; margin: 8px 0; opacity: 0.8; }
+.bubble blockquote      { border-left: 3px solid #EE6A28; padding-left: 12px; margin: 8px 0; opacity: 0.8; }
 .bubble hr              { border: none; border-top: 1px solid rgba(255,255,255,0.15); margin: 10px 0; }
-.bubble a               { color: #33FFFF; }
+.bubble a               { color: #EE6A28; }
 .bubble table           { border-collapse: collapse; width: 100%; margin: 8px 0; font-size: 0.88em; }
 .bubble th, .bubble td  { border: 1px solid rgba(255,255,255,0.15); padding: 6px 10px; }
-.bubble th              { background: rgba(51,255,255,0.1); color: #33FFFF; }
+.bubble th              { background: rgba(238, 106, 40,0.1); color: #EE6A28; }
 
 /* Código en línea */
 .bubble code:not(.hljs) {
-  background: rgba(51,255,255,0.1);
-  border: 1px solid rgba(51,255,255,0.2);
+  background: rgba(238, 106, 40,0.1);
+  border: 1px solid rgba(238, 106, 40,0.2);
   border-radius: 4px;
   padding: 1px 6px;
   font-family: 'Courier New', monospace;
   font-size: 0.87em;
-  color: #33FFFF;
+  color: #EE6A28;
 }
 
 /* Bloques de código */
@@ -234,17 +234,17 @@ body, html {
 .copy-btn {
   position: absolute;
   top: 8px; right: 8px;
-  background: rgba(51,255,255,0.12);
-  border: 1px solid rgba(51,255,255,0.3);
+  background: rgba(238, 106, 40,0.12);
+  border: 1px solid rgba(238, 106, 40,0.3);
   border-radius: 6px;
-  color: #33FFFF;
+  color: #EE6A28;
   padding: 3px 9px;
   font-size: 0.74rem;
   cursor: pointer;
   transition: background 0.2s, color 0.2s;
   white-space: nowrap;
 }
-.copy-btn:hover  { background: rgba(51,255,255,0.28); }
+.copy-btn:hover  { background: rgba(238, 106, 40,0.28); }
 .copy-btn.copied { color: #4ade80; border-color: #4ade80; }
 
 /* KaTeX */
@@ -255,7 +255,7 @@ body, html {
 .bubble.typing { display: flex; gap: 6px; align-items: center; padding: 14px 18px; }
 .bubble.typing span {
   display: inline-block; width: 8px; height: 8px;
-  border-radius: 50%; background: #33FFFF; opacity: 0.5;
+  border-radius: 50%; background: #EE6A28; opacity: 0.5;
   animation: cai-bounce 1.2s infinite;
 }
 .bubble.typing span:nth-child(2) { animation-delay: 0.2s; }
@@ -277,13 +277,13 @@ body, html {
   gap: 10px;
   padding: 14px 24px;
   background: rgba(0,0,0,0.85);
-  border-top: 1px solid rgba(0,255,255,0.2);
+  border-top: 1px solid rgba(255, 138, 76,0.2);
   flex-shrink: 0;
 }
 .cai-input {
   flex: 1; resize: none;
   background: rgba(255,255,255,0.06);
-  border: 1px solid rgba(0,255,255,0.25);
+  border: 1px solid rgba(255, 138, 76,0.25);
   border-radius: 12px;
   padding: 10px 14px;
   color: #fff;
@@ -295,18 +295,18 @@ body, html {
   outline: none;
   transition: border-color 0.2s, box-shadow 0.2s;
 }
-.cai-input:focus        { border-color: #33FFFF; box-shadow: 0 0 10px rgba(51,255,255,0.25); }
+.cai-input:focus        { border-color: #EE6A28; box-shadow: 0 0 10px rgba(238, 106, 40,0.25); }
 .cai-input::placeholder { color: rgba(255,255,255,0.3); }
 .cai-input:disabled     { opacity: 0.4; cursor: not-allowed; }
 
 .cai-send {
   flex-shrink: 0; width: 44px; height: 44px;
   border-radius: 50%; background: transparent;
-  border: 1.5px solid #33FFFF; color: #33FFFF; cursor: pointer;
+  border: 1.5px solid #EE6A28; color: #EE6A28; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
 }
-.cai-send:hover:not(:disabled)  { background: rgba(51,255,255,0.15); box-shadow: 0 0 12px rgba(51,255,255,0.5); }
+.cai-send:hover:not(:disabled)  { background: rgba(238, 106, 40,0.15); box-shadow: 0 0 12px rgba(238, 106, 40,0.5); }
 .cai-send:active:not(:disabled) { transform: scale(0.9); }
 .cai-send:disabled               { opacity: 0.3; cursor: not-allowed; }
 
@@ -473,10 +473,10 @@ body, html {
 .cai-header-left { display: flex; align-items: center; gap: 12px; }
 .cai-avatar {
   width: 40px; height: 40px; border-radius: 50%;
-  background: linear-gradient(135deg, #33FFFF, #00c8c8);
+  background: linear-gradient(135deg, #EE6A28, #C4531A);
   display: flex; align-items: center; justify-content: center;
   color: #000; font-size: 18px;
-  box-shadow: 0 0 15px rgba(51,255,255,0.3);
+  box-shadow: 0 0 15px rgba(238, 106, 40,0.3);
 }
 .cai-status {
   display: flex; align-items: center; gap: 6px;
@@ -509,13 +509,13 @@ body, html {
   display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
 }
 .cai-suggestion {
-  padding: 8px 14px; background: rgba(51,255,255,0.08);
-  border: 1px solid rgba(51,255,255,0.2); border-radius: 20px;
-  color: #33FFFF; font-size: 0.8rem; cursor: pointer;
+  padding: 8px 14px; background: rgba(238, 106, 40,0.08);
+  border: 1px solid rgba(238, 106, 40,0.2); border-radius: 20px;
+  color: #EE6A28; font-size: 0.8rem; cursor: pointer;
   font-family: inherit; transition: all 0.2s;
 }
 .cai-suggestion:hover {
-  background: rgba(51,255,255,0.15); border-color: rgba(51,255,255,0.5);
+  background: rgba(238, 106, 40,0.15); border-color: rgba(238, 106, 40,0.5);
   transform: translateY(-1px);
 }
 
@@ -526,7 +526,7 @@ body, html {
 }
 .cai-typing span {
   width: 6px; height: 6px; border-radius: 50%;
-  background: #33FFFF; opacity: 0.4;
+  background: #EE6A28; opacity: 0.4;
   animation: typing-bounce 1.2s infinite;
 }
 .cai-typing span:nth-child(2) { animation-delay: 0.2s; }
@@ -540,13 +540,13 @@ body, html {
 .cai-progress-badge {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 4px 12px; margin-bottom: 8px;
-  background: rgba(51,255,255,0.1); border: 1px solid rgba(51,255,255,0.2);
-  border-radius: 12px; font-size: 0.75rem; color: #33FFFF;
+  background: rgba(238, 106, 40,0.1); border: 1px solid rgba(238, 106, 40,0.2);
+  border-radius: 12px; font-size: 0.75rem; color: #EE6A28;
   animation: fade-in 0.3s ease;
 }
 .cai-progress-badge .spinner {
-  width: 12px; height: 12px; border: 2px solid rgba(51,255,255,0.2);
-  border-top-color: #33FFFF; border-radius: 50%;
+  width: 12px; height: 12px; border: 2px solid rgba(238, 106, 40,0.2);
+  border-top-color: #EE6A28; border-radius: 50%;
   animation: spin 0.8s linear infinite;
 }
 @keyframes spin { to { transform: rotate(360deg); } }
@@ -555,7 +555,7 @@ body, html {
 /* ── Contenedor de gráficos Plotly ─────────────────────────────── */
 .cai-chart-container {
   margin: 12px 0; padding: 16px;
-  background: rgba(0,0,0,0.4); border: 1px solid rgba(51,255,255,0.15);
+  background: rgba(0,0,0,0.4); border: 1px solid rgba(238, 106, 40,0.15);
   border-radius: 12px; overflow: hidden;
 }
 .cai-chart-container .plotly {
@@ -565,8 +565,8 @@ body, html {
 /* ── Paso a paso destacado ─────────────────────────────────────── */
 .bubble.assistant .step-marker {
   display: inline-block; width: 24px; height: 24px;
-  border-radius: 50%; background: rgba(51,255,255,0.15);
-  color: #33FFFF; font-size: 0.75rem; font-weight: 700;
+  border-radius: 50%; background: rgba(238, 106, 40,0.15);
+  color: #EE6A28; font-size: 0.75rem; font-weight: 700;
   text-align: center; line-height: 24px; margin-right: 8px;
   vertical-align: middle;
 }
@@ -579,21 +579,21 @@ body, html {
 .copy-btn {
   position: absolute; top: 6px; right: 6px;
   padding: 4px 10px; font-size: 0.72rem;
-  background: rgba(51,255,255,0.15); color: #33FFFF;
-  border: 1px solid rgba(51,255,255,0.2); border-radius: 6px;
+  background: rgba(238, 106, 40,0.15); color: #EE6A28;
+  border: 1px solid rgba(238, 106, 40,0.2); border-radius: 6px;
   cursor: pointer; font-family: inherit; transition: all 0.2s;
   z-index: 2;
 }
-.copy-btn:hover { background: rgba(51,255,255,0.25); }
+.copy-btn:hover { background: rgba(238, 106, 40,0.25); }
 .copy-btn.copied { background: rgba(74,222,128,0.2); color: #4ade80; border-color: rgba(74,222,128,0.3); }
 
 /* ── Scrollbar mejorada ────────────────────────────────────────── */
 .cai-messages::-webkit-scrollbar { width: 6px; }
 .cai-messages::-webkit-scrollbar-track { background: transparent; }
 .cai-messages::-webkit-scrollbar-thumb {
-  background: rgba(51,255,255,0.2); border-radius: 3px;
+  background: rgba(238, 106, 40,0.2); border-radius: 3px;
 }
-.cai-messages::-webkit-scrollbar-thumb:hover { background: rgba(51,255,255,0.4); }
+.cai-messages::-webkit-scrollbar-thumb:hover { background: rgba(238, 106, 40,0.4); }
 
 /* ── Responsive ────────────────────────────────────────────────── */
 @media (max-width: 600px) {

@@ -1430,7 +1430,7 @@ function addRP(id,uname,ci,outfit={}){
   const cv=document.createElement('canvas');cv.width=256;cv.height=52;
   const ctx=cv.getContext('2d');
   ctx.fillStyle='rgba(0,0,0,0.65)';ctx.roundRect(2,2,252,48,8);ctx.fill();
-  ctx.fillStyle='#00f5d4';ctx.font='bold 24px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
+  ctx.fillStyle='#FF8A4C';ctx.font='bold 24px Arial';ctx.textAlign='center';ctx.textBaseline='middle';
   ctx.fillText(uname.substring(0,14),128,26);
   const sp=new THREE.Sprite(new THREE.SpriteMaterial({map:new THREE.CanvasTexture(cv),depthTest:false}));
   sp.scale.set(2,0.44,1);sp.position.y=2.4;g.add(sp);

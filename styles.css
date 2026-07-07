@@ -20,7 +20,7 @@ body, html {
 
 /* ══════════════════════════════════════════════════════════════════
    SIDEBAR UNIFICADO — mismo estilo en TODAS las páginas
-   Estilo cyber neón con background oscuro y acentos cyan
+   Estilo cyber neón con background oscuro y acentos naranja
 ════════════════════════════════════════════════════════════════ */
 
 .menu-icon {
@@ -28,19 +28,19 @@ body, html {
     top: 16px;
     left: 16px;
     font-size: 24px;
-    color: #33FFFF;
+    color: #EE6A28;
     cursor: pointer;
     z-index: 1100;
     background: rgba(0, 0, 0, 0.7);
     padding: 8px 12px;
     border-radius: 8px;
-    border: 1px solid rgba(51, 255, 255, 0.2);
-    text-shadow: 0 0 8px rgba(51, 255, 255, 0.5);
+    border: 1px solid rgba(238, 106, 40, 0.2);
+    text-shadow: 0 0 8px rgba(238, 106, 40, 0.5);
     transition: background 0.2s, transform 0.1s;
     user-select: none;
 }
 .menu-icon:hover {
-    background: rgba(51, 255, 255, 0.15);
+    background: rgba(238, 106, 40, 0.15);
 }
 .menu-icon:active {
     transform: scale(0.95);
@@ -57,7 +57,7 @@ body, html {
     z-index: 1050;
     display: flex;
     flex-direction: column;
-    border-right: 1px solid rgba(51, 255, 255, 0.2);
+    border-right: 1px solid rgba(238, 106, 40, 0.2);
     box-shadow: 4px 0 24px rgba(0, 0, 0, 0.6);
 }
 
@@ -68,9 +68,9 @@ body, html {
 .sidebar-header {
     padding: 18px 20px;
     background: rgba(0, 0, 0, 0.6);
-    color: #33FFFF;
+    color: #EE6A28;
     text-align: right;
-    border-bottom: 1px solid rgba(51, 255, 255, 0.15);
+    border-bottom: 1px solid rgba(238, 106, 40, 0.15);
 }
 
 .back-arrow {
@@ -82,21 +82,21 @@ body, html {
 }
 .back-arrow:hover {
     opacity: 1;
-    color: #33FFFF;
+    color: #EE6A28;
 }
 
 /* Tarjeta de usuario (inyectada por session.js) */
 .user-info {
     padding: 14px 20px;
-    background: rgba(51, 255, 255, 0.08);
-    border-bottom: 1px solid rgba(51, 255, 255, 0.15);
+    background: rgba(238, 106, 40, 0.08);
+    border-bottom: 1px solid rgba(238, 106, 40, 0.15);
     display: flex;
     flex-direction: column;
     gap: 3px;
 }
 
 .user-info .user-name {
-    color: #33FFFF;
+    color: #EE6A28;
     font-weight: 700;
     font-size: 0.95rem;
     white-space: nowrap;
@@ -134,15 +134,15 @@ body, html {
 }
 
 .sidebar ul li a:hover {
-    color: #33FFFF;
-    background: rgba(51, 255, 255, 0.06);
+    color: #EE6A28;
+    background: rgba(238, 106, 40, 0.06);
     padding-left: 26px;
 }
 
 .sidebar ul li a.active {
-    color: #33FFFF;
-    background: rgba(51, 255, 255, 0.1);
-    border-left-color: #33FFFF;
+    color: #EE6A28;
+    background: rgba(238, 106, 40, 0.1);
+    border-left-color: #EE6A28;
     font-weight: 600;
 }
 
@@ -183,7 +183,7 @@ body, html {
 .main-content h1 {
     font-size: 48px;
     margin: 0;
-    color: #33FFFF;
+    color: #EE6A28;
     font-family: 'Arial Black', sans-serif;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
 }
@@ -249,7 +249,7 @@ body, html {
 }
 
 .game-card h2 {
-    color: #33FFFF;
+    color: #EE6A28;
     font-size: 24px;
     margin: 0;
 }
@@ -394,7 +394,7 @@ canvas {
 }
 
 .tool-card h2 {
-    color: #33FFFF;
+    color: #EE6A28;
     font-size: 24px;
     margin: 0;
 }
@@ -453,7 +453,7 @@ canvas {
     height: 620px;
     max-width: 120vw;
     transform: translate(-50%, -50%);
-    background: radial-gradient(circle, rgba(51,255,255,0.16) 0%, rgba(51,255,255,0.05) 35%, transparent 70%);
+    background: radial-gradient(circle, rgba(238, 106, 40,0.16) 0%, rgba(238, 106, 40,0.05) 35%, transparent 70%);
     z-index: 0;
     pointer-events: none;
 }
@@ -487,7 +487,7 @@ canvas {
     -webkit-user-select: none;
     touch-action: none;
     z-index: 3;
-    filter: drop-shadow(0 0 26px rgba(51,255,255,0.5));
+    filter: drop-shadow(0 0 26px rgba(238, 106, 40,0.5));
     translate: 0 0;
     animation: floatLogo 4.5s ease-in-out infinite;
 }
@@ -514,8 +514,8 @@ canvas {
     font-size: clamp(2.2rem, 7vw, 4rem);
     font-weight: 900;
     margin: 6px 0 0;
-    color: #33FFFF;
-    text-shadow: 0 0 44px rgba(51,255,255,0.45);
+    color: #EE6A28;
+    text-shadow: 0 0 44px rgba(238, 106, 40,0.45);
     letter-spacing: -0.02em;
     line-height: 1.05;
     z-index: 2;
@@ -541,7 +541,7 @@ canvas {
     padding: 30px 20px;
     text-decoration: none;
     background: rgba(255, 255, 255, 0.035);
-    border: 1px solid rgba(51, 255, 255, 0.18);
+    border: 1px solid rgba(238, 106, 40, 0.18);
     border-radius: 18px;
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
@@ -551,19 +551,19 @@ canvas {
 
 .hero-card:hover {
     transform: translateY(-6px);
-    border-color: rgba(51, 255, 255, 0.6);
-    box-shadow: 0 12px 44px rgba(51, 255, 255, 0.2);
-    background: rgba(51, 255, 255, 0.07);
+    border-color: rgba(238, 106, 40, 0.6);
+    box-shadow: 0 12px 44px rgba(238, 106, 40, 0.2);
+    background: rgba(238, 106, 40, 0.07);
 }
 
 .hero-card .ico {
     font-size: 2.5rem;
     line-height: 1;
-    filter: drop-shadow(0 0 12px rgba(51,255,255,0.35));
+    filter: drop-shadow(0 0 12px rgba(238, 106, 40,0.35));
 }
 
 .hero-card .t {
-    color: #33FFFF;
+    color: #EE6A28;
     font-weight: 800;
     font-size: 1.15rem;
     font-family: 'Inter', sans-serif;

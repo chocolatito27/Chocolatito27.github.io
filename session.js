@@ -69,7 +69,7 @@
       userWrap.id = "cw-sidebar-user-wrap";
       userWrap.style.cssText = "padding:14px 20px;background:rgba(108,141,245,0.15);border-bottom:1px solid rgba(255,255,255,0.1);display:flex;flex-direction:column;gap:3px;";
       userWrap.innerHTML = `
-        <div style="color:#33FFFF;font-weight:700;font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(user.username)}</div>
+        <div style="color:#EE6A28;font-weight:700;font-size:0.95rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${escHtml(user.username)}</div>
         <div style="color:#aaa;font-size:0.78rem;font-family:'Courier New',monospace;">ID: ${escHtml(user.id)}</div>
         <div style="color:#aaa;font-size:0.78rem;">Cr\u00e9ditos: <span style="color:#4ade80;font-weight:700;">${user.credits}</span></div>
       `;

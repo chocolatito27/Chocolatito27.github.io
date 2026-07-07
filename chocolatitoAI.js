@@ -27,11 +27,11 @@ function getToken() { return localStorage.getItem("cw_token"); }
 particlesJS("particles-js", {
   particles: {
     number: { value: 50, density: { enable: true, value_area: 900 } },
-    color: { value: ["#33FFFF", "#00c8c8", "#4ade80"] },
+    color: { value: ["#EE6A28", "#C4531A", "#4ade80"] },
     shape: { type: "circle" },
     opacity: { value: 0.3, random: true },
     size: { value: 2.5, random: true },
-    line_linked: { enable: true, distance: 130, color: "#33FFFF", opacity: 0.1, width: 1 },
+    line_linked: { enable: true, distance: 130, color: "#EE6A28", opacity: 0.1, width: 1 },
     move: { enable: true, speed: 1, direction: "none", random: true, straight: false, out_mode: "out" }
   },
   interactivity: { detect_on: "canvas", events: { onhover: { enable: true, mode: "grab" }, resize: true }, modes: { grab: { distance: 140, line_linked: { opacity: 0.2 } } } },
@@ -175,8 +175,8 @@ function renderPlotly(divId, config) {
           }
           return {
             x: xValues, y: yValues, type: "scatter", mode: "lines+markers",
-            name: fn.name || "", line: { color: fn.color || "#33FFFF", width: 3 },
-            marker: { size: 8, color: fn.color || "#33FFFF" },
+            name: fn.name || "", line: { color: fn.color || "#EE6A28", width: 3 },
+            marker: { size: 8, color: fn.color || "#EE6A28" },
           };
         }
         // Función normal
@@ -194,7 +194,7 @@ function renderPlotly(divId, config) {
         }
         return {
           x: xValues, y: yValues, type: "scatter", mode: "lines",
-          name: fn.name || fn.expr, line: { color: fn.color || "#33FFFF", width: 2 },
+          name: fn.name || fn.expr, line: { color: fn.color || "#EE6A28", width: 2 },
           connectgaps: true,
         };
       });
@@ -217,7 +217,7 @@ function renderPlotly(divId, config) {
     } else if (config.type === "bar") {
       const trace = {
         x: config.labels, y: config.values, type: "bar",
-        marker: { color: config.colors || ["#33FFFF", "#4ade80", "#f97316", "#a896f0", "#ef4444"] },
+        marker: { color: config.colors || ["#EE6A28", "#4ade80", "#f97316", "#a896f0", "#ef4444"] },
       };
       const layout = {
         title: { text: config.title || "", font: { color: "#fff", size: 14 } },
