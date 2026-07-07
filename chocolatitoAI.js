@@ -20,8 +20,98 @@ const statusText = document.getElementById("cai-status-text");
 
 let chatHistory = [{ role: "assistant", content: "¡Hola! Soy ChocolatitoAI 🎓" }];
 let isGenerating = false;
+let currentAbortController = null;        // para poder DETENER la generación
+const HISTORY_KEY = "cai_history";        // conversación guardada
+
+const SEND_ICON = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>';
+const STOP_ICON = '<svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="6" width="12" height="12" rx="2"/></svg>';
 
 function getToken() { return localStorage.getItem("cw_token"); }
+
+/* ── Guardar / restaurar conversación ───────────────────────────── */
+function saveHistory() {
+  try { localStorage.setItem(HISTORY_KEY, JSON.stringify(chatHistory)); } catch {}
+}
+function restoreHistory() {
+  let saved = null;
+  try { saved = JSON.parse(localStorage.getItem(HISTORY_KEY) || "null"); } catch {}
+  if (!Array.isArray(saved) || saved.length <= 1) return;
+  chatHistory = saved;
+  messagesEl.innerHTML = "";
+  saved.forEach((m, i) => {
+    if (i === 0) return;                  // saludo inicial
+    if (m.role === "user") {
+      addBubble("user", m.content);
+    } else if (m.role === "assistant") {
+      const { bubble } = addBubble("assistant", m.content);
+      addAssistantActions(bubble, m.content);
+    }
+  });
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+/* ── Botón enviar / detener ─────────────────────────────────────── */
+function setSendButtonMode(mode) {
+  if (mode === "stop") {
+    sendBtn.innerHTML = STOP_ICON;
+    sendBtn.classList.add("stop");
+    sendBtn.title = "Detener generación";
+  } else {
+    sendBtn.innerHTML = SEND_ICON;
+    sendBtn.classList.remove("stop");
+    sendBtn.title = "Enviar";
+  }
+}
+function stopGeneration() {
+  if (currentAbortController) currentAbortController.abort();
+}
+
+/* ── Acciones bajo cada respuesta: copiar / regenerar ───────────── */
+function addAssistantActions(bubble, content) {
+  if (bubble.querySelector(".cai-msg-actions")) return;
+  // sólo el último mensaje conserva "Regenerar"
+  messagesEl.querySelectorAll(".cai-regen-btn").forEach(b => b.remove());
+
+  const actions = document.createElement("div");
+  actions.className = "cai-msg-actions";
+
+  const copyBtn = document.createElement("button");
+  copyBtn.className = "cai-action-btn";
+  copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+  copyBtn.onclick = () => {
+    navigator.clipboard.writeText(content).then(() => {
+      copyBtn.innerHTML = '<i class="fas fa-check"></i> Copiado';
+      copyBtn.classList.add("done");
+      setTimeout(() => {
+        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Copiar';
+        copyBtn.classList.remove("done");
+      }, 1800);
+    }).catch(() => {});
+  };
+  actions.appendChild(copyBtn);
+
+  const regenBtn = document.createElement("button");
+  regenBtn.className = "cai-action-btn cai-regen-btn";
+  regenBtn.innerHTML = '<i class="fas fa-rotate-right"></i> Regenerar';
+  regenBtn.onclick = () => regenerateLast();
+  actions.appendChild(regenBtn);
+
+  bubble.appendChild(actions);
+}
+
+/* ── Regenerar la última respuesta ──────────────────────────────── */
+function regenerateLast() {
+  if (isGenerating) return;
+  if (chatHistory.length && chatHistory[chatHistory.length - 1].role === "assistant") {
+    chatHistory.pop();
+    const rows = messagesEl.querySelectorAll(".bubble-row.assistant");
+    if (rows.length) rows[rows.length - 1].remove();
+    saveHistory();
+  }
+  if (chatHistory.length && chatHistory[chatHistory.length - 1].role === "user") {
+    streamAssistant();
+  }
+}
 
 /* ── Partículas ──────────────────────────────────────────────────── */
 particlesJS("particles-js", {
@@ -292,27 +382,31 @@ function addBubble(role, content, isStreaming = false) {
   return { row, bubble };
 }
 
-/* ── Enviar mensaje con STREAMING ────────────────────────────────── */
+/* ── Enviar mensaje ─────────────────────────────────────────────── */
 async function sendMessage(text) {
   if (!text || isGenerating) return;
-
   addBubble("user", text);
   chatHistory.push({ role: "user", content: text });
+  saveHistory();
   inputBox.value = "";
   inputBox.style.height = "auto";
-  sendBtn.disabled = true;
+  await streamAssistant();
+}
+
+/* ── Stream de la respuesta (con opción de DETENER) ─────────────── */
+async function streamAssistant() {
   inputBox.disabled = true;
   isGenerating = true;
+  setSendButtonMode("stop");          // el botón pasa a "detener"
   setStatusThinking("Analizando...");
 
-  // Crear burbuja de streaming
   const { row, bubble } = addBubble("assistant", "", true);
   const contentDiv = bubble.querySelector(".streaming-content");
   const badge = bubble.querySelector(".cai-progress-badge");
   const badgeText = badge.querySelector(".badge-text");
 
   let accumulated = "";
-  let lastStatus = "";
+  currentAbortController = new AbortController();
 
   try {
     const res = await fetch(STREAM_URL, {
@@ -322,11 +416,10 @@ async function sendMessage(text) {
         Authorization: "Bearer " + getToken(),
       },
       body: JSON.stringify({ messages: chatHistory }),
+      signal: currentAbortController.signal,
     });
 
-    if (!res.ok) {
-      throw new Error(`HTTP ${res.status}`);
-    }
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
 
     const reader = res.body.getReader();
     const decoder = new TextDecoder();
@@ -356,19 +449,17 @@ async function sendMessage(text) {
           if (parsed.type === "delta") {
             if (badge) badge.style.display = "none";
             accumulated += parsed.content;
-            // Renderizar incrementalmente (solo texto plano por velocidad)
             contentDiv.innerHTML = "";
             contentDiv.appendChild(renderContent(accumulated));
             messagesEl.scrollTop = messagesEl.scrollHeight;
           }
 
           if (parsed.type === "done") {
-            // Render final completo
             if (badge) badge.style.display = "none";
             bubble.classList.remove("streaming");
+            accumulated = parsed.content;
             contentDiv.innerHTML = "";
             contentDiv.appendChild(renderContent(parsed.content));
-            chatHistory.push({ role: "assistant", content: parsed.content });
             messagesEl.scrollTop = messagesEl.scrollHeight;
           }
 
@@ -376,27 +467,48 @@ async function sendMessage(text) {
             throw new Error(parsed.content);
           }
         } catch (e) {
-          if (e.message.includes("HTTP")) throw e;
+          if (e.message && e.message.includes("HTTP")) throw e;
         }
       }
     }
 
+    // Guardar la respuesta y añadir acciones
+    if (accumulated) {
+      chatHistory.push({ role: "assistant", content: accumulated });
+      addAssistantActions(bubble, accumulated);
+      saveHistory();
+    }
     setStatusOnline();
+
   } catch (err) {
     if (badge) badge.style.display = "none";
     bubble.classList.remove("streaming");
-    contentDiv.innerHTML = "";
-    const errEl = document.createElement("div");
-    errEl.innerHTML = `❌ Error: ${err.message}<br><small style="color:rgba(255,255,255,0.4)">Intenta de nuevo en unos segundos</small>`;
-    errEl.style.color = "#ef4444";
-    contentDiv.appendChild(errEl);
-    setStatusError("Error de conexión");
+
+    if (err.name === "AbortError") {
+      // Detenido por el usuario: conservamos lo que se alcanzó a generar
+      if (accumulated) {
+        chatHistory.push({ role: "assistant", content: accumulated });
+        addAssistantActions(bubble, accumulated);
+        saveHistory();
+      } else {
+        row.remove();
+      }
+      setStatusOnline();
+    } else {
+      contentDiv.innerHTML = "";
+      const errEl = document.createElement("div");
+      errEl.innerHTML = `❌ Error: ${err.message}<br><small style="color:rgba(255,255,255,0.4)">Intenta de nuevo en unos segundos</small>`;
+      errEl.style.color = "#ef4444";
+      contentDiv.appendChild(errEl);
+      setStatusError("Error de conexión");
+    }
   } finally {
+    currentAbortController = null;
     isGenerating = false;
-    sendBtn.disabled = false;
+    setSendButtonMode("send");
     inputBox.disabled = false;
     inputBox.focus();
-    setTimeout(() => setStatusOnline(), 3000);
+    setTimeout(() => { if (!isGenerating) setStatusOnline(); }, 3000);
   }
 }
 
@@ -411,6 +523,7 @@ function useSuggestion(text) {
 function clearChat() {
   if (!confirm("¿Limpiar toda la conversación?")) return;
   chatHistory = [{ role: "assistant", content: "¡Hola! Soy ChocolatitoAI 🎓" }];
+  try { localStorage.removeItem(HISTORY_KEY); } catch {}
   messagesEl.innerHTML = `
     <div class="bubble-row assistant">
       <div class="bubble assistant">
@@ -501,8 +614,12 @@ inputBox.addEventListener("input", () => {
   inputBox.style.height = "auto";
   inputBox.style.height = Math.min(inputBox.scrollHeight, 120) + "px";
 });
-sendBtn.addEventListener("click", () => sendMessage(inputBox.value.trim()));
+sendBtn.addEventListener("click", () => {
+  if (isGenerating) stopGeneration();
+  else sendMessage(inputBox.value.trim());
+});
 imgGenBtn.addEventListener("click", generateImage);
 
-// Focus inicial
+// Cargar conversación previa (si existe) y focus inicial
+restoreHistory();
 inputBox.focus();
